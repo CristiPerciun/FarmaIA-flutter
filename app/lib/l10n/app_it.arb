@@ -1,0 +1,31 @@
+{
+  "@@locale": "it",
+  "appTitle": "Baganza Farmacie",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "homeTitle": "Home",
+  "catalogTitle": "Negozio",
+  "styleGuideTitle": "Style Guide",
+  "navToCatalog": "Vai al negozio",
+  "navToHome": "Torna alla home",
+  "navToStyleGuide": "Style guide",
+  "languageLabel": "Lingua",
+  "languageItalian": "Italiano",
+  "languageEnglish": "English",
+  "welcomeMessage": "Benvenuto in Baganza Farmacie",
+  "welcomeSubtitle": "Non solo farmaci — Parma",
+  "demoCounterLabel": "Contatore demo (Riverpod)",
+  "incrementButton": "Incrementa",
+  "catalogPlaceholder": "Il catalogo prodotti sarà disponibile nella Fase 2.",
+  "logoPlaceholder": "Baganza Farmacie",
+  "notFound": "Pagina non trovata: {path}",
+  "@notFound": {
+    "description": "Messaggio mostrato per una rotta inesistente",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
+}

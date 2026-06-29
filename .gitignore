@@ -1,0 +1,45 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+*.iml
+*.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node / Firebase
+node_modules/
+firebase/functions/lib/
+firebase/.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+storage-debug.log
+database-debug.log
+
+# Secrets & credentials
+.env
+.env.*
+!.env.example
+**/google-services.json
+**/GoogleService-Info.plist
+# firebase_options.dart is committed (client config, restricted by App Check)
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated l10n (optional - Flutter generates these)
+# app/lib/l10n/app_localizations*.dart

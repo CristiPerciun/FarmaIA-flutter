@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "dbfarmacia",
+    "dev": "dbfarmacia",
+    "prod": "dbfarmacia-prod"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "@@locale": "en",
+  "appTitle": "Baganza Pharmacies",
+  "homeTitle": "Home",
+  "catalogTitle": "Shop",
+  "styleGuideTitle": "Style Guide",
+  "navToCatalog": "Go to shop",
+  "navToHome": "Back to home",
+  "navToStyleGuide": "Style guide",
+  "languageLabel": "Language",
+  "languageItalian": "Italiano",
+  "languageEnglish": "English",
+  "welcomeMessage": "Welcome to Baganza Pharmacies",
+  "welcomeSubtitle": "More than medicines — Parma",
+  "demoCounterLabel": "Demo counter (Riverpod)",
+  "incrementButton": "Increment",
+  "catalogPlaceholder": "The product catalog will be available in Phase 2.",
+  "logoPlaceholder": "Baganza Pharmacies",
+  "notFound": "Page not found: {path}"
+}
