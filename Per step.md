@@ -17,7 +17,7 @@
 - **Compliance-first:** ruoli, regole di sicurezza e impianto privacy/logo vengono prima delle feature di vendita (Fase 1).
 - **Fette verticali:** quando possibile si completa un flusso end-to-end (UI → dato → backend) invece di costruire a strati orizzontali.
 - **Un branch per step**, PR piccola, test inclusi; niente chiavi/segreti nel client (sempre lato Cloud Functions).
-- **Due repository:** `frontend/` (Flutter) e `backend/` (Firebase) — vedi §4.
+- **Due progetti in monorepo:** `app/` (Flutter) e `firebase/` (Firebase) — vedi §4.
 - **Gate critici (non superabili senza):** (a) le pagine SEO devono rendere HTML reale prima di investire in traffico (§6.2); (b) prima del lancio della vendita medicinali servono autorizzazione + logo ministeriale (§16.8, Parte 2).
 
 ---
@@ -40,7 +40,7 @@
 ### Step 0.1 — Repository e ambiente ⭐ · S
 - **Obiettivo:** due repo pronti e versionati.
 - **Attività:**
-  - [ ] Crea `frontend/` (Flutter) e `backend/` (Firebase) con Git e strategia di branching.
+  - [ ] Crea `app/` (Flutter) e `firebase/` (Firebase) con Git e strategia di branching.
   - [ ] Configura Flutter SDK, linter/analyzer, formattazione.
   - [ ] README con istruzioni di avvio per entrambi i progetti.
 - **✓ Fatto quando:** entrambi i repo compilano "a vuoto" e il linter passa. · **Rif.** §4

@@ -81,13 +81,13 @@ Pipeline **AI per il data-entry**, **consulenza professionale** integrata, **bil
 
 ## 4. Architettura dei Progetti (Frontend + Backend)
 
-Il sistema è composto da **due progetti separati** versionati indipendentemente.
+Il sistema è composto da **due progetti** (`app/` Flutter e `firebase/` Firebase), indipendenti tra loro ma mantenuti in un unico **monorepo** Git (decisione di progetto: vedi README).
 
 ### 4.1 Progetto Frontend (Flutter) — architettura Feature-First
 Ogni funzionalità ha il proprio ecosistema isolato, anziché la classica divisione orizzontale in `ui/` e `models/`.
 
 ```
-frontend/ (Flutter)
+app/ (Flutter)
 └── lib/
     ├── core/                   # Temi, design tokens, costanti, router, i18n, client Firebase, utility
     ├── l10n/                   # File ARB: app_it.arb, app_en.arb
@@ -108,7 +108,7 @@ frontend/ (Flutter)
 Backend "thin" ma necessario: ospita chiavi e logica AI, webhook di pagamento, sincronizzazione ricerca, regole.
 
 ```
-backend/ (Firebase)
+firebase/ (Firebase)
 ├── functions/
 │   └── src/
 │       ├── ai/                 # Pipeline: vision (Photoroom) + generazione testi LLM (IT/EN), grounding, guardrail
