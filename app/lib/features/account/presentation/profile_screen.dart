@@ -142,8 +142,8 @@ class _AccountView extends ConsumerWidget {
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.receipt_long_outlined),
           title: Text(l10n.ordersTitle),
-          subtitle: Text(l10n.comingSoonPhase3),
-          enabled: false,
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/orders'),
         ),
         const Divider(height: 32),
         AppButton(

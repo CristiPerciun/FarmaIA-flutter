@@ -8,10 +8,21 @@ import '../../features/admin/presentation/admin_dashboard_screen.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
+import '../../features/cart/presentation/cart_screen.dart';
 import '../../features/catalog/presentation/catalog_screen.dart';
+import '../../features/catalog/presentation/product_detail_screen.dart';
+import '../../features/catalog/presentation/scan_screen.dart';
+import '../../features/checkout/presentation/checkout_screen.dart';
+import '../../features/checkout/presentation/order_confirmation_screen.dart';
+import '../../features/checkout/presentation/payment_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/orders/presentation/order_detail_screen.dart';
+import '../../features/orders/presentation/orders_screen.dart';
+import '../../features/shell/presentation/coming_soon_screen.dart';
 import '../../features/style_guide/presentation/style_guide_screen.dart';
 import '../../l10n/app_localizations.dart';
+import '../widgets/adaptive_scaffold.dart';
+import 'transitions.dart';
 
 /// Route prefixes that require a signed-in user (§9.2). `/admin` additionally
 /// requires a staff role, checked in the redirect below.
@@ -73,6 +84,69 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/catalog',
         name: 'catalog',
         builder: (context, state) => const CatalogScreen(),
+      ),
+      GoRoute(
+        path: '/product/:id',
+        name: 'product',
+        pageBuilder: (context, state) => fadeSlidePage(
+          key: state.pageKey,
+          child: ProductDetailScreen(productId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/scan',
+        name: 'scan',
+        builder: (context, state) => const ScanScreen(),
+      ),
+      GoRoute(
+        path: '/chat',
+        name: 'chat',
+        builder: (context, state) {
+          final l10n = AppLocalizations.of(context)!;
+          return ComingSoonScreen(
+            tab: AppTab.chatAi,
+            title: l10n.navChatAi,
+            message: l10n.comingSoonPhase4,
+            icon: Icons.chat_bubble_outline,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/cart',
+        name: 'cart',
+        builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: '/checkout',
+        name: 'checkout',
+        builder: (context, state) => const CheckoutScreen(),
+        routes: [
+          GoRoute(
+            path: 'payment',
+            name: 'payment',
+            builder: (context, state) => const PaymentScreen(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/order/confirmed',
+        name: 'orderConfirmed',
+        builder: (context, state) => OrderConfirmationScreen(
+          orderNumber: state.extra is String ? state.extra as String : '',
+        ),
+      ),
+      GoRoute(
+        path: '/orders',
+        name: 'orders',
+        builder: (context, state) => const OrdersScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: 'orderDetail',
+            builder: (context, state) =>
+                OrderDetailScreen(orderId: state.pathParameters['id']!),
+          ),
+        ],
       ),
       GoRoute(
         path: '/style-guide',

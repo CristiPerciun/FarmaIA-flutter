@@ -76,5 +76,158 @@
   "withdrawalConfirm": "Confirm withdrawal",
   "withdrawalConfirmBody": "Do you want to exercise the right of withdrawal for this order (art. 54-bis)? The request will be recorded.",
   "withdrawalRequested": "Withdrawal requested. We'll contact you to complete the process.",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+
+  "navHome": "Home",
+  "navShop": "Shop",
+  "navChatAi": "AI Chat",
+  "navCart": "Cart",
+  "navProfile": "Profile",
+
+  "catalogAllCategories": "All",
+  "catalogFilters": "Filters",
+  "catalogFilterCategory": "Category",
+  "catalogFilterMedicinesOnly": "Medicines only",
+  "catalogFilterOnSale": "On sale",
+  "catalogClearFilters": "Clear filters",
+  "catalogApplyFilters": "Apply",
+  "catalogNoProducts": "No products found",
+  "catalogEmptyHint": "Try removing a filter or changing your search.",
+  "catalogResultsCount": "{count, plural, =0{No products} =1{1 product} other{{count} products}}",
+  "@catalogResultsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "catalogLoadError": "Could not load the catalog.",
+
+  "productAddToCart": "Add",
+  "addToCartComingSoon": "The cart arrives in Phase 3.",
+  "priceWas": "List price {price}",
+  "@priceWas": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+
+  "productDescription": "Description",
+  "productActiveIngredient": "Active ingredient",
+  "productPosology": "Posology",
+  "productContraindications": "Contraindications",
+  "productWarnings": "Warnings",
+  "productCeMarking": "CE marking",
+  "productCeMarkingPresent": "Medical device with CE marking.",
+  "productNotFound": "Product not available.",
+  "trustReturnsTitle": "Returns & withdrawal",
+  "trustReturnsBody": "Right of withdrawal within 14 days (art. 54-bis). Medicines follow statutory limitations.",
+
+  "searchTitle": "Search",
+  "searchHint": "Search products, active ingredients…",
+  "searchNoResults": "No results for \"{query}\"",
+  "@searchNoResults": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "searchClear": "Clear",
+
+  "scanTitle": "Scan code",
+  "scanInstruction": "Point the camera at the product barcode (EAN).",
+  "scanManualTitle": "Enter the code",
+  "scanManualHint": "EAN code",
+  "scanManualSubmit": "Search",
+  "scanNotSupported": "The camera is not available on this device. Enter the code manually.",
+  "scanPermissionDenied": "Camera permission denied. You can enter the code manually.",
+  "scanNotFound": "No product with code {code}.",
+  "@scanNotFound": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+
+  "offlineBannerTitle": "You're offline",
+  "offlineBannerBody": "You're browsing the saved catalog. Some actions are unavailable without a connection.",
+  "offlineActionDisabled": "Action unavailable offline.",
+
+  "cartTitle": "Cart",
+  "cartEmpty": "Your cart is empty",
+  "cartEmptyHint": "Add products from the shop.",
+  "cartRemove": "Remove",
+  "cartCheckout": "Go to checkout",
+  "cartItemUnavailable": "No longer available",
+  "addedToCart": "Added to cart",
+  "cartQuantity": "Quantity",
+
+  "summarySubtotal": "Subtotal",
+  "summaryShipping": "Shipping",
+  "summaryShippingFree": "Free",
+  "summaryVat": "VAT (included)",
+  "summaryVatRate": "incl. VAT {rate}%",
+  "@summaryVatRate": {
+    "placeholders": { "rate": { "type": "int" } }
+  },
+  "summaryTotal": "Total",
+  "summaryFreeShippingHint": "Add {amount} for free shipping.",
+  "@summaryFreeShippingHint": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+
+  "checkoutTitle": "Checkout",
+  "checkoutContact": "Contact",
+  "checkoutGuestNote": "You can order as a guest; creating an account is optional.",
+  "checkoutShippingAddress": "Shipping address",
+  "fieldFullName": "Full name",
+  "fieldPhone": "Phone",
+  "fieldStreet": "Address (street and number)",
+  "fieldCity": "City",
+  "fieldZip": "Postcode",
+  "fieldProvince": "Province",
+  "checkoutContinueToPayment": "Continue to payment",
+
+  "paymentTitle": "Payment",
+  "paymentMethod": "Payment method",
+  "paymentMethodCard": "Card (Stripe/Nexi)",
+  "paymentMethodPaypal": "PayPal",
+  "paymentMethodSatispay": "Satispay",
+  "paymentMethodBnpl": "Pay in instalments (Scalapay/Klarna)",
+  "paymentSandboxNotice": "Sandbox environment: no real charge. Real payment-gateway integration is described in ADR 0003.",
+  "paymentPay": "Pay {amount}",
+  "@paymentPay": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "paymentProcessing": "Processing payment…",
+  "paymentFailed": "Payment failed. Please try again.",
+  "orderPlacedTitle": "Order confirmed",
+  "orderPlacedBody": "Thank you! Your order {number} has been recorded.",
+  "@orderPlacedBody": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+
+  "ordersEmpty": "You have no orders yet.",
+  "orderNumberLabel": "Order {number}",
+  "@orderNumberLabel": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "orderItemsLabel": "Items",
+  "orderTrackingLabel": "Tracking",
+  "orderCarrierLabel": "Carrier",
+  "orderPaymentLabel": "Payment",
+  "orderShippingLabel": "Shipping",
+  "orderStatusCreated": "Created",
+  "orderStatusConfirmed": "Confirmed",
+  "orderStatusPreparing": "Preparing",
+  "orderStatusShipped": "Shipped",
+  "orderStatusDelivered": "Delivered",
+  "orderStatusCancelled": "Cancelled",
+  "paymentStatusPending": "Pending",
+  "paymentStatusPaid": "Paid",
+  "paymentStatusFailed": "Failed",
+  "paymentStatusRefunded": "Refunded",
+  "shippingStatusProcessing": "Processing",
+  "shippingStatusShipped": "Shipped",
+  "shippingStatusDelivered": "Delivered",
+  "shippingStatusReturned": "Returned",
+  "withdrawalAlreadyRequested": "Withdrawal already requested for this order.",
+  "signInToOrder": "Sign in to see your orders.",
+  "genericErrorRetry": "Something went wrong. Please try again."
 }

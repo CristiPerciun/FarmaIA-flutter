@@ -95,5 +95,158 @@
   "withdrawalConfirm": "Conferma recesso",
   "withdrawalConfirmBody": "Vuoi esercitare il diritto di recesso per questo ordine (art. 54-bis)? La richiesta verrà registrata.",
   "withdrawalRequested": "Recesso richiesto. Ti contatteremo per completare la procedura.",
-  "cancel": "Annulla"
+  "cancel": "Annulla",
+
+  "navHome": "Home",
+  "navShop": "Negozio",
+  "navChatAi": "Chat AI",
+  "navCart": "Carrello",
+  "navProfile": "Profilo",
+
+  "catalogAllCategories": "Tutti",
+  "catalogFilters": "Filtri",
+  "catalogFilterCategory": "Categoria",
+  "catalogFilterMedicinesOnly": "Solo medicinali",
+  "catalogFilterOnSale": "In offerta",
+  "catalogClearFilters": "Azzera filtri",
+  "catalogApplyFilters": "Applica",
+  "catalogNoProducts": "Nessun prodotto trovato",
+  "catalogEmptyHint": "Prova a rimuovere qualche filtro o a cambiare ricerca.",
+  "catalogResultsCount": "{count, plural, =0{Nessun prodotto} =1{1 prodotto} other{{count} prodotti}}",
+  "@catalogResultsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "catalogLoadError": "Impossibile caricare il catalogo.",
+
+  "productAddToCart": "Aggiungi",
+  "addToCartComingSoon": "Il carrello arriva nella Fase 3.",
+  "priceWas": "Prezzo di listino {price}",
+  "@priceWas": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+
+  "productDescription": "Descrizione",
+  "productActiveIngredient": "Principio attivo",
+  "productPosology": "Posologia",
+  "productContraindications": "Controindicazioni",
+  "productWarnings": "Avvertenze",
+  "productCeMarking": "Marcatura CE",
+  "productCeMarkingPresent": "Dispositivo medico con marcatura CE.",
+  "productNotFound": "Prodotto non disponibile.",
+  "trustReturnsTitle": "Reso e recesso",
+  "trustReturnsBody": "Diritto di recesso entro 14 giorni (art. 54-bis). I medicinali seguono le limitazioni di legge.",
+
+  "searchTitle": "Cerca",
+  "searchHint": "Cerca prodotti, principi attivi…",
+  "searchNoResults": "Nessun risultato per \"{query}\"",
+  "@searchNoResults": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "searchClear": "Cancella",
+
+  "scanTitle": "Scansiona codice",
+  "scanInstruction": "Inquadra il codice a barre (EAN) del prodotto.",
+  "scanManualTitle": "Inserisci il codice",
+  "scanManualHint": "Codice EAN",
+  "scanManualSubmit": "Cerca",
+  "scanNotSupported": "La fotocamera non è disponibile su questo dispositivo. Inserisci il codice a mano.",
+  "scanPermissionDenied": "Permesso fotocamera negato. Puoi inserire il codice a mano.",
+  "scanNotFound": "Nessun prodotto con codice {code}.",
+  "@scanNotFound": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+
+  "offlineBannerTitle": "Sei offline",
+  "offlineBannerBody": "Stai consultando il catalogo salvato. Alcune azioni non sono disponibili senza rete.",
+  "offlineActionDisabled": "Azione non disponibile offline.",
+
+  "cartTitle": "Carrello",
+  "cartEmpty": "Il carrello è vuoto",
+  "cartEmptyHint": "Aggiungi prodotti dal negozio.",
+  "cartRemove": "Rimuovi",
+  "cartCheckout": "Vai al checkout",
+  "cartItemUnavailable": "Non più disponibile",
+  "addedToCart": "Aggiunto al carrello",
+  "cartQuantity": "Quantità",
+
+  "summarySubtotal": "Subtotale",
+  "summaryShipping": "Spedizione",
+  "summaryShippingFree": "Gratuita",
+  "summaryVat": "IVA (inclusa)",
+  "summaryVatRate": "di cui IVA {rate}%",
+  "@summaryVatRate": {
+    "placeholders": { "rate": { "type": "int" } }
+  },
+  "summaryTotal": "Totale",
+  "summaryFreeShippingHint": "Aggiungi {amount} per la spedizione gratuita.",
+  "@summaryFreeShippingHint": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+
+  "checkoutTitle": "Checkout",
+  "checkoutContact": "Contatti",
+  "checkoutGuestNote": "Puoi ordinare come ospite; creare un account è facoltativo.",
+  "checkoutShippingAddress": "Indirizzo di spedizione",
+  "fieldFullName": "Nome e cognome",
+  "fieldPhone": "Telefono",
+  "fieldStreet": "Indirizzo (via e numero)",
+  "fieldCity": "Città",
+  "fieldZip": "CAP",
+  "fieldProvince": "Provincia",
+  "checkoutContinueToPayment": "Vai al pagamento",
+
+  "paymentTitle": "Pagamento",
+  "paymentMethod": "Metodo di pagamento",
+  "paymentMethodCard": "Carta (Stripe/Nexi)",
+  "paymentMethodPaypal": "PayPal",
+  "paymentMethodSatispay": "Satispay",
+  "paymentMethodBnpl": "Paga a rate (Scalapay/Klarna)",
+  "paymentSandboxNotice": "Ambiente sandbox: nessun addebito reale. L'integrazione dei gateway di pagamento reali è descritta nell'ADR 0003.",
+  "paymentPay": "Paga {amount}",
+  "@paymentPay": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "paymentProcessing": "Elaborazione del pagamento…",
+  "paymentFailed": "Pagamento non riuscito. Riprova.",
+  "orderPlacedTitle": "Ordine confermato",
+  "orderPlacedBody": "Grazie! Il tuo ordine {number} è stato registrato.",
+  "@orderPlacedBody": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+
+  "ordersEmpty": "Non hai ancora ordini.",
+  "orderNumberLabel": "Ordine {number}",
+  "@orderNumberLabel": {
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "orderItemsLabel": "Articoli",
+  "orderTrackingLabel": "Tracking",
+  "orderCarrierLabel": "Corriere",
+  "orderPaymentLabel": "Pagamento",
+  "orderShippingLabel": "Spedizione",
+  "orderStatusCreated": "Creato",
+  "orderStatusConfirmed": "Confermato",
+  "orderStatusPreparing": "In preparazione",
+  "orderStatusShipped": "Spedito",
+  "orderStatusDelivered": "Consegnato",
+  "orderStatusCancelled": "Annullato",
+  "paymentStatusPending": "In attesa",
+  "paymentStatusPaid": "Pagato",
+  "paymentStatusFailed": "Non riuscito",
+  "paymentStatusRefunded": "Rimborsato",
+  "shippingStatusProcessing": "In lavorazione",
+  "shippingStatusShipped": "Spedito",
+  "shippingStatusDelivered": "Consegnato",
+  "shippingStatusReturned": "Reso",
+  "withdrawalAlreadyRequested": "Recesso già richiesto per questo ordine.",
+  "signInToOrder": "Accedi per vedere i tuoi ordini.",
+  "genericErrorRetry": "Qualcosa è andato storto. Riprova."
 }

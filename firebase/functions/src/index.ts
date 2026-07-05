@@ -22,3 +22,11 @@ export const health = onRequest((request, response) => {
 
 // Keeps the `role` custom claim in sync with the users doc (§1.3, §5.5).
 export {syncRoleClaim} from "./auth/sync_role_claim";
+
+// Orders: creation, payment confirmation/webhook, withdrawal (§3.4, §5.5).
+export {
+  createOrder,
+  confirmMockPayment,
+  paymentWebhook,
+  requestWithdrawal,
+} from "./orders/order_functions";

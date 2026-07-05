@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,7 +18,42 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Farma Smart — l'app di Baganza Farmacie: catalogo, servizi e assistente AI.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Farma Smart — l'app di Baganza Farmacie a Parma: catalogo, servizi e assistente AI.">
+  <link rel="canonical" href="https://www.farmaciabaganza.it/">
+
+  <!-- Social preview (OpenGraph / Twitter). NOTE: this is the Flutter PWA
+       shell; per-page SEO for crawlers is served by the SSR storefront — see
+       docs/adr/0001-storefront-seo.md (§6.2, step 2.7). -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Baganza Farmacie">
+  <meta property="og:title" content="Farma Smart — Baganza Farmacie">
+  <meta property="og:description" content="Catalogo, servizi e assistente AI della Farmacia Baganza a Parma.">
+  <meta property="og:image" content="https://www.farmaciabaganza.it/icons/Icon-512.png">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Farma Smart — Baganza Farmacie">
+  <meta name="twitter:description" content="Catalogo, servizi e assistente AI della Farmacia Baganza a Parma.">
+
+  <!-- Organization structured data (site-wide). Product/FAQ/Breadcrumb JSON-LD
+       is emitted per page by the SSR storefront (step 2.7 ADR). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Pharmacy",
+    "name": "Baganza Farmacie",
+    "url": "https://www.farmaciabaganza.it/",
+    "image": "https://www.farmaciabaganza.it/icons/Icon-512.png",
+    "areaServed": "Parma, IT",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Parma",
+      "addressRegion": "Emilia-Romagna",
+      "addressCountry": "IT"
+    }
+  }
+  </script>
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">

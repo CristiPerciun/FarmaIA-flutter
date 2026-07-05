@@ -25,4 +25,12 @@ abstract final class AppColors {
   static const Color textPrimary = Color(0xFF14532D);
   static const Color textSecondary = Color(0xFF1F2A24);
   static const Color border = Color(0xFFE0E8E2);
+
+  /// Ambient background wash — cold ice-blue that fades into white (§7.2.2).
+  /// NEVER used for text or interactive elements: it is purely atmospheric and
+  /// keeps green as the single interactive color.
+  static const Color ambientAzure = Color(0xFFEAF4FE);
+
+  /// Slightly more saturated ambient tone, reserved for the Home hero (§7.2.2).
+  static const Color ambientAzureHero = Color(0xFFDDEEFC);
 }

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/providers/demo_counter_provider.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/adaptive_scaffold.dart';
+import '../../../core/widgets/ambient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -14,11 +15,12 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final counter = ref.watch(demoCounterProvider);
     final locale = ref.watch(localeProvider);
 
-    return Scaffold(
+    return AdaptiveScaffold(
+      currentTab: AppTab.home,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: Text(l10n.homeTitle),
         actions: [
           IconButton(
@@ -32,63 +34,48 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _LogoPlaceholder(label: l10n.logoPlaceholder),
-            const SizedBox(height: 24),
-            Text(
-              l10n.welcomeMessage,
-              style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.welcomeSubtitle,
-              style: Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+      body: AmbientBackground(
+        hero: true,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 96),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    _LogoPlaceholder(label: l10n.logoPlaceholder),
+                    const SizedBox(height: 24),
                     Text(
-                      l10n.demoCounterLabel,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      l10n.welcomeMessage,
+                      style: Theme.of(context).textTheme.headlineLarge,
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '$counter',
-                      style: Theme.of(context).textTheme.headlineLarge,
+                      l10n.welcomeSubtitle,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    AppButton(
+                      label: l10n.navToCatalog,
+                      icon: Icons.storefront_outlined,
+                      onPressed: () => context.go('/catalog'),
                     ),
                     const SizedBox(height: 12),
                     AppButton(
-                      label: l10n.incrementButton,
-                      onPressed: () =>
-                          ref.read(demoCounterProvider.notifier).increment(),
+                      label: l10n.navToStyleGuide,
+                      variant: AppButtonVariant.outlined,
+                      icon: Icons.palette_outlined,
+                      onPressed: () => context.go('/style-guide'),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            AppButton(
-              label: l10n.navToCatalog,
-              icon: Icons.storefront_outlined,
-              onPressed: () => context.go('/catalog'),
-            ),
-            const SizedBox(height: 12),
-            AppButton(
-              label: l10n.navToStyleGuide,
-              variant: AppButtonVariant.outlined,
-              icon: Icons.palette_outlined,
-              onPressed: () => context.go('/style-guide'),
-            ),
-          ],
+          ),
         ),
       ),
     );

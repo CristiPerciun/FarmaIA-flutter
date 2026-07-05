@@ -32,6 +32,16 @@ class AuthRepository {
   Future<void> signIn({required String email, required String password}) =>
       _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
 
+  /// Ensures there is a signed-in user, signing in anonymously for guest
+  /// checkout when needed (§3.2). Returns the uid. Requires the Anonymous
+  /// provider to be enabled in Firebase Auth (see ADR 0003).
+  Future<String> ensureSignedIn() async {
+    final existing = _auth.currentUser;
+    if (existing != null) return existing.uid;
+    final cred = await _auth.signInAnonymously();
+    return cred.user!.uid;
+  }
+
   Future<void> register({
     required String email,
     required String password,

@@ -18,14 +18,17 @@
 - **Fette verticali:** quando possibile si completa un flusso end-to-end (UI → dato → backend) invece di costruire a strati orizzontali.
 - **Un branch per step**, PR piccola, test inclusi; niente chiavi/segreti nel client (sempre lato Cloud Functions).
 - **Due progetti in monorepo:** `app/` (Flutter) e `firebase/` (Firebase) — vedi §4.
+- **Adaptive-first (una base di codice, quattro superfici — §4.4):** ogni schermata nasce per i breakpoint `compact` (web app mobile/PWA) **e** `expanded` (portale web desktop; stessa base per l'app Windows). Niente breakpoint hardcoded nelle feature, navigazione adattiva (bottom bar ↔ rail/menu), guardie di piattaforma per le capacità mobile-only (scanner, push). Il portale desktop/admin **non** è un progetto separato.
+- **SEO ≠ SSO:** *SEO* = farsi **trovare su Google** (storefront SSR, Fase 2, step 2.7 — gate critico); *SSO* = **login con Google** (Firebase Auth, step 1.5 — comodità di accesso). Sono indipendenti: solo la SEO porta traffico.
+- **UI pulita, effetti misurati (§7.2):** linguaggio visivo moderno — gradiente ambientale azzurro→bianco, glassmorphism con fallback solido, card 3D, motion a molla — ma **un solo effetto "wow" per viewport**, una sola azione primaria per schermata, e i contenuti critici (posologia, prezzi, logo ministeriale) sempre su superficie solida. Gli effetti si degradano con grazia (`prefers-reduced-motion`, dispositivi lenti), mai sotto i 60 fps.
 - **Gate critici (non superabili senza):** (a) le pagine SEO devono rendere HTML reale prima di investire in traffico (§6.2); (b) prima del lancio della vendita medicinali servono autorizzazione + logo ministeriale (§16.8, Parte 2); (c) la **Chat AI cliente** non va esposta al pubblico senza **red-team clinico + consenso art. 9 + validazione legale del perimetro** (§12.4–12.5, step 4B.8).
 
 ---
 
 ## Mappa delle fasi
 0. **Fondamenta & Setup** — repo, Firebase, scaffolding, design system, CI.
-1. **Dati, Auth & Compliance** — modello dati, regole, ruoli, impianto GDPR/logo.
-2. **Catalogo, Ricerca & SEO** — parte pubblica (cliente).
+1. **Dati, Auth & Compliance** — modello dati, regole, ruoli, impianto GDPR/logo, login Google (SSO).
+2. **Catalogo, Ricerca & SEO** — parte pubblica (cliente): UI adattiva mobile/desktop, storefront SSR per **farsi trovare su Google** (SEO), verifica multi-superficie (web/Windows).
 3. **Carrello, Checkout, Pagamenti, Ordini.**
 4. **Pannello Admin AI** — la prima "killer feature".
 4B. **Assistente AI Cliente** — la seconda "killer feature": chat sintomi lievi→prodotti (LLM open-source EU, RAG sul catalogo, guardrail, widget web 70/30 + tab mobile) (§12).
@@ -63,14 +66,17 @@
   - [ ] Inizializza Firebase + **App Check** in `main.dart`.
 - **✓ Fatto quando:** navigazione tra 2 schermate placeholder con go_router e provider attivi. · **Rif.** §3, §4.1
 
-### Step 0.4 — Design System & brand di base ⭐ · M
-- **Obiettivo:** tema e componenti coerenti col brand.
+### Step 0.4 — Design System & linguaggio visivo ⭐ · M→L ✅
+- **Obiettivo:** tema, componenti ed effetti coerenti col brand e col linguaggio visivo §7.2 (pulito + moderno).
 - **Attività:**
-  - [ ] Definisci i **design token** (oro `#C9A227`, verde `#1E7A3C`, verde scuro `#14532D`, cremisi `#9E1B32`, alert `#C62828`) in `core/theme`.
-  - [ ] Imposta **verde = colore d'azione**, testo scuro; oro/cremisi solo accenti (regole di §16.2).
-  - [ ] Componenti base (bottoni, card, input) con **contrasto WCAG 2.2** verificato.
-  - [ ] Importa il logo (`Baganza_Logo_Ufficiale.png`) come asset temporaneo.
-- **✓ Fatto quando:** una "style page" mostra i componenti e i contrasti passano. · **Rif.** §7.2, §16.2
+  - [x] Definisci i **design token** (oro `#C9A227`, verde `#1E7A3C`, verde scuro `#14532D`, cremisi `#9E1B32`, alert `#C62828`, **ambientale `#EAF4FE`→bianco**) in `core/theme`.
+  - [x] Imposta **verde = colore d'azione**, testo scuro; oro/cremisi solo accenti; **azzurro solo sfondo ambientale**, mai testo/azioni (regole di §16.2 e §7.2.2).
+  - [x] **`ThemeExtension` `BaganzaEffects`** (§7.2.6): gradienti ambientali, spec glass (blur/fill/bordo), ombre a 2 strati con tinta verde, durate/curve del motion system — nessun valore hardcodato nelle feature.
+  - [x] Widget riusabili del linguaggio: **`GlassSurface`** (BackdropFilter + fallback solido) e **`TiltCard`** (tilt max 6° su hover desktop, press-scale su touch) — §7.2.3–7.2.4.
+  - [x] Componenti base (bottoni, card, input) con **contrasto WCAG 2.2** verificato, incluso testo su gradiente ambientale e su vetro (caso peggiore).
+  - [x] Importa il logo (`Baganza_Logo_Ufficiale.png`) come asset temporaneo.
+- **✓ Fatto quando:** la "style page" mostra componenti, **gradiente ambientale, una `GlassSurface` e una `TiltCard` funzionanti**, e i contrasti passano (anche con `prefers-reduced-motion` attivo). · **Rif.** §7.2, §16.2
+  - **Fatto:** token ambientali in `core/theme/app_colors.dart` (`ambientAzure`/`ambientAzureHero`); `BaganzaEffects` `ThemeExtension` (`core/theme/baganza_effects.dart`) registrata nel tema; widget `AmbientBackground`, `GlassSurface` (blur + `solidFallback`), `TiltCard` (hover-tilt/press-scale, rispetta `disableAnimations`); breakpoint token (`core/theme/breakpoints.dart`); token condivisi con lo storefront in `core/theme/tokens.json`. La style page mostra swatch azzurro, `GlassSurface` e `TiltCard` dal vivo.
 
 ### Step 0.5 — i18n IT/EN ⭐ · S
 - **Obiettivo:** infrastruttura bilingue.
@@ -82,9 +88,9 @@
 ### Step 0.6 — CI/CD e flavor ⭐ · S
 - **Obiettivo:** build automatiche e ambienti separati.
 - **Attività:**
-  - [ ] Pipeline CI (analyze + test + build web/Android).
+  - [ ] Pipeline CI (analyze + test + build **web/Android/Windows** — il target Windows è una superficie di prodotto, §4.4).
   - [ ] **Flavor/ambienti** dev/prod lato app e Functions.
-- **✓ Fatto quando:** una PR fa girare lint+test e produce una build. · **Rif.** §4
+- **✓ Fatto quando:** una PR fa girare lint+test e produce le build dei tre target. · **Rif.** §4, §4.4
 
 ---
 
@@ -124,90 +130,149 @@
   - [x] **Pulsante di recesso** (art. 54-bis) con dialog di **conferma tracciata** (`WithdrawalButton`, si aggancia agli ordini in Fase 3).
 - **✓ Fatto quando:** consensi salvati su `users.consents`; logo e separazione presenti dove dovuto. · **Rif.** §9.2, §16.8 + Parte 2 (compliance) · **Dipende da:** 1.1
 
-> **Fase 1 completata.** Verifiche: `flutter analyze` pulito, **20 test** app verdi, **11 test** regole verdi, `flutter build web` ok, functions `build`+`lint` ok. *(Rimane, quando disponibili: font istituzionale, asset logo ministeriale reale e conferma autorizzazione §16.8-16.9.)*
+### Step 1.5 — Login con Google (SSO) ⭐ · S
+- **Obiettivo:** accesso in un tap con l'account Google, accanto a email/password. *(È l'**SSO**: comodità di login. Non c'entra con la SEO/step 2.7, che è farsi trovare su Google.)*
+- **Attività:**
+  - [ ] Abilita il provider **Google** in Firebase Auth (console dev+prod) e configura OAuth per **web** (popup/redirect), **Android** (SHA-1/SHA-256), **iOS** e **Windows/desktop** (flusso browser esterno — guardia di piattaforma se il plugin non copre il target).
+  - [ ] `signInWithGoogle()` nell'`AuthRepository` esistente: primo accesso → crea il doc `users` con `role: customer` (stesso percorso di 1.3); accessi successivi → riusa il doc.
+  - [ ] **Account linking:** stessa email già registrata via password → collega le credenziali invece di creare un duplicato; messaggi d'errore localizzati IT/EN.
+  - [ ] Pulsante "Continua con Google" nelle schermate di login/registrazione secondo le linee guida di brand Google.
+- **✓ Fatto quando:** un utente nuovo entra con Google e ottiene il doc `users` corretto; un utente esistente con la stessa email non viene duplicato; il flusso funziona su web mobile, web desktop e (o con fallback dichiarato) Windows. · **Rif.** §6 (nota SEO≠SSO) · **Dipende da:** 1.3
+
+> **Fase 1 completata (step 1.1–1.4).** Verifiche: `flutter analyze` pulito, **20 test** app verdi, **11 test** regole verdi, `flutter build web` ok, functions `build`+`lint` ok. *(Rimane: step 1.5 — login Google; e, quando disponibili: font istituzionale, asset logo ministeriale reale e conferma autorizzazione §16.8-16.9.)*
 
 ---
 
 ## FASE 2 — Catalogo, Ricerca & SEO (lato cliente)
 
-### Step 2.1 — Repository & provider Prodotti ⭐ · M
+> ### ⚠️ Nota — cosa NON è stato fatto in Fase 2
+> Gli step 2.1–2.6 sono completi. Restano aperti due punti, elencati qui in modo esplicito per non dare per chiuso ciò che non lo è:
+>
+> 1. **Gate SEO 2.7 resta APERTO.** Sono state posate le fondamenta servibili dallo shell, ma le pagine HTML reali per pagina (JSON-LD `Product`, meta per-pagina, Ispezione URL Search Console) richiedono lo **storefront SSR** — un progetto di rendering separato dall'app Flutter, dettagliato nell'**ADR 0001** (`docs/adr/0001-storefront-seo.md`). Non è stato inventato uno stack SSR fittizio.
+> 2. **Step 2.8 (run su Windows + CI multi-target) è PARZIALE.** Le guardie di piattaforma (`core/utils/platform_support.dart`) e la shell adattiva ci sono, ma la verifica su **Windows reale** (`flutter run -d windows`) e il **target Windows in CI** restano da fare.
+
+### Step 2.1 — Repository & provider Prodotti ⭐ · M ✅
 - **Obiettivo:** dati prodotto disponibili nell'app.
 - **Attività:**
-  - [ ] Modelli Dart (Product/Category) + repository Firestore + provider Riverpod.
+  - [x] Modelli Dart (Product/Category) + repository Firestore + provider Riverpod.
 - **✓ Fatto quando:** la lista prodotti pubblicati si carica da Firestore. · **Rif.** §5 · **Dipende da:** 1.1
+  - **Fatto:** `ProductRepository` (`features/catalog/data/`) legge **solo `published`** (rules §5.5), ordinati per `createdAt` desc, con filtri per categoria/tipo + read singola prodotto/categorie; provider Riverpod (`features/catalog/application/catalog_providers.dart`, `autoDispose`). Aggiunto indice composito `status+createdAt` (`firestore.indexes.json`). **7 test** con `fake_cloud_firestore` (`test/product_repository_test.dart`) — draft esclusi, ordinamento e filtri verificati. *(UI griglia/card → Step 2.2.)*
 
-### Step 2.2 — Lista catalogo, categorie e filtri ⭐ · M
+### Step 2.2 — Lista catalogo, categorie e filtri (adattiva) ⭐ · M ✅
 - **Attività:**
-  - [ ] Schermata Negozio con griglia/card prodotto, categorie e filtri.
-  - [ ] Card prodotto (foto scontornata, prezzo barrato, "+").
-- **✓ Fatto quando:** navigazione catalogo fluida con filtri funzionanti. · **Rif.** §7.3–7.4, §13 · **Dipende da:** 2.1
+  - [x] **Breakpoint token** in `core/theme` (`compact` <600 · `medium` 600–1024 · `expanded` ≥1024, §4.4) + **shell adattiva**: bottom bar su mobile, `NavigationRail`/menu orizzontale su desktop — stesse rotte `go_router`, wrapper unico.
+  - [x] Schermata Negozio con griglia/card prodotto, categorie e filtri: griglia fluida (`maxCrossAxisExtent`, mai colonne fisse); filtri come bottom-sheet su mobile e **pannello laterale in `GlassSurface`** su desktop; testata con gradiente ambientale (§7.2.2).
+  - [x] **Card prodotto 3D** (`TiltCard`, §7.2.4): foto scontornata "sollevata" con ombra propria, prezzo barrato, "+" verde; tilt+sheen su hover desktop, press-scale su touch; **entrata staggered** (fade+slide 24 px, 40 ms).
+  - [x] **Skeleton shimmer** durante il caricamento della griglia (niente spinner a pagina intera, §7.2.5).
+- **✓ Fatto quando:** navigazione catalogo fluida con filtri funzionanti **sia a 390 px sia a ≥1280 px**, senza scroll orizzontale, a 60 fps sulla griglia (verifica raster, §7.2.6). · **Rif.** §4.4, §7.2–7.4, §13 · **Dipende da:** 2.1, 0.4
+  - **Fatto:** `AdaptiveScaffold` (`core/widgets/`) con bottom bar in vetro (compact) e `NavigationRail` in vetro (expanded) sulle 5 voci §7.3 (Chat AI/Carrello → placeholder Fase 4B/3). `CatalogScreen` con testata ambientale + ricerca, chip categorie, griglia `maxCrossAxisExtent`, `CatalogFilterPanel` laterale (desktop) / `CatalogFilterSheet` (mobile). `ProductCard` = `TiltCard` con foto (cached), prezzo barrato in offerta, "+"; entrata staggered per la prima schermata. `ProductCardSkeleton` con shimmer (`flutter_animate`).
 
-### Step 2.3 — Dettaglio prodotto (bilingue) ⭐ · M
+### Step 2.3 — Dettaglio prodotto (bilingue) ⭐ · M ✅
 - **Attività:**
-  - [ ] Pagina dettaglio: descrizione, principio attivo, posologia, controindicazioni (IT/EN), prezzo, CE per dispositivi.
-  - [ ] Segnali di fiducia (logo dove medicinale, info reso/recesso).
-- **✓ Fatto quando:** scheda completa e corretta in entrambe le lingue. · **Rif.** §5, §7.5 · **Dipende da:** 2.1
+  - [x] Pagina dettaglio: descrizione, principio attivo, posologia, controindicazioni (IT/EN), prezzo, CE per dispositivi. Parte alta con **gradiente ambientale** dietro la foto; posologia/controindicazioni/prezzo **sempre su superficie solida** (§7.2.3).
+  - [x] **Hero transition** dalla card alla scheda (immagine condivisa, `Hero` + `CustomTransitionPage`; resto in fade+slide, §7.2.5).
+  - [x] Segnali di fiducia (logo dove medicinale, info reso/recesso).
+- **✓ Fatto quando:** scheda completa e corretta in entrambe le lingue, con transizione fluida card→scheda (e istantanea con `prefers-reduced-motion`). · **Rif.** §5, §7.2, §7.5 · **Dipende da:** 2.1
+  - **Fatto:** `ProductDetailScreen` (rotta `/product/:id`): foto in `Hero(productHeroTag)` su gradiente ambientale, tutto il resto (prezzo, sezioni, posologia/controindicazioni via `LocalizedText.resolve`) su superficie solida bianca; badge CE per `dispositivoMedico`; `MinisterialLogo` se medicinale + card reso/recesso. Rotta con `fadeSlidePage` (`core/router/transitions.dart`) che rispetta `disableAnimations`. Contenuto centrato ≤820 px su desktop.
 
-### Step 2.4 — Ricerca fuzzy ⭐ · M
+### Step 2.4 — Ricerca fuzzy ⭐ · M ✅
 - **Attività:**
-  - [ ] Scegli motore (Algolia / Typesense / estensione Firebase).
-  - [ ] **Sync prodotti pubblicati** dal backend al motore (Cloud Function).
-  - [ ] UI ricerca con tolleranza ai refusi.
+  - [x] Scegli motore (Algolia / Typesense / estensione Firebase). → **ADR 0002**: fuzzy client-side per l'MVP, migrazione a Typesense quando serve (anche vettoriale, §4B.2).
+  - [x] ~~Sync prodotti pubblicati dal backend al motore (Cloud Function).~~ Non necessario per il fuzzy client-side; è il passo di migrazione descritto nell'ADR.
+  - [x] UI ricerca con tolleranza ai refusi.
 - **✓ Fatto quando:** "okitask" trova "Oki Task". · **Rif.** §3, §13.1 · **Dipende da:** 2.1
+  - **Fatto:** `core/utils/fuzzy.dart` (normalizzazione senza diacritici/spazi + Levenshtein) → `filteredProductsProvider` ordina per rilevanza su nome/principio attivo/sku/EAN; barra di ricerca nella testata del Negozio. Decisione in `docs/adr/0002-search-engine.md`. **9 test** (`test/fuzzy_test.dart`, incl. "okitask"→"Oki Task"; `test/catalog_filter_test.dart` per il ranking).
 
-### Step 2.5 — Scanner barcode ⭐ · S
+### Step 2.5 — Scanner barcode ⭐ · S ✅
 - **Attività:**
-  - [ ] Scansione EAN da fotocamera → ricerca/riordino del prodotto.
+  - [x] Scansione EAN da fotocamera → ricerca/riordino del prodotto.
 - **✓ Fatto quando:** inquadrando un codice si apre la scheda corretta. · **Rif.** §13.1 · **Dipende da:** 2.3
+  - **Fatto:** `ScanScreen` (rotta `/scan`, apribile dall'icona nel Negozio) con `mobile_scanner`; guardia di piattaforma `PlatformSupport.barcodeScanner` (`core/utils/`) → su desktop/web fallback a **inserimento EAN manuale**. `ProductRepository.fetchPublishedProductByBarcode` (solo `published`) → naviga alla scheda o mostra "non trovato". **3 test** repository EAN.
 
-### Step 2.6 — Catalogo offline ⭐ · M
+### Step 2.6 — Catalogo offline ⭐ · M ✅
 - **Attività:**
-  - [ ] Persistenza offline Firestore + cache immagini per i prodotti pubblicati.
-  - [ ] Banner "offline" e disabilitazione azioni transazionali.
+  - [x] Persistenza offline Firestore + cache immagini per i prodotti pubblicati.
+  - [x] Banner "offline" e disabilitazione azioni transazionali.
 - **✓ Fatto quando:** senza rete il catalogo già scaricato resta navigabile. · **Rif.** §9.1 · **Dipende da:** 2.2
+  - **Fatto:** persistenza Firestore abilitata in `firebase_init.dart` (anche web, cache illimitata); immagini via `cached_network_image`. `isOnlineProvider` (`connectivity_plus`) → `OfflineBanner` app-wide (overlay in `app.dart`); le azioni transazionali (carrello, in Fase 3) leggeranno lo stato online per disabilitarsi (stringa `offlineActionDisabled` pronta).
 
-### Step 2.7 — SEO & rendering (gate critico) ⭐ · L
-- **Obiettivo:** pagine pubbliche indicizzabili.
+### Step 2.7 — SEO: farsi trovare su Google (gate critico) ⭐ · L
+- **Obiettivo:** il catalogo e i contenuti compaiono nelle **ricerche di Google** con pagine HTML reali. *(Questo è **SEO** — trovabilità; il login con Google/**SSO** è lo step 1.5. Vedi la nota in §6.)*
+- **Perché serve uno storefront a parte:** Flutter Web disegna su canvas → il crawler di Google **non vede testo né link** (§6.1). Quindi le pagine pubbliche (catalogo, schede, blog, sedi/servizi) vanno servite come **HTML SSR/prerender**, mentre la PWA Flutter resta per i flussi autenticati. **Un solo dominio, due renderer** (§6.2): `/`, `/p/{slug}`, `/blog/...` → storefront SSR; `/app/...` → PWA.
 - **Attività:**
-  - [ ] Storefront **SSR/prerender** per catalogo + schede + blog (no Flutter "puro" sulle pagine pubbliche).
-  - [ ] `<title>`/meta/OpenGraph per pagina, **JSON-LD** (Product/FAQ/Breadcrumb), `sitemap.xml`, `robots.txt`, **hreflang** IT/EN.
-- **✓ Fatto quando:** l'**Ispezione URL di Search Console** mostra testo e link reali. · **Rif.** §6.2 · **Dipende da:** 2.3
+  - [x] **ADR di piattaforma storefront:** (a) Next.js/Astro su **Firebase Hosting + Cloud Run/Functions** (consigliata: un solo fornitore), (b) Next.js su Vercel, (c) prerender bot (solo come ponte). Decisione registrata → `docs/adr/0001-storefront-seo.md` (scelta **a**).
+  - [ ] Storefront che legge **le stesse collezioni Firestore** (solo `published`): lista catalogo, scheda prodotto, blog, pagine sedi/servizi; CTA "Aggiungi al carrello" → deep-link alla PWA (`/app/...`). *(Track SSR separato — vedi ADR.)*
+  - [~] `<title>`/meta/OpenGraph **a livello di sito** + **JSON-LD `Pharmacy`** nello shell (`web/index.html`). Il per-pagina (`Product`/`FAQPage`/`BreadcrumbList`) e `hreflang` con URL per lingua li serve lo storefront SSR.
+  - [x] **Token visivi condivisi** esportati per lo storefront (`core/theme/tokens.json` → CSS custom properties, §7.2.6).
+  - [x] `robots.txt` (esclude `/app/`) + **`sitemap.xml`** seed con hreflang IT/EN; la (ri)generazione dal dato è la Cloud Function del track SSR.
+  - [ ] **Search Console:** verifica proprietà, invio sitemap, Ispezione URL su scheda prodotto e articolo. *(Dopo che lo storefront SSR è online.)*
+  - [ ] *(Post-gate, opzionale)* feed **Google Merchant Center** (schede gratuite) dal JSON-LD `Product`.
+- **✓ Fatto quando:** l'**Ispezione URL di Search Console** mostra testo e link reali su una scheda prodotto e un articolo, in IT e EN, e la sitemap è inviata. **Senza questo gate non si investe in traffico/marketing.** · **Rif.** §6.2 · **Dipende da:** 2.3
+  - **Fondamenta fatte (gate ANCORA APERTO):** `web/robots.txt`, `web/sitemap.xml` (hreflang IT/EN + x-default), OpenGraph/Twitter/canonical + JSON-LD `Pharmacy` in `web/index.html`, token condivisi `tokens.json`, ADR `docs/adr/0001-storefront-seo.md`. **Manca lo storefront SSR** (rendering server per-pagina + Cloud Function sitemap + verifica Search Console): è un progetto di rendering separato dall'app Flutter, dettagliato nell'ADR. Il gate §6.2 si chiude solo con quello.
+
+### Step 2.8 — Portale web desktop & app Windows (verifica multi-superficie) ⭐ · S
+- **Obiettivo:** la stessa base di codice regge le quattro superfici del §4.4 — web app mobile, portale web desktop, app Windows (l'iOS/Android nativo segue con gli store, Fase 8).
+- **Attività:**
+  - [ ] Passata di verifica dei flussi Fase 2 su **web desktop ≥1280 px** (shell a rail, griglie, dettaglio) e su **Windows** (`flutter run -d windows`).
+  - [x] **Guardie di piattaforma** consolidate in `core/utils`: scanner barcode solo mobile (fallback: campo EAN manuale su desktop/Windows), gestione hover/focus da tastiera sulle card e sui filtri.
+  - [ ] **Build Windows in CI** accanto a web/Android: una rottura del target desktop è una rottura di build.
+- **✓ Fatto quando:** catalogo, ricerca e dettaglio funzionano su web mobile, web desktop e Windows senza layout rotti; la CI compila i tre target. · **Rif.** §4.4 · **Dipende da:** 2.2, 2.3
+  - **Parziale:** guardie di piattaforma in `core/utils/platform_support.dart` (scanner→fallback EAN); shell adattiva rail/bottom-bar e hover-tilt/focus sulle card già presenti da 2.2. `flutter build web` verde. **Restano:** run di verifica su Windows e target Windows in CI.
+
+> **Fase 2 — step 2.1–2.7 completati** (linguaggio visivo §7.2 incluso in 0.4). Verifiche: `flutter analyze` pulito, **44 test** app verdi (+17 da Fase 1), `flutter build web` ok. *(Restano: 2.7 gate SEO = storefront SSR reale — track separato nell'ADR; 2.8 = run Windows + CI multi-target.)*
 
 ---
 
 ## FASE 3 — Carrello, Checkout, Pagamenti, Ordini
 
-### Step 3.1 — Carrello ⭐ · M
+> ### ⚠️ Nota — cosa NON è completo in Fase 3
+> Gli step 3.1, 3.2, 3.4 e 3.5 sono completi. Restano aperti (dettaglio in **ADR 0003**, `docs/adr/0003-payments-and-orders.md`):
+>
+> 1. **Gateway di pagamento reali (3.3) NON integrati.** L'app usa un **provider sandbox** (`confirmMockPayment`) che sostituisce il webhook del gateway: nessun addebito reale. Mancano SDK/redirect di Stripe/Nexi, PayPal, Satispay, BNPL, tokenizzazione PCI-DSS + 3-D Secure, e chiavi in Secret Manager. La logica ordine/stock/idempotenza è però già quella definitiva.
+> 2. **Firma webhook** in `paymentWebhook`: oggi valida forma + idempotenza; la verifica della firma per gateway è un TODO segnalato.
+> 3. **Email transazionali** sono uno **stub** (`logger`); manca SMTP/SendGrid reale.
+> 4. **Guest checkout** usa **Anonymous Auth**, da abilitare in Firebase Auth (dev+prod).
+
+### Step 3.1 — Carrello ⭐ · M ✅
 - **Attività:**
-  - [ ] Stato carrello + persistenza per utente (`carts/{uid}`), snapshot prezzo.
+  - [x] Stato carrello + persistenza per utente (`carts/{uid}`), snapshot prezzo.
 - **✓ Fatto quando:** aggiunta/rimozione e totali corretti, persistenti tra sessioni. · **Rif.** §5 · **Dipende da:** 2.3, 1.3
+  - **Fatto:** `CartRepository` (`carts/{uid}`) + `CartController` (`features/cart/application/`): add/incrementa/setQty/remove/clear con **snapshot prezzo** all'aggiunta; persistenza Firestore per utenti loggati e carrello ospite in memoria (unificati da `cartProvider`). `CartScreen` con stepper quantità, totali live e badge sul nav (carrello). Azioni transazionali disabilitate offline. Add-to-cart cablato su card e scheda. **5 test** (`test/cart_controller_test.dart`).
 
-### Step 3.2 — Checkout ⭐ · L
+### Step 3.2 — Checkout ⭐ · L ✅
 - **Attività:**
-  - [ ] Indirizzi, riepilogo, **IVA per categoria**, spese di spedizione.
-  - [ ] **Guest checkout**; spese mostrate presto; campi minimi (CRO §10 Parte 2).
+  - [x] Indirizzi, riepilogo, **IVA per categoria**, spese di spedizione.
+  - [x] **Guest checkout**; spese mostrate presto; campi minimi (CRO §10 Parte 2).
 - **✓ Fatto quando:** flusso fino al pagamento, con totali e IVA corretti. · **Rif.** §5, Parte 2 §2 · **Dipende da:** 3.1
+  - **Fatto:** `OrderPricing` (pure, testabile): subtotale lordo, **IVA inclusa raggruppata per aliquota**, spedizione da `config/app` (soglia gratis), totale; `OrderSummary` riusabile su carrello e checkout. `CheckoutScreen` con form minimo (nome/email/telefono + indirizzo), nota **guest-friendly**, riepilogo live. **8 test** (`test/order_pricing_test.dart`).
 
-### Step 3.3 — Integrazione pagamenti ⭐ · L
+### Step 3.3 — Integrazione pagamenti ⭐ · L 🟡 (sandbox; gateway reali → ADR 0003)
 - **Attività:**
-  - [ ] Gateway: **PayPal**, **Stripe/Nexi**, **Satispay**, **BNPL** (Scalapay/Klarna).
-  - [ ] Tokenizzazione (PCI-DSS), **3-D Secure 2.0**; chiavi lato server.
+  - [x] Scelta metodo in UI: **PayPal**, **Stripe/Nexi**, **Satispay**, **BNPL** (Scalapay/Klarna).
+  - [ ] Integrazione gateway reali: tokenizzazione (PCI-DSS), **3-D Secure 2.0**; chiavi lato server. *(Non fatto — vedi nota e ADR 0003.)*
 - **✓ Fatto quando:** pagamento in **sandbox** completato per ogni metodo abilitato. · **Rif.** Parte 2 §3 · **Dipende da:** 3.2
+  - **Fatto (MVP):** `PaymentScreen` con selezione metodo + avviso sandbox; il pagamento passa dal provider sandbox lato server (`confirmMockPayment`). Chiavi mai nel client. **Gateway reali da integrare (ADR 0003).**
 
-### Step 3.4 — Creazione ordine & webhook (backend) ⭐ · L
+### Step 3.4 — Creazione ordine & webhook (backend) ⭐ · L ✅
 - **Attività:**
-  - [ ] Cloud Function di creazione ordine; **webhook** di pagamento idempotenti.
-  - [ ] Stati `paymentStatus`/`status`; **stock scalato solo a pagamento confermato**; email transazionali.
+  - [x] Cloud Function di creazione ordine; **webhook** di pagamento idempotenti.
+  - [x] Stati `paymentStatus`/`status`; **stock scalato solo a pagamento confermato**; email transazionali (stub).
 - **✓ Fatto quando:** un pagamento sandbox genera un ordine `paid` e l'email parte. · **Rif.** §4.2, §9.2 · **Dipende da:** 3.3
+  - **Fatto:** `createOrder` (callable) riprezza dal carrello sui `products` autoritativi (solo `published`), crea ordine `pending`/`created` con `userRef="users/<uid>"`, **senza toccare lo stock**. `markOrderPaid` condivisa da `confirmMockPayment` (callable) e `paymentWebhook` (HTTP, idempotente via `webhookEvents/{eventId}`): transazione che segna `paid`/`confirmed`, **scala lo stock una sola volta**, svuota il carrello, accoda l'email (stub). `firebase/functions` build+lint verdi. *(Firma webhook + email reale → ADR 0003.)*
 
-### Step 3.5 — Area ordini cliente ⭐ · M
+### Step 3.5 — Area ordini cliente ⭐ · M ✅
 - **Attività:**
-  - [ ] Storico ordini, stato spedizione/tracking, richiesta **recesso**.
+  - [x] Storico ordini, stato spedizione/tracking, richiesta **recesso**.
 - **✓ Fatto quando:** il cliente vede e traccia i propri ordini. · **Rif.** §5, §16.8 · **Dipende da:** 3.4
+  - **Fatto:** `OrderRepository` + provider; `OrdersScreen` (storico, chip stato pagamento/ordine, totale) da `/orders` e dal Profilo; `OrderDetailScreen` con articoli, totali, stato pagamento/spedizione, corriere/tracking e `WithdrawalButton` cablato su `requestWithdrawal` (recesso tracciato art. 54-bis).
+
+> **Fase 3 — step 3.1, 3.2, 3.4, 3.5 completati; 3.3 in sandbox.** Verifiche: `flutter analyze` pulito, **56 test** app verdi (+12 da Fase 2), functions `build`+`lint` ok, `flutter build web` ok. *(Restano i gateway di pagamento reali + firma webhook + email reale + Anonymous Auth — ADR 0003.)*
 
 ---
 
 ## FASE 4 — Pannello Admin AI (killer feature)
+
+> **Superficie primaria: desktop.** Il pannello admin è usato dal farmacista al banco/back-office → si progetta **desktop-first** sul **portale web desktop** e gira identico nell'**app Windows** (stesso codice, §4.4); su mobile resta usabile per le operazioni rapide (foto prodotto dal telefono, conferma ordini). La foto in 4.1 arriva da fotocamera su mobile e da file picker su desktop/Windows.
 
 ### Step 4.1 — UI "Aggiungi Prodotto" ⭐ · M
 - **Attività:**
@@ -254,7 +319,7 @@
 ### Step 4B.2 — Embeddings & indice vettoriale ⭐ · M
 - **Attività:**
   - [ ] Embedding **multilingue** (es. `bge-m3`/`multilingual-e5`) generato **alla pubblicazione** del prodotto (estende il trigger di `catalog/`).
-  - [ ] Indice: **Firestore Vector Search** o **Typesense ibrido** (riuso del motore di 2.4 — scegliere qui).
+  - [ ] Indice: **Firestore Vector Search** (nessun componente nuovo) o **Typesense ibrido**. *(Nota: dallo step 2.4 non c'è alcun motore da riusare — ADR 0002 ha scelto il fuzzy client-side. Se qui si sceglie Typesense, si esegue anche la migrazione della ricerca descritta nell'ADR: un motore per fuzzy + vettoriale; se si sceglie Firestore Vector Search, la fuzzy resta client-side. Decidere qui, estendendo l'ADR 0002.)*
   - [ ] Query top-k con filtri rigidi: `status==published`, `available==true`, `assistantEligible==true`.
 - **✓ Fatto quando:** "mal di testa" restituisce i prodotti pertinenti del catalogo di prova. · **Rif.** §12.3 · **Dipende da:** 2.4, 4.4
 
@@ -395,7 +460,8 @@
 - [ ] **App Check** in enforcement; verifica **nessuna chiave nel client**; revisione rules. · **Rif.** §11, §5.5
 
 ### Step 8.5 — Deploy & PWA ⭐ · M
-- [ ] Hosting **Firebase/Vercel** (SSR per le pagine pubbliche); `manifest.json` (icone, `theme_color`), service worker `offline-first`; build store Android/iOS. · **Rif.** §6.4, §13.4
+- [ ] Hosting **Firebase/Vercel** (SSR per le pagine pubbliche, secondo l'ADR di 2.7); `manifest.json` (icone, `theme_color`), service worker `offline-first`; build store Android/iOS.
+- [ ] *(Opzionale, post-MVP)* pacchetto **MSIX** dell'app Windows per il farmacista (il portale web desktop copre già lo stesso ruolo dal giorno 1, §4.4). · **Rif.** §6.4, §13.4
 
 ### Step 8.6 — Gate di lancio (compliance) ⭐ · M
 - [ ] **Autorizzazione Ministero** + **logo** prima della vendita medicinali; consensi e **pulsante recesso** attivi; verifica **Criteri di Accettazione** (§15). · **Rif.** §15, §16.8, Parte 2 §5 · **Dipende da:** 8.1–8.5
@@ -407,7 +473,7 @@
 | Milestone | Contenuto | Step |
 |---|---|---|
 | **M1 — Fondamenta** | Setup, dati, auth, compliance scaffolding | Fase 0–1 |
-| **M2 — Catalogo navigabile + SEO** | Negozio, ricerca, scanner, offline, pagine indicizzabili | Fase 2 |
+| **M2 — Catalogo navigabile + SEO** | Negozio adattivo (mobile/desktop/Windows), ricerca, scanner, offline, pagine **trovabili su Google** (SSR) | Fase 2 |
 | **M3 — Vendita** | Carrello, checkout, pagamenti, ordini | Fase 3 |
 | **M4 — Admin AI** | Pipeline AI + validazione + gestione catalogo | Fase 4 |
 | **M4B — Chat AI cliente** | LLM open EU + RAG catalogo + guardrail + UI web 70/30 e tab mobile + audit farmacista | Fase 4B |
@@ -421,6 +487,8 @@
 ## Ordine consigliato & parallelizzazioni
 - **Sequenza portante:** 0 → 1 → 2 → 3 → 8 (lancio).
 - **In parallelo** (dopo la Fase 1):
+  - lo **step 1.5 (login Google/SSO)** è piccolo e indipendente: si può fare in qualunque momento, non blocca nulla;
+  - lo **step 2.8** (verifica desktop/Windows) si fa a valle di 2.2–2.3, prima di iniziare la Fase 4 (che è desktop-first);
   - un profilo **backend** può lavorare alla **Fase 4 (Admin AI)** mentre il frontend fa la **Fase 2**;
   - lo **spike 4B.1** (scelta LLM) non ha dipendenze di prodotto: può partire subito dopo la Fase 0; il resto della **Fase 4B** richiede catalogo e ricerca (2.4) e può procedere in parallelo alle Fasi 3 e 5;
   - la **Fase 5 (Baganza/servizi)** è abbastanza indipendente e può procedere in parallelo alla 3;

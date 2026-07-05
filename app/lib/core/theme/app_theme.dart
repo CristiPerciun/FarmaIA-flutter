@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'baganza_effects.dart';
 
 abstract final class AppTheme {
   static ThemeData get light {
@@ -18,6 +19,8 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      // Visual-language tokens (§7.2.6) — features read these, never hardcode.
+      extensions: const [BaganzaEffects.standard],
       scaffoldBackgroundColor: AppColors.background,
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.background,

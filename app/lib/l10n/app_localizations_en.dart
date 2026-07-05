@@ -233,4 +233,356 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navShop => 'Shop';
+
+  @override
+  String get navChatAi => 'AI Chat';
+
+  @override
+  String get navCart => 'Cart';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get catalogAllCategories => 'All';
+
+  @override
+  String get catalogFilters => 'Filters';
+
+  @override
+  String get catalogFilterCategory => 'Category';
+
+  @override
+  String get catalogFilterMedicinesOnly => 'Medicines only';
+
+  @override
+  String get catalogFilterOnSale => 'On sale';
+
+  @override
+  String get catalogClearFilters => 'Clear filters';
+
+  @override
+  String get catalogApplyFilters => 'Apply';
+
+  @override
+  String get catalogNoProducts => 'No products found';
+
+  @override
+  String get catalogEmptyHint =>
+      'Try removing a filter or changing your search.';
+
+  @override
+  String catalogResultsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count products',
+      one: '1 product',
+      zero: 'No products',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get catalogLoadError => 'Could not load the catalog.';
+
+  @override
+  String get productAddToCart => 'Add';
+
+  @override
+  String get addToCartComingSoon => 'The cart arrives in Phase 3.';
+
+  @override
+  String priceWas(String price) {
+    return 'List price $price';
+  }
+
+  @override
+  String get productDescription => 'Description';
+
+  @override
+  String get productActiveIngredient => 'Active ingredient';
+
+  @override
+  String get productPosology => 'Posology';
+
+  @override
+  String get productContraindications => 'Contraindications';
+
+  @override
+  String get productWarnings => 'Warnings';
+
+  @override
+  String get productCeMarking => 'CE marking';
+
+  @override
+  String get productCeMarkingPresent => 'Medical device with CE marking.';
+
+  @override
+  String get productNotFound => 'Product not available.';
+
+  @override
+  String get trustReturnsTitle => 'Returns & withdrawal';
+
+  @override
+  String get trustReturnsBody =>
+      'Right of withdrawal within 14 days (art. 54-bis). Medicines follow statutory limitations.';
+
+  @override
+  String get searchTitle => 'Search';
+
+  @override
+  String get searchHint => 'Search products, active ingredients…';
+
+  @override
+  String searchNoResults(String query) {
+    return 'No results for \"$query\"';
+  }
+
+  @override
+  String get searchClear => 'Clear';
+
+  @override
+  String get scanTitle => 'Scan code';
+
+  @override
+  String get scanInstruction =>
+      'Point the camera at the product barcode (EAN).';
+
+  @override
+  String get scanManualTitle => 'Enter the code';
+
+  @override
+  String get scanManualHint => 'EAN code';
+
+  @override
+  String get scanManualSubmit => 'Search';
+
+  @override
+  String get scanNotSupported =>
+      'The camera is not available on this device. Enter the code manually.';
+
+  @override
+  String get scanPermissionDenied =>
+      'Camera permission denied. You can enter the code manually.';
+
+  @override
+  String scanNotFound(String code) {
+    return 'No product with code $code.';
+  }
+
+  @override
+  String get offlineBannerTitle => 'You\'re offline';
+
+  @override
+  String get offlineBannerBody =>
+      'You\'re browsing the saved catalog. Some actions are unavailable without a connection.';
+
+  @override
+  String get offlineActionDisabled => 'Action unavailable offline.';
+
+  @override
+  String get cartTitle => 'Cart';
+
+  @override
+  String get cartEmpty => 'Your cart is empty';
+
+  @override
+  String get cartEmptyHint => 'Add products from the shop.';
+
+  @override
+  String get cartRemove => 'Remove';
+
+  @override
+  String get cartCheckout => 'Go to checkout';
+
+  @override
+  String get cartItemUnavailable => 'No longer available';
+
+  @override
+  String get addedToCart => 'Added to cart';
+
+  @override
+  String get cartQuantity => 'Quantity';
+
+  @override
+  String get summarySubtotal => 'Subtotal';
+
+  @override
+  String get summaryShipping => 'Shipping';
+
+  @override
+  String get summaryShippingFree => 'Free';
+
+  @override
+  String get summaryVat => 'VAT (included)';
+
+  @override
+  String summaryVatRate(int rate) {
+    return 'incl. VAT $rate%';
+  }
+
+  @override
+  String get summaryTotal => 'Total';
+
+  @override
+  String summaryFreeShippingHint(String amount) {
+    return 'Add $amount for free shipping.';
+  }
+
+  @override
+  String get checkoutTitle => 'Checkout';
+
+  @override
+  String get checkoutContact => 'Contact';
+
+  @override
+  String get checkoutGuestNote =>
+      'You can order as a guest; creating an account is optional.';
+
+  @override
+  String get checkoutShippingAddress => 'Shipping address';
+
+  @override
+  String get fieldFullName => 'Full name';
+
+  @override
+  String get fieldPhone => 'Phone';
+
+  @override
+  String get fieldStreet => 'Address (street and number)';
+
+  @override
+  String get fieldCity => 'City';
+
+  @override
+  String get fieldZip => 'Postcode';
+
+  @override
+  String get fieldProvince => 'Province';
+
+  @override
+  String get checkoutContinueToPayment => 'Continue to payment';
+
+  @override
+  String get paymentTitle => 'Payment';
+
+  @override
+  String get paymentMethod => 'Payment method';
+
+  @override
+  String get paymentMethodCard => 'Card (Stripe/Nexi)';
+
+  @override
+  String get paymentMethodPaypal => 'PayPal';
+
+  @override
+  String get paymentMethodSatispay => 'Satispay';
+
+  @override
+  String get paymentMethodBnpl => 'Pay in instalments (Scalapay/Klarna)';
+
+  @override
+  String get paymentSandboxNotice =>
+      'Sandbox environment: no real charge. Real payment-gateway integration is described in ADR 0003.';
+
+  @override
+  String paymentPay(String amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String get paymentProcessing => 'Processing payment…';
+
+  @override
+  String get paymentFailed => 'Payment failed. Please try again.';
+
+  @override
+  String get orderPlacedTitle => 'Order confirmed';
+
+  @override
+  String orderPlacedBody(String number) {
+    return 'Thank you! Your order $number has been recorded.';
+  }
+
+  @override
+  String get ordersEmpty => 'You have no orders yet.';
+
+  @override
+  String orderNumberLabel(String number) {
+    return 'Order $number';
+  }
+
+  @override
+  String get orderItemsLabel => 'Items';
+
+  @override
+  String get orderTrackingLabel => 'Tracking';
+
+  @override
+  String get orderCarrierLabel => 'Carrier';
+
+  @override
+  String get orderPaymentLabel => 'Payment';
+
+  @override
+  String get orderShippingLabel => 'Shipping';
+
+  @override
+  String get orderStatusCreated => 'Created';
+
+  @override
+  String get orderStatusConfirmed => 'Confirmed';
+
+  @override
+  String get orderStatusPreparing => 'Preparing';
+
+  @override
+  String get orderStatusShipped => 'Shipped';
+
+  @override
+  String get orderStatusDelivered => 'Delivered';
+
+  @override
+  String get orderStatusCancelled => 'Cancelled';
+
+  @override
+  String get paymentStatusPending => 'Pending';
+
+  @override
+  String get paymentStatusPaid => 'Paid';
+
+  @override
+  String get paymentStatusFailed => 'Failed';
+
+  @override
+  String get paymentStatusRefunded => 'Refunded';
+
+  @override
+  String get shippingStatusProcessing => 'Processing';
+
+  @override
+  String get shippingStatusShipped => 'Shipped';
+
+  @override
+  String get shippingStatusDelivered => 'Delivered';
+
+  @override
+  String get shippingStatusReturned => 'Returned';
+
+  @override
+  String get withdrawalAlreadyRequested =>
+      'Withdrawal already requested for this order.';
+
+  @override
+  String get signInToOrder => 'Sign in to see your orders.';
+
+  @override
+  String get genericErrorRetry => 'Something went wrong. Please try again.';
 }

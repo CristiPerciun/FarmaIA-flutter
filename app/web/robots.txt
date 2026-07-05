@@ -1,0 +1,7 @@
+# Baganza Farmacie — robots (§6.2, step 2.7)
+# Public SSR storefront is crawlable; the Flutter PWA (/app/) is not indexed.
+User-agent: *
+Allow: /
+Disallow: /app/
+
+Sitemap: https://www.farmaciabaganza.it/sitemap.xml

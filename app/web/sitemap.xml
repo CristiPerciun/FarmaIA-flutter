@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Seed sitemap with IT/EN hreflang (§6.2, step 2.7). This static file covers the
+  stable top-level pages; product and article URLs are appended by the Cloud
+  Function that regenerates the sitemap on publish/archive (see the ADR at
+  docs/adr/0001-storefront-seo.md). Do not hand-maintain product entries here.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.farmaciabaganza.it/</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.farmaciabaganza.it/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.farmaciabaganza.it/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.farmaciabaganza.it/"/>
+  </url>
+  <url>
+    <loc>https://www.farmaciabaganza.it/prodotti</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.farmaciabaganza.it/prodotti"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.farmaciabaganza.it/en/products"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.farmaciabaganza.it/prodotti"/>
+  </url>
+</urlset>

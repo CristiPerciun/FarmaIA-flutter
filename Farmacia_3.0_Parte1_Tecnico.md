@@ -78,7 +78,8 @@ Pipeline **AI per il data-entry** (admin), **assistente AI sintomi→prodotti** 
 | **RAG & embeddings (chat)** | Embedding multilingue open (es. `bge-m3`/`multilingual-e5`) + **Firestore Vector Search o Typesense (ibrido)** | Grounding della chat **sul solo catalogo pubblicato**; se si sceglie Typesense per la ricerca fuzzy, lo stesso motore copre anche il vettoriale (un componente in meno). Vedi §12.3. |
 | **Moderazione AI (chat)** | Llama Guard 3 (o filtri del provider) | Guardrail su input/output della chat cliente; supporta l'**italiano**. Vedi §12.4. |
 | **Routing** | go_router | Navigazione nativa e web; routing **basato su path** (non hash) per favorire l'indicizzazione e prevenire 404 sulla PWA. |
-| **Ricerca** | Algolia / Typesense / estensione Firebase | Fuzzy search con tolleranza ai refusi. Algolia premium; Typesense (self-hosted) o l'estensione Firebase più economiche per cataloghi piccoli/medi. **Nota:** se serve anche il vettoriale per la chat (§12.3), Typesense li copre entrambi. |
+| **Ricerca** | **MVP: fuzzy client-side** (`core/utils/fuzzy.dart`) — *deciso, ADR 0002* | Normalizzazione (diacritici/spazi) + Levenshtein sul catalogo pubblicato in memoria: zero infrastruttura, funziona **offline** (§9.1), adeguata a un catalogo di farmacia. **Migrazione registrata** (ADR 0002): quando il catalogo cresce o serve il vettoriale per la chat (§12.3), **Typesense** copre fuzzy *e* vettoriale con una Cloud Function di sync (`search/`); il contratto lato app (`filteredProductsProvider`) resta stabile. Algolia resta l'alternativa premium. |
+| **Effetti & motion UI** | `flutter_animate` + `BackdropFilter` + `Transform`/`Hero` (+ Rive per lo splash) | Linguaggio visivo §7.2: gradienti ambientali, glassmorphism con fallback solido, card 3D con tilt, transizioni hero, skeleton shimmer. Token in `ThemeExtension`, condivisi con lo storefront SSR via CSS variables. |
 | **Internazionalizzazione** | `flutter_localizations` + ARB (`intl`) | Stringhe UI esternalizzate in `.arb` per IT/EN; contenuti di catalogo bilingui nel dato (vedi §5 e §8). |
 | **Persistenza offline** | Firestore offline persistence + cache immagini | Solo per la **consultazione catalogo** (vedi §9). |
 | **Hosting** | **Firebase Hosting o Vercel/Netlify** *(rivisto)* | GitHub Pages è sconsigliato per un e-commerce (vedi §6.4). Firebase Hosting si integra nativamente col backend; Vercel/Netlify offrono SSR/prerendering per la SEO. |
@@ -150,6 +151,26 @@ firebase/ (Firebase)
         ├──► Motore di ricerca (Algolia/Typesense) + indice vettoriale (RAG chat, §12.3)
         └──► Gateway di pagamento (Stripe/PayPal/Satispay)
 ```
+
+### 4.4 Superfici client: una base di codice, quattro superfici *(decisione di sostenibilità)*
+
+Il sistema serve pubblici e contesti d'uso diversi. Per restare sostenibile con un team piccolo, la regola è: **un solo codice Flutter adattivo + uno storefront SSR leggero**, mai tre frontend paralleli.
+
+| Superficie | Utente principale | Tecnologia | Ruolo |
+|---|---|---|---|
+| **Storefront pubblico (SEO)** | Visitatori e crawler di Google | HTML **SSR/prerender** (§6.2) | Catalogo, schede prodotto, blog, pagine sedi/servizi. È l'unica superficie che Google indicizza. |
+| **Web app mobile (PWA)** | Clienti da smartphone | **Flutter Web** (breakpoint compact) | Flussi autenticati: carrello, checkout, account, chat AI (tab), prenotazioni. Installabile (manifest + service worker). |
+| **Portale web desktop** | Clienti da PC + **admin/farmacista** | **Flutter Web** (breakpoint expanded, stesso codice) | Stessa app con layout desktop: navigazione a rail/menu orizzontale, griglie multi-colonna, chat 70/30 (§12.6), **dashboard admin**. |
+| **App Windows** | Admin/farmacista al banco/back-office | **Flutter Windows** (stesso codice, target già abilitato in `app/windows/`) | Uso quotidiano del pannello admin senza browser: inserimento prodotti AI, ordini, prenotazioni, audit chat. Distribuzione MSIX (post-MVP; il portale web desktop copre lo stesso ruolo dal giorno 1). |
+
+**Regole di adattività (vincolanti per ogni nuova schermata):**
+- **Breakpoint token** in `core/theme` (allineati a Material 3): `compact` < 600 px · `medium` 600–1024 px · `expanded` ≥ 1024 px. Nessun breakpoint hardcoded nelle feature.
+- **Navigazione adattiva:** bottom bar 5 voci su `compact` (§7.3); `NavigationRail`/menu orizzontale su `expanded`; la chat AI passa da tab full-screen a pannello 70/30 (§12.6). Una sola sorgente di rotte (`go_router`), il layout wrapper decide la shell.
+- **Contenuti fluidi:** griglie con `SliverGrid`/`maxCrossAxisExtent` (mai conteggi di colonne fissi), form con larghezza massima leggibile (~640 px) centrata su desktop.
+- **Guardie di piattaforma** in `core/utils` (`kIsWeb`, `Platform.isWindows`, …): scanner barcode e push **solo mobile** (su desktop: input EAN manuale e email/nessuna notifica); pagamenti su web via redirect/checkout hosted; nessun plugin mobile-only importato senza fallback. Ogni feature dichiara la propria **matrice di supporto** nel piano (Per step).
+- **Parità di test:** la CI compila **web + Android + Windows**; una rottura del target Windows è una rottura di build, non un problema "da vedere poi".
+
+> **Perché non un progetto separato per il portale?** Il portale desktop è la stessa app con più spazio: duplicarlo (es. React admin) raddoppierebbe modelli, regole, i18n e manutenzione. L'unica cosa che resta fuori da Flutter è lo storefront SEO (§6), che è un problema di *rendering per i crawler*, non di UI applicativa.
 
 ---
 
@@ -271,15 +292,37 @@ parametri operativi (es. `freeShippingThreshold`, costi di spedizione, aliquote 
 
 ## 6. SEO, Indicizzazione e Architettura di Rendering *(critica)*
 
+> **Nota terminologica (per evitare un equivoco ricorrente):**
+> - **SEO** (*Search Engine Optimization*) = far **trovare il catalogo nelle ricerche di Google**. È l'oggetto di questa sezione e della Fase 2 del piano (step 2.7). Non richiede alcun account Google dell'utente: riguarda ciò che il **crawler** di Google riesce a leggere.
+> - **SSO** (*Single Sign-On*, es. "Accedi con Google") = permettere all'utente di **fare login** con il proprio account Google invece di email+password. È una comodità di autenticazione (Firebase Auth con provider `google.com`), indipendente dalla SEO: attivarla non aiuta in alcun modo l'indicizzazione. Nel piano è lo step 1.5.
+>
+> Le due cose condividono solo la parola "Google": la SEO decide **se i clienti vi trovano**, l'SSO decide **quanto è comodo entrare**.
+
 ### 6.1 Il problema: Flutter Web e l'indicizzazione
 Flutter Web in modalità **CanvasKit** disegna l'interfaccia su una *canvas* WebGL: la pagina è **priva di DOM testuale indicizzabile** (nessun testo semantico/heading/link leggibile dal crawler). Una PWA Flutter "pura" è quindi **quasi invisibile a Google**. Anche il renderer HTML produce testo frammentato ed è in via di deprioritizzazione; il **peso del bundle** (JS/WASM) penalizza i Core Web Vitals.
 
 ### 6.2 La raccomandazione: disaccoppiare il rendering
 - **Catalogo, schede prodotto e blog** serviti come **HTML pre-renderizzato / SSR** (storefront statico o SSR con Next.js o equivalente; in alternativa prerender per i bot via Rendertron/Prerender.io).
-- **Flutter** per i flussi "app-like" autenticati (carrello, checkout, account, admin).
+- **Flutter** per i flussi "app-like" autenticati (carrello, checkout, account, admin) — vedi le superfici del §4.4.
 - Routing **basato su path**, `<title>`/meta/OpenGraph per pagina, **JSON-LD** (`Product`, `FAQPage`, `BreadcrumbList`), `robots.txt`, `sitemap.xml`. Le pagine SEO sono **bilingui** con URL e `hreflang` per IT/EN.
 
-> **Gate di validazione:** l'**Ispezione URL di Google Search Console** deve mostrare testo e link reali su schede e blog prima di investire in traffico.
+**Architettura di riferimento (un dominio, due renderer):**
+```
+www.farmaciabaganza.it
+├── /            /prodotti/... /p/{slug} /blog/... /sedi /servizi   → STOREFRONT SSR (HTML reale)
+│     legge Firestore lato server (solo `published`) · JSON-LD · hreflang IT/EN
+│     ogni pagina ha CTA "Aggiungi al carrello / Apri nell'app" → deep-link alla PWA
+└── /app/...                                                        → PWA FLUTTER
+      carrello, checkout, account, chat AI, prenotazioni, admin
+```
+- **Un solo dominio** (niente sottodominio `shop.`): l'autorità SEO si accumula su un host unico e i cookie/sessione Firebase valgono per entrambi i renderer.
+- **Stessa fonte dati:** lo storefront SSR legge le **stesse collezioni Firestore** dell'app (prodotti `published`, articoli, sedi, servizi) — zero duplicazione di contenuto, la validazione del farmacista (§10) copre automaticamente anche le pagine SEO.
+- **Sitemap generata dal dato:** una Cloud Function rigenera `sitemap.xml` (IT+EN) alla pubblicazione/archiviazione di prodotti e articoli; `robots.txt` esclude `/app/`.
+- **Risorse di radice — proprietà che migra:** `robots.txt`, `sitemap.xml` e il JSON-LD di sito (`Pharmacy`) valgono solo alla **radice del dominio**. Finché la PWA Flutter è servita a `/`, li ospita lo shell (`app/web/` — fondamenta già presenti, ADR 0001); **alla messa in linea dello storefront la proprietà passa allo storefront** e le rewrite di hosting devono continuare a servirli dalla radice (la PWA si sposta sotto `/app/` e non li porta con sé).
+- **Scelta implementativa — decisa (ADR 0001, `docs/adr/`):** opzione **(a) Next.js/Astro su Firebase Hosting + Cloud Functions/Cloud Run** — integrazione nativa, un solo fornitore. Scartate: (b) Vercel (fornitore in più, sessione Firebase su due host), (c) prerender dei bot (fragile, Core Web Vitals scarsi — ammesso solo come ponte). Il gate resta aperto finché l'Ispezione URL non è verde.
+- **Oltre la ricerca organica:** con lo storefront in piedi, il feed prodotti può alimentare **Google Merchant Center (schede gratuite / Shopping)** — per una farmacia locale è spesso il canale con più resa; richiede JSON-LD `Product` corretto (prezzo, disponibilità, GTIN/EAN già nel modello dati §5.1).
+
+> **Gate di validazione:** l'**Ispezione URL di Google Search Console** deve mostrare testo e link reali su schede e blog prima di investire in traffico. La proprietà Search Console e l'invio della sitemap fanno parte dello step 2.7, non del lancio.
 
 ### 6.3 Contenuti, E-E-A-T e YMYL
 Contenuti sanitari = **YMYL**: vanno **firmati e revisionati dal farmacista** (autore con credenziali), con citazioni, data di revisione, trasparenza su azienda/contatti, HTTPS. L'AI supera l'E-E-A-T **solo** con revisione umana responsabile.
@@ -294,12 +337,56 @@ Le condizioni d'uso di GitHub **vietano** l'uso di GitHub Pages per gestire un'a
 ### 7.1 Pubblico e principio guida
 Pubblico tendenzialmente **maturo** → **accessibilità = conversione**: caratteri grandi, navigazione semplice, alto contrasto, aree tattili ampie. Riferimento **WCAG 2.2** (testo 4,5:1; componenti UI 3:1).
 
-### 7.2 Revisione critica delle scelte estetiche
-- **Neumorphism — da evitare come default:** contrasti troppo bassi (~1,1:1, sotto il minimo WCAG di 3:1), pulsanti poco distinguibili.
-- **Glassmorphism — solo decorativo:** ammesso se lo sfondo solido garantisce testo ≥4,5:1; **mai dietro** posologia, controindicazioni, prezzo o logo ministeriale.
-- **Bento grid** — ok, se rispetta contrasto e dimensioni target.
+### 7.2 Linguaggio visivo — moderno, pulito, effetti misurati *(specifica di implementazione)*
 
-**Raccomandazione:** base **flat/Material ad alto contrasto**, palette calma (verde smeraldo o blu ospedaliero), ampio spazio bianco; glassmorphism solo su superfici decorative; niente neumorfismo sui controlli.
+**Direzione confermata:** UI **molto pulita** (poche informazioni per schermata) con un linguaggio 2026: **sfondi ambientali azzurro→bianco** (ispirazione apple.com), **glassmorphism** sulle superfici di navigazione, **card 3D** per i prodotti, **motion system** a molla. Gli effetti sono il condimento, non il piatto: al massimo **un elemento "wow" per viewport**.
+
+#### 7.2.1 Pulizia prima di tutto (regole di densità)
+- **Una sola azione primaria per schermata** (CTA verde); le secondarie sono testuali/outline.
+- **Progressive disclosure:** la card mostra solo foto, nome, prezzo, "+"; tutto il resto (posologia, avvertenze, dettagli) vive nella scheda. Niente badge, etichette o contatori che non siano azionabili o essenziali.
+- **Massimo 2 livelli tipografici per vista** (titolo + corpo) oltre a prezzo/CTA; spazio bianco generoso (spaziatura base 8 px, sezioni separate da 32–48 px, mai da linee/box).
+- Se una schermata ha bisogno di una spiegazione, si toglie contenuto — non si aggiunge testo.
+
+#### 7.2.2 Sfondo ambientale azzurro→bianco (ispirazione Apple)
+- **Token:** `ambientAzure` `#EAF4FE` (azzurro ghiaccio) che sfuma **verticalmente** in `#FFFFFF` (stop ~55–70% dell'altezza); variante appena più satura `#DDEEFC` per l'hero della Home.
+- **Dove:** hero della Home, testata delle sezioni (Negozio, Servizi), sfondo della parte alta della scheda prodotto, empty state. **Non invadente per costruzione:** il gradiente sta **dietro** i contenuti, il testo lungo poggia sempre sulla zona bianca o su superficie solida.
+- **Cosa NON è:** l'azzurro non è un colore d'azione né di testo — il **verde `#1E7A3C` resta l'unico colore interattivo** (un secondo colore cliccabile confonderebbe). L'azzurro freddo fa anche da contrappunto neutro che valorizza oro/verde/cremisi del logo (§16.2) senza competere.
+- Contrasto: su `#EAF4FE` il testo scuro `#14532D`/`#1F2A24` supera comodamente 4,5:1 — verificare comunque nella style page.
+
+#### 7.2.3 Glassmorphism (dove sì, dove mai)
+- **Superfici ammesse (chrome di navigazione e overlay):** app bar/bottom bar sticky durante lo scroll, `NavigationRail` desktop, pannello chat AI 70/30 (header), bottom-sheet filtri, dialog.
+- **Spec:** blur `σ 20–24` (`BackdropFilter` / `backdrop-filter` CSS), riempimento bianco **70–75%** di opacità, bordo 1 px bianco 45%, raggio **20–24 px**, ombra morbida a bassa opacità. Il testo sopra il vetro deve mantenere **≥ 4,5:1 rispetto al caso peggiore** di ciò che può scorrervi sotto.
+- **Vietato dietro contenuti critici:** posologia, controindicazioni, prezzo, totali del checkout, logo ministeriale — sempre su superficie **solida**.
+- **Fallback solido obbligatorio:** su dispositivi a basse prestazioni (o dove il blur costa troppo) la stessa superficie rende bianco pieno 96% senza blur — il layout non cambia.
+
+#### 7.2.4 Card prodotto 3D
+Costruzione **a livelli**, non finto rilievo (il neumorphism resta vietato sui controlli):
+- **Livelli:** superficie card bianca (raggio 20–24) → **foto scontornata "sollevata"** che sborda leggermente dal bordo superiore, con **ombra propria** sotto il prodotto → testo e prezzo in basso, CTA "+" verde.
+- **Profondità:** ombra a **due strati** — ambientale (`y 2, blur 8, nero 5%`) + direzionale (`y 12, blur 24, nero 8%` con **tinta verde 10%**: le ombre colorate sono ciò che rende "moderna" la profondità).
+- **Desktop (hover):** tilt prospettico **max 6°** che segue il puntatore (`Matrix4` con `perspective 0.0015`), la foto trasla di 2–4 px in senso opposto (parallasse interna), **sheen** radiale bianco ~8% che segue il cursore; rientro a molla al leave.
+- **Touch (mobile):** niente tilt — **press: scale 0.97** + ombra compressa (spring, ~180 ms), rilascio con overshoot leggero.
+- **Entrata in lista:** fade + slide-up 24 px, **stagger 40 ms** tra card, solo al primo build (non a ogni scroll).
+
+#### 7.2.5 Motion system (tendenza 2026: fisica, non easing lineari)
+- **Curve:** spring/`Curves.easeOutBack` leggero per gli elementi che "arrivano"; `emphasized` Material 3 per i cambi di layout. **Durate:** micro-interazioni 150–200 ms · standard 250–300 ms · transizioni di pagina/layout 400–500 ms. Mai animazioni in loop.
+- **Hero transition** card → scheda prodotto: l'immagine del prodotto è l'elemento condiviso (`Hero` + `CustomTransitionPage` su go_router); il resto della scheda entra in fade+slide.
+- **Skeleton shimmer** al caricamento (card fantasma con shimmer diagonale), **mai spinner a pagina intera**.
+- **Micro-interazioni:** "+" che spara un pallino verso il carrello + badge che rimbalza; toggle e chip con transizione di colore 150 ms; pull-to-refresh brandizzato (anello oro che si disegna, richiamo dello splash §16.3).
+- **Storefront SSR (§6):** stessi principi via CSS — reveal delle sezioni allo scroll (`IntersectionObserver` / scroll-driven animations come progressive enhancement), parallasse **leggero** solo sull'hero. Gli effetti non devono costare Core Web Vitals: niente blur full-page, immagini `loading="lazy"`.
+- **`prefers-reduced-motion`:** ovunque (app e storefront) — transizioni istantanee, shimmer sostituito da placeholder statico (già obbligatorio per la chat, §12.6).
+
+#### 7.2.6 Implementazione Flutter (riferimento per lo sviluppo)
+| Cosa | Come | Note |
+|---|---|---|
+| **Token effetti** | `ThemeExtension` `BaganzaEffects` in `core/theme`: gradienti ambientali, spec glass (blur/fill/bordo), ombre a 2 strati, durate e curve | Un'unica fonte; le feature non hardcodano valori |
+| **Vetro** | Widget riusabile `GlassSurface` (`ClipRRect` + `BackdropFilter`) con flag `solidFallback` | Max **2 `BackdropFilter` per schermata**; `RepaintBoundary` intorno |
+| **Card 3D** | Widget `TiltCard`: `MouseRegion` + `AnimatedBuilder` + `Transform(Matrix4)`; tilt disattivo su touch | Il tilt è solo percettivo: hit-area e semantica invariate |
+| **Motion** | `flutter_animate` (fade/slide/scale/shimmer/stagger, `animate().shimmer()` per gli skeleton) + `Hero`; splash animato con Rive (§16.3) | Rispettare `MediaQuery.disableAnimations` |
+| **Transizioni rotta** | `CustomTransitionPage` su go_router (fade-through di default, hero per il prodotto) | Coerenti tra web e desktop |
+| **Performance** | Test raster su fascia bassa e web CanvasKit (DevTools → raster stats); gli effetti si degradano, non si portano il frame-rate sotto i 60 fps | Il fallback solido/statico è parte della spec, non un ripiego |
+| **Storefront SSR** | Gli stessi token esportati come **CSS custom properties** (file JSON di design token condiviso in `core/theme/tokens.json`) | Un solo vocabolario visivo su Flutter e HTML |
+
+**Cosa resta vietato:** neumorphism sui controlli; testo oro su bianco (§16.2); glass dietro contenuti critici; più effetti sovrapposti nello stesso viewport; qualunque animazione che ritardi un'azione dell'utente.
 
 ### 7.3 Bottom Navigation Bar (mobile)
 5 sezioni sempre visibili: **Home** · **Negozio** (catalogo, filtri, ricerca) · **Chat AI** (assistente, §12.6 — voce centrale evidenziata) · **Carrello** (badge) · **Profilo** (switch Cliente/Admin).
@@ -523,8 +610,9 @@ Tutte seguono il principio del §11: **logica e chiavi lato server**, contenuti 
 ## 13. Funzionalità di Prodotto
 
 ### 13.1 Ricerca intelligente & barcode scanner
-- **Fuzzy search** (Algolia/Typesense/estensione Firebase) per correggere i refusi.
-- **Scansione del codice a barre** (fotocamera) per trovare e **riordinare** in un tap.
+- **Fuzzy search** con tolleranza ai refusi: per l'MVP è **client-side** (`core/utils/fuzzy.dart` — decisione registrata in **ADR 0002**, `docs/adr/`); la migrazione a **Typesense** (fuzzy + vettoriale per la chat §12.3, sync via Cloud Function) scatta quando il catalogo cresce oltre il "piccolo/medio" o allo step 4B.2 — a contratto app invariato.
+- **Nota per lo storefront SSR (§6):** la fuzzy client-side vive nella PWA; se lo storefront pubblico avrà una propria ricerca, userà query Firestore semplici (prefisso/categoria) finché non arriva Typesense, che a quel punto serve entrambe le superfici.
+- **Scansione del codice a barre** (fotocamera, solo mobile — su desktop/Windows fallback a inserimento EAN manuale, §4.4) per trovare e **riordinare** in un tap.
 
 ### 13.2 Abbonamenti e riacquisto (funzione)
 Opzione **"Acquisto Ricorrente"** (integratori, cosmetici, OTC a uso cronico) con sconto. *(Strategia di retention nella Parte 2.)*
@@ -600,6 +688,7 @@ Questa sezione adatta il progetto generico alla **Farmacia Baganza** e ne fa l'*
 | `brandGreenDark` | `#14532D` | **Testo** e intestazioni (contrasto elevato) |
 | `brandCrimson` | `#9E1B32` | Accento prestigio (richiamo della "S"); **uso parco** |
 | `background` | `#FFFFFF` | Sfondo principale |
+| `ambientAzure` | `#EAF4FE` (hero `#DDEEFC`) → sfuma in `#FFFFFF` | **Gradiente ambientale** di sfondo (hero, testate di sezione, scheda prodotto — §7.2.2). Mai per testo, mai per elementi interattivi |
 | `textPrimary` | `#14532D` / `#1F2A24` | Testo corpo |
 | `alert` | rosso `#C62828` | **Solo** errori/urgenze (distinto dal cremisi del brand) |
 

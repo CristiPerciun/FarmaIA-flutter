@@ -6,6 +6,7 @@ import 'core/config/app_env.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/offline_banner.dart';
 import 'features/compliance/presentation/cookie_banner.dart';
 import 'l10n/app_localizations.dart';
 
@@ -37,6 +38,14 @@ class BaganzaApp extends ConsumerWidget {
       builder: (context, child) => Stack(
         children: [
           child ?? const SizedBox.shrink(),
+          // Offline banner pinned to the top (§9.1).
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: const OfflineBanner(),
+            ),
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: ConstrainedBox(

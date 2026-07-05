@@ -517,6 +517,642 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Annulla'**
   String get cancel;
+
+  /// No description provided for @navHome.
+  ///
+  /// In it, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navShop.
+  ///
+  /// In it, this message translates to:
+  /// **'Negozio'**
+  String get navShop;
+
+  /// No description provided for @navChatAi.
+  ///
+  /// In it, this message translates to:
+  /// **'Chat AI'**
+  String get navChatAi;
+
+  /// No description provided for @navCart.
+  ///
+  /// In it, this message translates to:
+  /// **'Carrello'**
+  String get navCart;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In it, this message translates to:
+  /// **'Profilo'**
+  String get navProfile;
+
+  /// No description provided for @catalogAllCategories.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get catalogAllCategories;
+
+  /// No description provided for @catalogFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtri'**
+  String get catalogFilters;
+
+  /// No description provided for @catalogFilterCategory.
+  ///
+  /// In it, this message translates to:
+  /// **'Categoria'**
+  String get catalogFilterCategory;
+
+  /// No description provided for @catalogFilterMedicinesOnly.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo medicinali'**
+  String get catalogFilterMedicinesOnly;
+
+  /// No description provided for @catalogFilterOnSale.
+  ///
+  /// In it, this message translates to:
+  /// **'In offerta'**
+  String get catalogFilterOnSale;
+
+  /// No description provided for @catalogClearFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Azzera filtri'**
+  String get catalogClearFilters;
+
+  /// No description provided for @catalogApplyFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Applica'**
+  String get catalogApplyFilters;
+
+  /// No description provided for @catalogNoProducts.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun prodotto trovato'**
+  String get catalogNoProducts;
+
+  /// No description provided for @catalogEmptyHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Prova a rimuovere qualche filtro o a cambiare ricerca.'**
+  String get catalogEmptyHint;
+
+  /// No description provided for @catalogResultsCount.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =0{Nessun prodotto} =1{1 prodotto} other{{count} prodotti}}'**
+  String catalogResultsCount(int count);
+
+  /// No description provided for @catalogLoadError.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile caricare il catalogo.'**
+  String get catalogLoadError;
+
+  /// No description provided for @productAddToCart.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get productAddToCart;
+
+  /// No description provided for @addToCartComingSoon.
+  ///
+  /// In it, this message translates to:
+  /// **'Il carrello arriva nella Fase 3.'**
+  String get addToCartComingSoon;
+
+  /// No description provided for @priceWas.
+  ///
+  /// In it, this message translates to:
+  /// **'Prezzo di listino {price}'**
+  String priceWas(String price);
+
+  /// No description provided for @productDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get productDescription;
+
+  /// No description provided for @productActiveIngredient.
+  ///
+  /// In it, this message translates to:
+  /// **'Principio attivo'**
+  String get productActiveIngredient;
+
+  /// No description provided for @productPosology.
+  ///
+  /// In it, this message translates to:
+  /// **'Posologia'**
+  String get productPosology;
+
+  /// No description provided for @productContraindications.
+  ///
+  /// In it, this message translates to:
+  /// **'Controindicazioni'**
+  String get productContraindications;
+
+  /// No description provided for @productWarnings.
+  ///
+  /// In it, this message translates to:
+  /// **'Avvertenze'**
+  String get productWarnings;
+
+  /// No description provided for @productCeMarking.
+  ///
+  /// In it, this message translates to:
+  /// **'Marcatura CE'**
+  String get productCeMarking;
+
+  /// No description provided for @productCeMarkingPresent.
+  ///
+  /// In it, this message translates to:
+  /// **'Dispositivo medico con marcatura CE.'**
+  String get productCeMarkingPresent;
+
+  /// No description provided for @productNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotto non disponibile.'**
+  String get productNotFound;
+
+  /// No description provided for @trustReturnsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Reso e recesso'**
+  String get trustReturnsTitle;
+
+  /// No description provided for @trustReturnsBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Diritto di recesso entro 14 giorni (art. 54-bis). I medicinali seguono le limitazioni di legge.'**
+  String get trustReturnsBody;
+
+  /// No description provided for @searchTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca'**
+  String get searchTitle;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca prodotti, principi attivi…'**
+  String get searchHint;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun risultato per \"{query}\"'**
+  String searchNoResults(String query);
+
+  /// No description provided for @searchClear.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancella'**
+  String get searchClear;
+
+  /// No description provided for @scanTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Scansiona codice'**
+  String get scanTitle;
+
+  /// No description provided for @scanInstruction.
+  ///
+  /// In it, this message translates to:
+  /// **'Inquadra il codice a barre (EAN) del prodotto.'**
+  String get scanInstruction;
+
+  /// No description provided for @scanManualTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci il codice'**
+  String get scanManualTitle;
+
+  /// No description provided for @scanManualHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Codice EAN'**
+  String get scanManualHint;
+
+  /// No description provided for @scanManualSubmit.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca'**
+  String get scanManualSubmit;
+
+  /// No description provided for @scanNotSupported.
+  ///
+  /// In it, this message translates to:
+  /// **'La fotocamera non è disponibile su questo dispositivo. Inserisci il codice a mano.'**
+  String get scanNotSupported;
+
+  /// No description provided for @scanPermissionDenied.
+  ///
+  /// In it, this message translates to:
+  /// **'Permesso fotocamera negato. Puoi inserire il codice a mano.'**
+  String get scanPermissionDenied;
+
+  /// No description provided for @scanNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun prodotto con codice {code}.'**
+  String scanNotFound(String code);
+
+  /// No description provided for @offlineBannerTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei offline'**
+  String get offlineBannerTitle;
+
+  /// No description provided for @offlineBannerBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Stai consultando il catalogo salvato. Alcune azioni non sono disponibili senza rete.'**
+  String get offlineBannerBody;
+
+  /// No description provided for @offlineActionDisabled.
+  ///
+  /// In it, this message translates to:
+  /// **'Azione non disponibile offline.'**
+  String get offlineActionDisabled;
+
+  /// No description provided for @cartTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Carrello'**
+  String get cartTitle;
+
+  /// No description provided for @cartEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Il carrello è vuoto'**
+  String get cartEmpty;
+
+  /// No description provided for @cartEmptyHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi prodotti dal negozio.'**
+  String get cartEmptyHint;
+
+  /// No description provided for @cartRemove.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi'**
+  String get cartRemove;
+
+  /// No description provided for @cartCheckout.
+  ///
+  /// In it, this message translates to:
+  /// **'Vai al checkout'**
+  String get cartCheckout;
+
+  /// No description provided for @cartItemUnavailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Non più disponibile'**
+  String get cartItemUnavailable;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiunto al carrello'**
+  String get addedToCart;
+
+  /// No description provided for @cartQuantity.
+  ///
+  /// In it, this message translates to:
+  /// **'Quantità'**
+  String get cartQuantity;
+
+  /// No description provided for @summarySubtotal.
+  ///
+  /// In it, this message translates to:
+  /// **'Subtotale'**
+  String get summarySubtotal;
+
+  /// No description provided for @summaryShipping.
+  ///
+  /// In it, this message translates to:
+  /// **'Spedizione'**
+  String get summaryShipping;
+
+  /// No description provided for @summaryShippingFree.
+  ///
+  /// In it, this message translates to:
+  /// **'Gratuita'**
+  String get summaryShippingFree;
+
+  /// No description provided for @summaryVat.
+  ///
+  /// In it, this message translates to:
+  /// **'IVA (inclusa)'**
+  String get summaryVat;
+
+  /// No description provided for @summaryVatRate.
+  ///
+  /// In it, this message translates to:
+  /// **'di cui IVA {rate}%'**
+  String summaryVatRate(int rate);
+
+  /// No description provided for @summaryTotal.
+  ///
+  /// In it, this message translates to:
+  /// **'Totale'**
+  String get summaryTotal;
+
+  /// No description provided for @summaryFreeShippingHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi {amount} per la spedizione gratuita.'**
+  String summaryFreeShippingHint(String amount);
+
+  /// No description provided for @checkoutTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Checkout'**
+  String get checkoutTitle;
+
+  /// No description provided for @checkoutContact.
+  ///
+  /// In it, this message translates to:
+  /// **'Contatti'**
+  String get checkoutContact;
+
+  /// No description provided for @checkoutGuestNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Puoi ordinare come ospite; creare un account è facoltativo.'**
+  String get checkoutGuestNote;
+
+  /// No description provided for @checkoutShippingAddress.
+  ///
+  /// In it, this message translates to:
+  /// **'Indirizzo di spedizione'**
+  String get checkoutShippingAddress;
+
+  /// No description provided for @fieldFullName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome e cognome'**
+  String get fieldFullName;
+
+  /// No description provided for @fieldPhone.
+  ///
+  /// In it, this message translates to:
+  /// **'Telefono'**
+  String get fieldPhone;
+
+  /// No description provided for @fieldStreet.
+  ///
+  /// In it, this message translates to:
+  /// **'Indirizzo (via e numero)'**
+  String get fieldStreet;
+
+  /// No description provided for @fieldCity.
+  ///
+  /// In it, this message translates to:
+  /// **'Città'**
+  String get fieldCity;
+
+  /// No description provided for @fieldZip.
+  ///
+  /// In it, this message translates to:
+  /// **'CAP'**
+  String get fieldZip;
+
+  /// No description provided for @fieldProvince.
+  ///
+  /// In it, this message translates to:
+  /// **'Provincia'**
+  String get fieldProvince;
+
+  /// No description provided for @checkoutContinueToPayment.
+  ///
+  /// In it, this message translates to:
+  /// **'Vai al pagamento'**
+  String get checkoutContinueToPayment;
+
+  /// No description provided for @paymentTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagamento'**
+  String get paymentTitle;
+
+  /// No description provided for @paymentMethod.
+  ///
+  /// In it, this message translates to:
+  /// **'Metodo di pagamento'**
+  String get paymentMethod;
+
+  /// No description provided for @paymentMethodCard.
+  ///
+  /// In it, this message translates to:
+  /// **'Carta (Stripe/Nexi)'**
+  String get paymentMethodCard;
+
+  /// No description provided for @paymentMethodPaypal.
+  ///
+  /// In it, this message translates to:
+  /// **'PayPal'**
+  String get paymentMethodPaypal;
+
+  /// No description provided for @paymentMethodSatispay.
+  ///
+  /// In it, this message translates to:
+  /// **'Satispay'**
+  String get paymentMethodSatispay;
+
+  /// No description provided for @paymentMethodBnpl.
+  ///
+  /// In it, this message translates to:
+  /// **'Paga a rate (Scalapay/Klarna)'**
+  String get paymentMethodBnpl;
+
+  /// No description provided for @paymentSandboxNotice.
+  ///
+  /// In it, this message translates to:
+  /// **'Ambiente sandbox: nessun addebito reale. L\'integrazione dei gateway di pagamento reali è descritta nell\'ADR 0003.'**
+  String get paymentSandboxNotice;
+
+  /// No description provided for @paymentPay.
+  ///
+  /// In it, this message translates to:
+  /// **'Paga {amount}'**
+  String paymentPay(String amount);
+
+  /// No description provided for @paymentProcessing.
+  ///
+  /// In it, this message translates to:
+  /// **'Elaborazione del pagamento…'**
+  String get paymentProcessing;
+
+  /// No description provided for @paymentFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagamento non riuscito. Riprova.'**
+  String get paymentFailed;
+
+  /// No description provided for @orderPlacedTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordine confermato'**
+  String get orderPlacedTitle;
+
+  /// No description provided for @orderPlacedBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Grazie! Il tuo ordine {number} è stato registrato.'**
+  String orderPlacedBody(String number);
+
+  /// No description provided for @ordersEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Non hai ancora ordini.'**
+  String get ordersEmpty;
+
+  /// No description provided for @orderNumberLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordine {number}'**
+  String orderNumberLabel(String number);
+
+  /// No description provided for @orderItemsLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Articoli'**
+  String get orderItemsLabel;
+
+  /// No description provided for @orderTrackingLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Tracking'**
+  String get orderTrackingLabel;
+
+  /// No description provided for @orderCarrierLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Corriere'**
+  String get orderCarrierLabel;
+
+  /// No description provided for @orderPaymentLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagamento'**
+  String get orderPaymentLabel;
+
+  /// No description provided for @orderShippingLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Spedizione'**
+  String get orderShippingLabel;
+
+  /// No description provided for @orderStatusCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'Creato'**
+  String get orderStatusCreated;
+
+  /// No description provided for @orderStatusConfirmed.
+  ///
+  /// In it, this message translates to:
+  /// **'Confermato'**
+  String get orderStatusConfirmed;
+
+  /// No description provided for @orderStatusPreparing.
+  ///
+  /// In it, this message translates to:
+  /// **'In preparazione'**
+  String get orderStatusPreparing;
+
+  /// No description provided for @orderStatusShipped.
+  ///
+  /// In it, this message translates to:
+  /// **'Spedito'**
+  String get orderStatusShipped;
+
+  /// No description provided for @orderStatusDelivered.
+  ///
+  /// In it, this message translates to:
+  /// **'Consegnato'**
+  String get orderStatusDelivered;
+
+  /// No description provided for @orderStatusCancelled.
+  ///
+  /// In it, this message translates to:
+  /// **'Annullato'**
+  String get orderStatusCancelled;
+
+  /// No description provided for @paymentStatusPending.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa'**
+  String get paymentStatusPending;
+
+  /// No description provided for @paymentStatusPaid.
+  ///
+  /// In it, this message translates to:
+  /// **'Pagato'**
+  String get paymentStatusPaid;
+
+  /// No description provided for @paymentStatusFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Non riuscito'**
+  String get paymentStatusFailed;
+
+  /// No description provided for @paymentStatusRefunded.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimborsato'**
+  String get paymentStatusRefunded;
+
+  /// No description provided for @shippingStatusProcessing.
+  ///
+  /// In it, this message translates to:
+  /// **'In lavorazione'**
+  String get shippingStatusProcessing;
+
+  /// No description provided for @shippingStatusShipped.
+  ///
+  /// In it, this message translates to:
+  /// **'Spedito'**
+  String get shippingStatusShipped;
+
+  /// No description provided for @shippingStatusDelivered.
+  ///
+  /// In it, this message translates to:
+  /// **'Consegnato'**
+  String get shippingStatusDelivered;
+
+  /// No description provided for @shippingStatusReturned.
+  ///
+  /// In it, this message translates to:
+  /// **'Reso'**
+  String get shippingStatusReturned;
+
+  /// No description provided for @withdrawalAlreadyRequested.
+  ///
+  /// In it, this message translates to:
+  /// **'Recesso già richiesto per questo ordine.'**
+  String get withdrawalAlreadyRequested;
+
+  /// No description provided for @signInToOrder.
+  ///
+  /// In it, this message translates to:
+  /// **'Accedi per vedere i tuoi ordini.'**
+  String get signInToOrder;
+
+  /// No description provided for @genericErrorRetry.
+  ///
+  /// In it, this message translates to:
+  /// **'Qualcosa è andato storto. Riprova.'**
+  String get genericErrorRetry;
 }
 
 class _AppLocalizationsDelegate
