@@ -8,6 +8,7 @@ import '../../../core/widgets/adaptive_scaffold.dart';
 import '../../../core/widgets/ambient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../assistant/presentation/assistant_search_bar.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -19,6 +20,7 @@ class HomeScreen extends ConsumerWidget {
 
     return AdaptiveScaffold(
       currentTab: AppTab.home,
+      showAssistantPill: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(l10n.homeTitle),
@@ -58,7 +60,10 @@ class HomeScreen extends ConsumerWidget {
                       style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    // Search = the assistant (§12.6): opens /assistant on tap.
+                    const AssistantSearchBar(),
+                    const SizedBox(height: 24),
                     AppButton(
                       label: l10n.navToCatalog,
                       icon: Icons.storefront_outlined,

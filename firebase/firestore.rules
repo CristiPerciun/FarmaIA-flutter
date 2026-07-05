@@ -98,6 +98,27 @@ service cloud.firestore {
       allow write: if isStaff();
     }
 
+    // --- assistant chat (§12.5, Fase 4B): written ONLY by Cloud Functions.
+    // The owner can read back their sessions; staff read for supervision
+    // (step 4B.7). Even staff edits go through the `assistantReview`
+    // callable, so the registry stays an audit log.
+    match /chatSessions/{sessionId} {
+      allow read: if ownsRef(resource.data.userRef) || isStaff();
+      allow create, update, delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if isStaff()
+          || ownsRef(get(/databases/$(database)/documents/chatSessions/$(sessionId)).data.userRef);
+        allow create, update, delete: if false;
+      }
+    }
+
+    // --- assistant monitoring reports (step 4B.8): staff read-only ---
+    match /assistantReports/{reportId} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+
     // --- deny by default (also covers collections not yet modeled) ---
     match /{document=**} {
       allow read, write: if false;

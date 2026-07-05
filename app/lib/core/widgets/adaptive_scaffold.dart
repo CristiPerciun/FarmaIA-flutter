@@ -1,10 +1,16 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/assistant/application/assistant_panel.dart';
+import '../../features/assistant/presentation/widgets/assistant_pill.dart';
+import '../../features/assistant/presentation/widgets/assistant_side_panel.dart';
 import '../../features/cart/application/cart_providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
+import '../theme/baganza_effects.dart';
 import '../theme/breakpoints.dart';
 import 'glass_surface.dart';
 
@@ -25,7 +31,7 @@ Widget _tabIcon(AppTab tab, IconData icon, int cartCount, {Color? color}) {
 enum AppTab {
   home('/'),
   shop('/catalog'),
-  chatAi('/chat'),
+  chatAi('/assistant'),
   cart('/cart'),
   profile('/profile');
 
@@ -60,7 +66,13 @@ enum AppTab {
 /// One code base, four surfaces (§4.4): a single wrapper that renders a glass
 /// bottom bar on `compact` and a glass `NavigationRail` on `expanded`, over the
 /// same `go_router` routes. Screens pass their [body]; the shell owns the nav.
-class AdaptiveScaffold extends StatelessWidget {
+///
+/// On `expanded` the shell also hosts the assistant 70/30 panel (§12.6, step
+/// 4B.5): when open, the content keeps ~70% of the width (min-360 px panel on
+/// the right) with a 250–300 ms emphasized animation — instant under
+/// `prefers-reduced-motion`. Screens that opt in via [showAssistantPill]
+/// (Home, Catalogo) get the floating bottom-center pill.
+class AdaptiveScaffold extends ConsumerWidget {
   const AdaptiveScaffold({
     super.key,
     required this.currentTab,
@@ -68,6 +80,7 @@ class AdaptiveScaffold extends StatelessWidget {
     this.appBar,
     this.floatingActionButton,
     this.extendBodyBehindAppBar = true,
+    this.showAssistantPill = false,
   });
 
   final AppTab currentTab;
@@ -76,16 +89,26 @@ class AdaptiveScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
   final bool extendBodyBehindAppBar;
 
+  /// Renders the assistant pill bottom-center on `expanded` (§12.6 — only
+  /// Home and Catalogo; never on mobile, where the chat is the central tab).
+  final bool showAssistantPill;
+
   void _onSelect(BuildContext context, AppTab tab) {
     if (tab == currentTab) return;
     context.go(tab.route);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = Breakpoints.of(context);
 
     if (size.usesRail) {
+      final panelOpen = ref.watch(
+        assistantPanelProvider.select((s) => s.isOpen),
+      );
+      final effects = BaganzaEffects.of(context);
+      final reduceMotion = MediaQuery.of(context).disableAnimations;
+
       return Scaffold(
         appBar: appBar,
         extendBodyBehindAppBar: extendBodyBehindAppBar,
@@ -93,7 +116,52 @@ class AdaptiveScaffold extends StatelessWidget {
         body: Row(
           children: [
             _GlassRail(currentTab: currentTab, onSelect: _onSelect),
-            Expanded(child: body),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // 30% of the content area, never below 360 px (§12.6).
+                  final panelWidth = math.max(
+                    360.0,
+                    constraints.maxWidth * 0.30,
+                  );
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            Positioned.fill(child: body),
+                            if (showAssistantPill && !panelOpen)
+                              const Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 24,
+                                child: Center(child: AssistantPill()),
+                              ),
+                          ],
+                        ),
+                      ),
+                      AnimatedContainer(
+                        duration: reduceMotion
+                            ? Duration.zero
+                            : effects.durationStandard,
+                        curve: effects.curveEmphasized,
+                        width: panelOpen ? panelWidth : 0,
+                        child: panelOpen
+                            ? ClipRect(
+                                child: OverflowBox(
+                                  alignment: Alignment.topLeft,
+                                  minWidth: panelWidth,
+                                  maxWidth: panelWidth,
+                                  child: const AssistantSidePanel(),
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ],
         ),
       );

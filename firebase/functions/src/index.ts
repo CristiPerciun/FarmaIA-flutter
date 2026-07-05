@@ -30,3 +30,21 @@ export {
   paymentWebhook,
   requestWithdrawal,
 } from "./orders/order_functions";
+
+// Admin AI pipeline: image Vision trigger + bilingual text generation (§4.2-4.3).
+export {processProductImage} from "./admin/vision_pipeline";
+export {generateProductTexts} from "./admin/generate_texts";
+
+// Customer assistant (§12, Fase 4B): chat pipeline with pre-LLM router and
+// guardrails, pharmacist escalation/review, embedding sync, GDPR purge and
+// daily monitoring.
+export {
+  assistantChat,
+  assistantEscalate,
+  assistantReview,
+} from "./ai/assistant_chat";
+export {syncProductEmbedding} from "./ai/product_embeddings";
+export {
+  purgeChatSessions,
+  assistantDailyReport,
+} from "./ai/assistant_maintenance";

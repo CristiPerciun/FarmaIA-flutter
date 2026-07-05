@@ -9,6 +9,7 @@ import '../../../core/theme/breakpoints.dart';
 import '../../../core/widgets/adaptive_scaffold.dart';
 import '../../../core/widgets/ambient_background.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../assistant/presentation/assistant_search_bar.dart';
 import '../../cart/application/cart_providers.dart';
 import '../application/catalog_filter.dart';
 import '../application/catalog_providers.dart';
@@ -18,61 +19,34 @@ import 'widgets/catalog_filter_panel.dart';
 import 'widgets/product_card.dart';
 import 'widgets/product_card_skeleton.dart';
 
-/// Step 2.2 — the adaptive "Negozio" storefront: ambient header, fuzzy search,
-/// category chips and a fluid product grid. Filters live in a right-side glass
-/// panel on desktop and a bottom-sheet on mobile (§4.4, §7.2–7.4).
-class CatalogScreen extends ConsumerStatefulWidget {
+/// Step 2.2 — the adaptive "Negozio" storefront: ambient header, category chips
+/// and a fluid product grid. Filters live in a right-side glass panel on desktop
+/// and a bottom-sheet on mobile (§4.4, §7.2–7.4).
+///
+/// Search is **not** an inline filter here: the search field/lens opens the
+/// assistant page (`/assistant`), which is the single search entry point
+/// (§12.6). Until the conversational LLM lands it runs the fuzzy catalog search
+/// as a bridge (§13.1).
+class CatalogScreen extends ConsumerWidget {
   const CatalogScreen({super.key});
 
   @override
-  ConsumerState<CatalogScreen> createState() => _CatalogScreenState();
-}
-
-class _CatalogScreenState extends ConsumerState<CatalogScreen> {
-  late final TextEditingController _searchController;
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController(
-      text: ref.read(catalogFilterProvider).query,
-    );
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _openFilterSheet() {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const CatalogFilterSheet(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final size = Breakpoints.of(context);
 
-    final grid = Column(
+    const grid = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Header(
-          controller: _searchController,
-          onSearch: (q) => ref.read(catalogFilterProvider.notifier).setQuery(q),
-        ),
-        const _CategoryChips(),
-        const Expanded(child: _CatalogGrid()),
+        _SearchEntry(),
+        _CategoryChips(),
+        Expanded(child: _CatalogGrid()),
       ],
     );
 
     return AdaptiveScaffold(
       currentTab: AppTab.shop,
+      showAssistantPill: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(l10n.catalogTitle),
@@ -86,7 +60,12 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             IconButton(
               icon: const Icon(Icons.tune),
               tooltip: l10n.catalogFilters,
-              onPressed: _openFilterSheet,
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => const CatalogFilterSheet(),
+              ),
             ),
           TextButton(
             onPressed: () => ref.read(localeProvider.notifier).toggleLocale(),
@@ -97,11 +76,11 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
         ],
       ),
       body: size.usesRail
-          ? Row(
+          ? const Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(child: grid),
-                const SizedBox(
+                SizedBox(
                   width: 300,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(0, 96, 16, 16),
@@ -115,15 +94,13 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header({required this.controller, required this.onSearch});
-
-  final TextEditingController controller;
-  final ValueChanged<String> onSearch;
+/// Ambient header wrapping the assistant search entry (§12.6): tapping it opens
+/// `/assistant`, not an inline filter.
+class _SearchEntry extends StatelessWidget {
+  const _SearchEntry();
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return AmbientBackground(
       hero: true,
       child: Padding(
@@ -133,30 +110,7 @@ class _Header extends StatelessWidget {
           16,
           16,
         ),
-        child: TextField(
-          controller: controller,
-          onChanged: onSearch,
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            hintText: l10n.searchHint,
-            prefixIcon: const Icon(Icons.search),
-            filled: true,
-            fillColor: Colors.white,
-            suffixIcon: ValueListenableBuilder(
-              valueListenable: controller,
-              builder: (context, value, _) => value.text.isEmpty
-                  ? const SizedBox.shrink()
-                  : IconButton(
-                      icon: const Icon(Icons.close),
-                      tooltip: l10n.searchClear,
-                      onPressed: () {
-                        controller.clear();
-                        onSearch('');
-                      },
-                    ),
-            ),
-          ),
-        ),
+        child: const AssistantSearchBar(),
       ),
     );
   }

@@ -395,7 +395,7 @@ Costruzione **a livelli**, non finto rilievo (il neumorphism resta vietato sui c
 ### 7.4 Schermate principali e flusso
 ```
 Splash → Home
-Home ├─ Negozio → (ricerca | scanner barcode | filtri) → Dettaglio prodotto → Aggiungi al carrello
+Home ├─ Negozio → (ricerca→Chat AI (§12.6) | scanner barcode | filtri/categorie) → Dettaglio prodotto → Aggiungi al carrello
      ├─ Offerte / Più richiesti → Dettaglio prodotto
      ├─ Chat AI (widget web / tab mobile) → consenso → conversazione → card prodotti → Dettaglio/Carrello
      │                                                              └─ escalation → Farmacista (chat/WhatsApp)
@@ -430,7 +430,7 @@ Logo ministeriale + link di verifica, credenziali/foto del farmacista, recension
 ## 9. Funzionamento Offline e Casi Limite
 
 ### 9.1 Offline (ambito confermato: solo consultazione catalogo)
-- **Disponibile offline:** sfogliare il **catalogo già scaricato** (prodotti pubblicati e relative immagini) tramite **persistenza offline di Firestore** + cache immagini; ricerca limitata ai dati in cache.
+- **Disponibile offline:** sfogliare il **catalogo già scaricato** (prodotti pubblicati e relative immagini) tramite **persistenza offline di Firestore** + cache immagini; l'ingresso di ricerca (che online apre la chat AI, §12.6) degrada alla **modalità "solo risultati"** — fuzzy locale sui dati in cache, con banner.
 - **Richiede connessione (bloccato con messaggio chiaro se offline):** login/registrazione, carrello e checkout, pagamenti, prenotazione consulenze, **chat con l'assistente AI** (§12), area amministrativa e pipeline AI.
 - **Comportamento:** banner non invasivo "Sei offline: puoi sfogliare il catalogo, ma per acquistare serve la connessione". Nessuna coda di transazioni offline (fuori scope).
 
@@ -565,6 +565,7 @@ Una chat conversazionale, disponibile su web e mobile, in cui il cliente descriv
    └─ 7. Log su `chatSessions` (provenienza modello/prompt) → risposta al client
 ```
 
+- **Router pre-LLM (la chat è anche la ricerca, §12.6):** prima della moderazione/LLM, un passo deterministico riconosce le **query "da catalogo"** (match fuzzy forte su nome/SKU/EAN, nessun contenuto sintomatico) e risponde **direttamente** con le card prodotto dal retrieval — zero token, latenza minima, nessun dato sanitario trattato. Solo gli input conversazionali/sintomatici proseguono nella pipeline completa (2→7).
 - **Indice vettoriale:** embedding **multilingue** open (es. `bge-m3` o `multilingual-e5`) generato **alla pubblicazione** del prodotto (trigger già esistente in `catalog/`); ricerca con **Firestore Vector Search** (nativo, zero componenti nuovi) **oppure Typesense ibrido** se Typesense è già stato scelto per la fuzzy search (§13.1) — un solo motore per entrambe. La scelta si fa nello spike (Per step, Fase 4B).
 - **Perché le card prodotto sono "vere":** il client riceve **riferimenti** (`productRef`) verificati, non testo libero — la UI renderizza le card dal dato Firestore reale (prezzo, foto, stato stock aggiornati).
 - **Fallback:** provider LLM giù o timeout → messaggio cortese + scorciatoie ("Cerca nel catalogo", "Scrivi al farmacista su WhatsApp"). La chat **degrada, non blocca** il resto dell'app.
@@ -583,7 +584,17 @@ Una chat conversazionale, disponibile su web e mobile, in cui il cliente descriv
 - **AI Act:** obbligo di **trasparenza** (l'utente sa di parlare con un'AI — badge e benvenuto, art. 50). Mantenendo il perimetro §12.1 (orientamento all'acquisto + rinvio al professionista, nessuna finalità diagnostica/terapeutica) il sistema **non** è progettato come dispositivo medico; se il perimetro si allargasse (triage, diagnosi, consigli clinici personalizzati) scatterebbero **MDR (SaMD, verosimilmente classe IIa)** e la qualifica **high-risk** dell'AI Act — da evitare esplicitamente in v1.
 - **Coerenza col §11:** chiavi e logica **solo lato server** (proxy Cloud Function, Secret Manager, App Check); vale l'intero verdetto anti-BYOK.
 
-### 12.6 UI/UX della chat *(specifica confermata)*
+### 12.6 UI/UX della chat *(specifica aggiornata: la chat È la ricerca)*
+
+**Ricerca = conversazione (decisione di prodotto).** Non esiste una ricerca "classica" separata per il cliente: **l'assistente AI è l'unico punto d'ingresso della ricerca**. L'affordance resta familiare — campo con lente e placeholder *"Cerca un prodotto o chiedi un consiglio…"* / *"Search a product or ask for advice…"* (ARB, §8) — ma non filtra una lista: **apre la conversazione**.
+- **Mobile:** il tap sul campo di ricerca (o sull'icona lente) in Home/Negozio **naviga alla pagina chat** (`/assistant` — pagina separata a schermo intero, input con autofocus e tastiera aperta). È la stessa destinazione della tab centrale "Chat AI".
+- **Web desktop:** il focus/click sul campo di ricerca (o sulla pill flottante, sotto) **apre il pannello 70/30**; i caratteri già digitati nel campo vengono travasati nell'input della chat.
+- **Query "da catalogo" senza attrito:** input riconoscibili come nome prodotto/EAN ("oki task", "enterogermina") vengono intercettati **prima** dell'LLM e rispondono subito con card prodotto (router pre-LLM, §12.3): cercare per nome non deve costare né latenza né token.
+- **Degradazioni obbligatorie — la ricerca non può mai sparire:**
+  - **consenso art. 9 rifiutato** → il campo lavora in **modalità "solo risultati"**: fuzzy locale (`core/utils/fuzzy.dart`, ADR 0002), lista di card senza testo generato, invito discreto ad attivare l'assistente;
+  - **offline** (§9.1) → stessa modalità "solo risultati" sulla cache locale, con banner;
+  - **LLM giù** → fallback §12.3 + risultati fuzzy per le query da catalogo.
+- **Rollout:** la barra classica dello step 2.4 resta come **ponte** finché la chat non supera il gate 4B.8; lo scambio ricerca→chat avviene dietro **feature flag** al lancio dell'assistente (la chat non va in pubblico prima del red-team).
 
 **Web desktop (breakpoint ≥ 1024 px) — pagine Home e Catalogo:**
 - **Widget flottante in basso al centro**: pill arrotondata con icona assistente e testo invitante — IT: *"Sono il tuo assistente AI: dimmi cosa ti fa male o cosa cerchi"* / EN: *"I'm your AI assistant: tell me what hurts or what you're looking for"* (stringhe in ARB, §8). Stile: fondo bianco, bordo/icona **verde azione** `#1E7A3C`, ombra leggera; **non copre** contenuti critici né i pulsanti di acquisto; resta visibile allo scroll.
@@ -594,8 +605,8 @@ Una chat conversazionale, disponibile su web e mobile, in cui il cliente descriv
 
 **Mobile (app iOS/Android e web < 1024 px):**
 - **Nessun widget flottante.** La chat è una **voce della BottomNavigationBar**: **Home · Negozio · Chat AI · Carrello · Profilo** (§7.3; "Servizi" diventa card hero della Home come da alternativa §16.7). Icona assistente, posizione **centrale** evidenziata.
-- La tab apre la chat **a schermo intero**: stesso componente conversazione (header con badge AI, disclaimer, card prodotto, input) + **chip di avvio rapido** ("Mal di testa", "Raffreddore", "Consiglio pelle", "Parla col farmacista").
-- **Primo utilizzo:** una schermata di onboarding (cosa fa/cosa non fa l'assistente) con **consenso esplicito** (§12.5) prima del primo messaggio; il consenso non viene richiesto di nuovo.
+- **Due ingressi, una destinazione:** la tab centrale **e** il campo di ricerca/lente di Home e Negozio portano entrambi alla **stessa pagina chat a schermo intero** (`/assistant`, rotta separata): header con badge AI, disclaimer, card prodotto, input (autofocus quando si arriva dalla ricerca) + **chip di avvio rapido** ("Mal di testa", "Raffreddore", "Consiglio pelle", "Parla col farmacista").
+- **Primo utilizzo:** una schermata di onboarding (cosa fa/cosa non fa l'assistente) con **consenso esplicito** (§12.5) prima del primo messaggio; il consenso non viene richiesto di nuovo. Se l'utente rifiuta, la pagina resta utilizzabile in **modalità "solo risultati"** (fuzzy locale, nessun invio all'LLM — vedi sopra): la ricerca non è mai ostaggio del consenso.
 
 ### 12.7 Altre funzionalità AI (post-MVP)
 - **Raccomandazioni di prodotto** (su dati commerciali, non sanitari).
@@ -609,9 +620,10 @@ Tutte seguono il principio del §11: **logica e chiavi lato server**, contenuti 
 
 ## 13. Funzionalità di Prodotto
 
-### 13.1 Ricerca intelligente & barcode scanner
-- **Fuzzy search** con tolleranza ai refusi: per l'MVP è **client-side** (`core/utils/fuzzy.dart` — decisione registrata in **ADR 0002**, `docs/adr/`); la migrazione a **Typesense** (fuzzy + vettoriale per la chat §12.3, sync via Cloud Function) scatta quando il catalogo cresce oltre il "piccolo/medio" o allo step 4B.2 — a contratto app invariato.
-- **Nota per lo storefront SSR (§6):** la fuzzy client-side vive nella PWA; se lo storefront pubblico avrà una propria ricerca, userà query Firestore semplici (prefisso/categoria) finché non arriva Typesense, che a quel punto serve entrambe le superfici.
+### 13.1 Ricerca (conversazionale) & barcode scanner
+- **L'ingresso della ricerca cliente è la chat AI (§12.6):** il campo con lente non filtra una lista — apre l'assistente (pagina `/assistant` su mobile, pannello 70/30 su desktop). Le query "da nome prodotto" ricevono card immediate via **router pre-LLM** (§12.3); le richieste di consiglio proseguono nella pipeline guardrail.
+- **Il motore fuzzy resta, come capacità interna** (`core/utils/fuzzy.dart` — ADR 0002): alimenta il router pre-LLM, la modalità **"solo risultati"** (consenso rifiutato / offline / LLM giù) e le ricerche interne (admin, selettore prodotti). Migrazione a **Typesense** (fuzzy + vettoriale, sync via Cloud Function) quando il catalogo cresce o allo step 4B.2 — a contratto invariato. La **barra classica** costruita nello step 2.4 fa da ponte fino al lancio della chat (gate 4B.8), poi viene sostituita dall'entry point conversazionale dietro feature flag.
+- **Nota per lo storefront SSR (§6):** la fuzzy client-side vive nella PWA; se lo storefront pubblico avrà una propria ricerca, userà query Firestore semplici (prefisso/categoria) finché non arriva Typesense. Il widget chat delle pagine SSR (§12.6) copre anche lì il ruolo di ricerca conversazionale.
 - **Scansione del codice a barre** (fotocamera, solo mobile — su desktop/Windows fallback a inserimento EAN manuale, §4.4) per trovare e **riordinare** in un tap.
 
 ### 13.2 Abbonamenti e riacquisto (funzione)
@@ -638,7 +650,7 @@ Farmaci con prescrizione; **marketplace multi-farmacia**; **video-consulenza** a
 ## 15. Criteri di Accettazione (Definition of Done)
 
 **Funzionali**
-- Il cliente può **trovare** un prodotto (ricerca + barcode), **vederne la scheda bilingue**, **aggiungerlo al carrello**, **pagare** (ambiente sandbox) e **ricevere conferma** ordine.
+- Il cliente può **trovare** un prodotto (ricerca conversazionale via chat AI §12.6 + barcode), **vederne la scheda bilingue**, **aggiungerlo al carrello**, **pagare** (ambiente sandbox) e **ricevere conferma** ordine. Una query per nome ("okitask") produce le card corrette **anche senza consenso AI e offline** (modalità "solo risultati").
 - **Offline**, il catalogo già scaricato è navigabile; le azioni transazionali sono bloccate con messaggio chiaro.
 - L'admin può creare un prodotto da **foto + descrizione**, il backend genera **immagine WebP + testi IT/EN**, e il prodotto diventa visibile **solo dopo** il clic "Pubblica" del farmacista.
 - Un utente **non autorizzato** non raggiunge l'area admin e non può pubblicare.
@@ -646,7 +658,8 @@ Farmaci con prescrizione; **marketplace multi-farmacia**; **video-consulenza** a
 **Assistente AI cliente (§12)**
 - A un sintomo lieve ("mal di testa") la chat risponde in italiano con **massimo 3–5 prodotti, tutti esistenti nel catalogo pubblicato** (card reali con prezzo/foto); a un **red-flag** (es. "dolore al petto") **non propone prodotti** e rimanda a medico/112/farmacista.
 - La chat **non parte senza consenso esplicito** (art. 9); il badge/disclaimer AI è sempre visibile; il pulsante "Parla con il farmacista" è presente in ogni risposta.
-- **Web ≥1024 px:** su Home e Catalogo il widget flottante in basso al centro apre il pannello con l'animazione **70/30** (contenuto a sinistra, chat a destra), ESC/✕ la chiude, `prefers-reduced-motion` rispettato. **Mobile:** la chat è la **tab centrale** della bottom bar, a schermo intero.
+- **Web ≥1024 px:** su Home e Catalogo il widget flottante in basso al centro **e il focus sul campo di ricerca** aprono il pannello con l'animazione **70/30** (contenuto a sinistra, chat a destra), ESC/✕ la chiude, `prefers-reduced-motion` rispettato. **Mobile:** la chat è la **tab centrale** della bottom bar **e** la destinazione del tap su campo di ricerca/lente (pagina `/assistant` a schermo intero, autofocus sull'input).
+- Una query "da catalogo" (nome/EAN) riceve card **senza** passare dall'LLM (router pre-LLM §12.3); il rifiuto del consenso non blocca la ricerca (modalità "solo risultati").
 - Il farmacista vede il **registro conversazioni** (pseudonimizzato) e la inbox delle **escalation**; la batteria di **red-team clinico** (emergenze, pediatria, Rx, prompt injection) passa prima del lancio.
 - Il modello è **open-weights su inference EU**; nessuna chiamata a endpoint extra-UE per i messaggi chat (verificato dai log).
 

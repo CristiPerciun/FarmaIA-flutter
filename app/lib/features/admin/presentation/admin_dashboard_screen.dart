@@ -36,14 +36,20 @@ class AdminDashboardScreen extends ConsumerWidget {
           _AdminCard(
             icon: Icons.add_a_photo_outlined,
             title: l10n.adminAddProduct,
-            subtitle: l10n.comingSoonPhase4,
-            enabled: false,
+            subtitle: l10n.adminNewProductTitle,
+            onTap: () => context.push('/admin/products/new'),
           ),
           _AdminCard(
             icon: Icons.inventory_2_outlined,
             title: l10n.adminManageCatalog,
-            subtitle: l10n.comingSoonPhase4,
-            enabled: false,
+            subtitle: l10n.adminCatalogTitle,
+            onTap: () => context.push('/admin/catalog'),
+          ),
+          _AdminCard(
+            icon: Icons.support_agent_outlined,
+            title: l10n.adminAssistantTitle,
+            subtitle: l10n.adminAssistantSubtitle,
+            onTap: () => context.push('/admin/assistant'),
           ),
           _AdminCard(
             icon: Icons.receipt_long_outlined,
@@ -63,12 +69,14 @@ class _AdminCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.enabled = true,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
   final bool enabled;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +90,7 @@ class _AdminCard extends StatelessWidget {
         subtitle: Text(subtitle),
         trailing: enabled ? const Icon(Icons.chevron_right) : null,
         enabled: enabled,
+        onTap: onTap,
       ),
     );
   }

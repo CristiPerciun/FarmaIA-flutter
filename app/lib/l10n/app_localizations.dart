@@ -380,6 +380,144 @@ abstract class AppLocalizations {
   /// **'Gestione ordini'**
   String get adminManageOrders;
 
+  /// No description provided for @adminAssistantTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Assistente AI — supervisione'**
+  String get adminAssistantTitle;
+
+  /// No description provided for @adminAssistantSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Registro conversazioni, escalation, red-flag'**
+  String get adminAssistantSubtitle;
+
+  /// No description provided for @adminAssistantGuardrails.
+  ///
+  /// In it, this message translates to:
+  /// **'Liste red-flag e ricetta'**
+  String get adminAssistantGuardrails;
+
+  /// No description provided for @adminAssistantNoSessions.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna conversazione registrata.'**
+  String get adminAssistantNoSessions;
+
+  /// No description provided for @adminAssistantFilterAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte'**
+  String get adminAssistantFilterAll;
+
+  /// No description provided for @adminAssistantFilterRedFlag.
+  ///
+  /// In it, this message translates to:
+  /// **'Red-flag'**
+  String get adminAssistantFilterRedFlag;
+
+  /// No description provided for @adminAssistantFilterFlagged.
+  ///
+  /// In it, this message translates to:
+  /// **'Segnalate'**
+  String get adminAssistantFilterFlagged;
+
+  /// No description provided for @adminAssistantFilterEscalations.
+  ///
+  /// In it, this message translates to:
+  /// **'Escalation da gestire'**
+  String get adminAssistantFilterEscalations;
+
+  /// No description provided for @adminAssistantUser.
+  ///
+  /// In it, this message translates to:
+  /// **'Utente'**
+  String get adminAssistantUser;
+
+  /// No description provided for @adminAssistantTurns.
+  ///
+  /// In it, this message translates to:
+  /// **'turni'**
+  String get adminAssistantTurns;
+
+  /// No description provided for @adminAssistantTagRedFlag.
+  ///
+  /// In it, this message translates to:
+  /// **'RED-FLAG'**
+  String get adminAssistantTagRedFlag;
+
+  /// No description provided for @adminAssistantTagFlagged.
+  ///
+  /// In it, this message translates to:
+  /// **'SEGNALATA'**
+  String get adminAssistantTagFlagged;
+
+  /// No description provided for @adminAssistantTagEscalated.
+  ///
+  /// In it, this message translates to:
+  /// **'ESCALATION'**
+  String get adminAssistantTagEscalated;
+
+  /// No description provided for @adminAssistantSession.
+  ///
+  /// In it, this message translates to:
+  /// **'Conversazione'**
+  String get adminAssistantSession;
+
+  /// No description provided for @adminAssistantFlagWrong.
+  ///
+  /// In it, this message translates to:
+  /// **'Risposta scorretta'**
+  String get adminAssistantFlagWrong;
+
+  /// No description provided for @adminAssistantUnflag.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimuovi segnalazione'**
+  String get adminAssistantUnflag;
+
+  /// No description provided for @adminAssistantMarkHandled.
+  ///
+  /// In it, this message translates to:
+  /// **'Escalation gestita'**
+  String get adminAssistantMarkHandled;
+
+  /// No description provided for @adminAssistantReviewNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Nota di revisione'**
+  String get adminAssistantReviewNote;
+
+  /// No description provided for @adminAssistantReviewNoteHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosa c\'era di sbagliato? (alimenta la revisione di prompt e red-flag)'**
+  String get adminAssistantReviewNoteHint;
+
+  /// No description provided for @adminAssistantRedFlagList.
+  ///
+  /// In it, this message translates to:
+  /// **'Red-flag aggiuntive (della farmacia)'**
+  String get adminAssistantRedFlagList;
+
+  /// No description provided for @adminAssistantRxList.
+  ///
+  /// In it, this message translates to:
+  /// **'Termini con ricetta aggiuntivi'**
+  String get adminAssistantRxList;
+
+  /// No description provided for @adminAssistantAddTerm.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi termine…'**
+  String get adminAssistantAddTerm;
+
+  /// No description provided for @adminAssistantBuiltinNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Le liste di base integrate nel sistema restano sempre attive: qui aggiungi solo termini specifici della farmacia. Le modifiche valgono dal prossimo messaggio, senza deploy.'**
+  String get adminAssistantBuiltinNote;
+
   /// No description provided for @consentsTitle.
   ///
   /// In it, this message translates to:
@@ -703,6 +841,240 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Cerca prodotti, principi attivi…'**
   String get searchHint;
+
+  /// No description provided for @searchAssistantHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca un prodotto o chiedi un consiglio…'**
+  String get searchAssistantHint;
+
+  /// No description provided for @assistantTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Assistente'**
+  String get assistantTitle;
+
+  /// No description provided for @assistantBridgeNote.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'assistente conversazionale AI arriva presto. Per ora ti mostro i prodotti che corrispondono alla ricerca.'**
+  String get assistantBridgeNote;
+
+  /// No description provided for @assistantEmptyPrompt.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrivi il nome di un prodotto o un principio attivo per cercarlo nel catalogo.'**
+  String get assistantEmptyPrompt;
+
+  /// No description provided for @assistantQuickChipHeadache.
+  ///
+  /// In it, this message translates to:
+  /// **'Mal di testa'**
+  String get assistantQuickChipHeadache;
+
+  /// No description provided for @assistantQuickChipCold.
+  ///
+  /// In it, this message translates to:
+  /// **'Raffreddore'**
+  String get assistantQuickChipCold;
+
+  /// No description provided for @assistantQuickChipSkin.
+  ///
+  /// In it, this message translates to:
+  /// **'Consiglio pelle'**
+  String get assistantQuickChipSkin;
+
+  /// No description provided for @assistantQuickChipPharmacist.
+  ///
+  /// In it, this message translates to:
+  /// **'Parla col farmacista'**
+  String get assistantQuickChipPharmacist;
+
+  /// No description provided for @assistantBadgeAi.
+  ///
+  /// In it, this message translates to:
+  /// **'AI'**
+  String get assistantBadgeAi;
+
+  /// No description provided for @assistantDisclaimer.
+  ///
+  /// In it, this message translates to:
+  /// **'Non sono un medico né un farmacista. Per casi seri rivolgiti al 112 o al tuo medico.'**
+  String get assistantDisclaimer;
+
+  /// No description provided for @assistantWelcome.
+  ///
+  /// In it, this message translates to:
+  /// **'Ciao! Dimmi cosa ti serve o descrivi un piccolo disturbo: ti propongo prodotti dal nostro catalogo.'**
+  String get assistantWelcome;
+
+  /// No description provided for @assistantInputHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrivi un messaggio…'**
+  String get assistantInputHint;
+
+  /// No description provided for @assistantSend.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia'**
+  String get assistantSend;
+
+  /// No description provided for @assistantNewConversation.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuova conversazione'**
+  String get assistantNewConversation;
+
+  /// No description provided for @assistantPanelTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Assistente AI'**
+  String get assistantPanelTitle;
+
+  /// No description provided for @assistantClose.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiudi'**
+  String get assistantClose;
+
+  /// No description provided for @assistantPillLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Sono il tuo assistente AI: dimmi cosa ti fa male o cosa cerchi'**
+  String get assistantPillLabel;
+
+  /// No description provided for @assistantTalkToPharmacist.
+  ///
+  /// In it, this message translates to:
+  /// **'Parla con il farmacista'**
+  String get assistantTalkToPharmacist;
+
+  /// No description provided for @assistantEscalationSent.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiesta inviata: un farmacista ti risponderà al più presto.'**
+  String get assistantEscalationSent;
+
+  /// No description provided for @assistantRedFlagHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Caso serio: rivolgiti a un professionista'**
+  String get assistantRedFlagHint;
+
+  /// No description provided for @assistantRouterIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Trovato nel catalogo:'**
+  String get assistantRouterIntro;
+
+  /// No description provided for @assistantOfflineFallback.
+  ///
+  /// In it, this message translates to:
+  /// **'Non riesco a contattare l\'assistente. Ecco alcuni risultati dal catalogo; per un consiglio scrivi al farmacista.'**
+  String get assistantOfflineFallback;
+
+  /// No description provided for @assistantDailyLimit.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai raggiunto il limite giornaliero di messaggi. Riprova domani.'**
+  String get assistantDailyLimit;
+
+  /// No description provided for @assistantSessionLimit.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa conversazione è troppo lunga: iniziane una nuova.'**
+  String get assistantSessionLimit;
+
+  /// No description provided for @assistantErrorGeneric.
+  ///
+  /// In it, this message translates to:
+  /// **'Qualcosa è andato storto. Riprova.'**
+  String get assistantErrorGeneric;
+
+  /// No description provided for @assistantOfflineBanner.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei offline: ricerca sul catalogo salvato, senza assistente.'**
+  String get assistantOfflineBanner;
+
+  /// No description provided for @assistantResultsOnlyBanner.
+  ///
+  /// In it, this message translates to:
+  /// **'Assistente disattivato: vedi solo i risultati di ricerca.'**
+  String get assistantResultsOnlyBanner;
+
+  /// No description provided for @assistantUnavailableBanner.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'assistente non è al momento disponibile: ecco la ricerca classica.'**
+  String get assistantUnavailableBanner;
+
+  /// No description provided for @assistantEnableCta.
+  ///
+  /// In it, this message translates to:
+  /// **'Attiva'**
+  String get assistantEnableCta;
+
+  /// No description provided for @assistantOnboardingTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Il tuo assistente AI'**
+  String get assistantOnboardingTitle;
+
+  /// No description provided for @assistantDoes1.
+  ///
+  /// In it, this message translates to:
+  /// **'Ti suggerisce prodotti da banco del nostro catalogo, come farebbe un commesso esperto.'**
+  String get assistantDoes1;
+
+  /// No description provided for @assistantDoes2.
+  ///
+  /// In it, this message translates to:
+  /// **'Riconosce i casi seri e ti indirizza subito a medico, 112 o farmacista.'**
+  String get assistantDoes2;
+
+  /// No description provided for @assistantDoes3.
+  ///
+  /// In it, this message translates to:
+  /// **'Ha sempre il farmacista al tuo fianco: puoi chiamarlo in ogni momento.'**
+  String get assistantDoes3;
+
+  /// No description provided for @assistantDoesnt1.
+  ///
+  /// In it, this message translates to:
+  /// **'Non fa diagnosi e non sostituisce il medico o il farmacista.'**
+  String get assistantDoesnt1;
+
+  /// No description provided for @assistantDoesnt2.
+  ///
+  /// In it, this message translates to:
+  /// **'Non consiglia farmaci con obbligo di ricetta né dosaggi fuori scheda.'**
+  String get assistantDoesnt2;
+
+  /// No description provided for @assistantConsentTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Consenso ai dati sulla salute (art. 9 GDPR)'**
+  String get assistantConsentTitle;
+
+  /// No description provided for @assistantConsentBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Quello che scrivi in chat può includere dati sulla salute. Con il tuo consenso viene inviato al nostro assistente su server in UE, usato solo per suggerirti prodotti e conservato al massimo 90 giorni. Puoi revocare il consenso quando vuoi dal profilo; senza consenso resta attiva la ricerca classica.'**
+  String get assistantConsentBody;
+
+  /// No description provided for @assistantConsentAccept.
+  ///
+  /// In it, this message translates to:
+  /// **'Accetto e inizio'**
+  String get assistantConsentAccept;
+
+  /// No description provided for @assistantConsentDecline.
+  ///
+  /// In it, this message translates to:
+  /// **'Non ora: solo risultati'**
+  String get assistantConsentDecline;
 
   /// No description provided for @searchNoResults.
   ///
@@ -1153,6 +1525,330 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Qualcosa è andato storto. Riprova.'**
   String get genericErrorRetry;
+
+  /// No description provided for @adminNewProductTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo prodotto'**
+  String get adminNewProductTitle;
+
+  /// No description provided for @adminEditProductTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica prodotto'**
+  String get adminEditProductTitle;
+
+  /// No description provided for @adminCatalogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestione catalogo'**
+  String get adminCatalogTitle;
+
+  /// No description provided for @adminProductNameIt.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome prodotto (IT)'**
+  String get adminProductNameIt;
+
+  /// No description provided for @adminProductNameEn.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome prodotto (EN)'**
+  String get adminProductNameEn;
+
+  /// No description provided for @adminProductType.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo'**
+  String get adminProductType;
+
+  /// No description provided for @adminPriceList.
+  ///
+  /// In it, this message translates to:
+  /// **'Prezzo di listino (centesimi)'**
+  String get adminPriceList;
+
+  /// No description provided for @adminPriceSale.
+  ///
+  /// In it, this message translates to:
+  /// **'Prezzo scontato (centesimi, 0 = nessuno)'**
+  String get adminPriceSale;
+
+  /// No description provided for @adminVatRate.
+  ///
+  /// In it, this message translates to:
+  /// **'Aliquota IVA (%)'**
+  String get adminVatRate;
+
+  /// No description provided for @adminStock.
+  ///
+  /// In it, this message translates to:
+  /// **'Giacenza'**
+  String get adminStock;
+
+  /// No description provided for @adminAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Disponibile'**
+  String get adminAvailable;
+
+  /// No description provided for @adminAssistantEligible.
+  ///
+  /// In it, this message translates to:
+  /// **'Suggeribile dall\'assistente AI'**
+  String get adminAssistantEligible;
+
+  /// No description provided for @adminAssistantEligibleHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Se disattivato, l\'assistente non proporrà mai questo prodotto (§12.3).'**
+  String get adminAssistantEligibleHint;
+
+  /// No description provided for @adminCeMarking.
+  ///
+  /// In it, this message translates to:
+  /// **'Marcatura CE (dispositivi)'**
+  String get adminCeMarking;
+
+  /// No description provided for @adminPickImage.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli foto'**
+  String get adminPickImage;
+
+  /// No description provided for @adminTakePhoto.
+  ///
+  /// In it, this message translates to:
+  /// **'Scatta foto'**
+  String get adminTakePhoto;
+
+  /// No description provided for @adminImageSelected.
+  ///
+  /// In it, this message translates to:
+  /// **'Immagine pronta al caricamento'**
+  String get adminImageSelected;
+
+  /// No description provided for @adminCreateDraft.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea bozza'**
+  String get adminCreateDraft;
+
+  /// No description provided for @adminDraftCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'Bozza creata'**
+  String get adminDraftCreated;
+
+  /// No description provided for @adminSave.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva'**
+  String get adminSave;
+
+  /// No description provided for @adminSaved.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifiche salvate'**
+  String get adminSaved;
+
+  /// No description provided for @adminGenerateTexts.
+  ///
+  /// In it, this message translates to:
+  /// **'Genera testi con AI'**
+  String get adminGenerateTexts;
+
+  /// No description provided for @adminGeneratingTexts.
+  ///
+  /// In it, this message translates to:
+  /// **'Generazione in corso…'**
+  String get adminGeneratingTexts;
+
+  /// No description provided for @adminTextsGenerated.
+  ///
+  /// In it, this message translates to:
+  /// **'Testi generati — da revisionare'**
+  String get adminTextsGenerated;
+
+  /// No description provided for @adminAiGeneratedBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'AI'**
+  String get adminAiGeneratedBadge;
+
+  /// No description provided for @adminAiImageStatusLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Immagine AI'**
+  String get adminAiImageStatusLabel;
+
+  /// No description provided for @adminReviewNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Revisiona posologia e controindicazioni (IT+EN) prima di pubblicare.'**
+  String get adminReviewNote;
+
+  /// No description provided for @adminPublish.
+  ///
+  /// In it, this message translates to:
+  /// **'Pubblica'**
+  String get adminPublish;
+
+  /// No description provided for @adminPublished.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotto pubblicato'**
+  String get adminPublished;
+
+  /// No description provided for @adminCannotPublishMedicine.
+  ///
+  /// In it, this message translates to:
+  /// **'Per pubblicare un medicinale servono posologia e controindicazioni in IT ed EN.'**
+  String get adminCannotPublishMedicine;
+
+  /// No description provided for @adminUnpublish.
+  ///
+  /// In it, this message translates to:
+  /// **'Riporta in bozza'**
+  String get adminUnpublish;
+
+  /// No description provided for @adminArchive.
+  ///
+  /// In it, this message translates to:
+  /// **'Archivia'**
+  String get adminArchive;
+
+  /// No description provided for @adminArchived.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotto archiviato'**
+  String get adminArchived;
+
+  /// No description provided for @adminFieldShortDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione breve'**
+  String get adminFieldShortDescription;
+
+  /// No description provided for @adminFieldDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get adminFieldDescription;
+
+  /// No description provided for @adminFieldActiveIngredient.
+  ///
+  /// In it, this message translates to:
+  /// **'Principio attivo'**
+  String get adminFieldActiveIngredient;
+
+  /// No description provided for @adminFieldPosology.
+  ///
+  /// In it, this message translates to:
+  /// **'Posologia'**
+  String get adminFieldPosology;
+
+  /// No description provided for @adminFieldContraindications.
+  ///
+  /// In it, this message translates to:
+  /// **'Controindicazioni'**
+  String get adminFieldContraindications;
+
+  /// No description provided for @adminFieldWarnings.
+  ///
+  /// In it, this message translates to:
+  /// **'Avvertenze'**
+  String get adminFieldWarnings;
+
+  /// No description provided for @adminSectionBasics.
+  ///
+  /// In it, this message translates to:
+  /// **'Dati di base'**
+  String get adminSectionBasics;
+
+  /// No description provided for @adminSectionTexts.
+  ///
+  /// In it, this message translates to:
+  /// **'Contenuti (IT / EN)'**
+  String get adminSectionTexts;
+
+  /// No description provided for @adminSectionPublish.
+  ///
+  /// In it, this message translates to:
+  /// **'Pubblicazione'**
+  String get adminSectionPublish;
+
+  /// No description provided for @adminNoProducts.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun prodotto. Creane uno con \"Aggiungi prodotto\".'**
+  String get adminNoProducts;
+
+  /// No description provided for @adminReviewedBy.
+  ///
+  /// In it, this message translates to:
+  /// **'Approvato da {uid}'**
+  String adminReviewedBy(String uid);
+
+  /// No description provided for @productTypeSop.
+  ///
+  /// In it, this message translates to:
+  /// **'Medicinale SOP'**
+  String get productTypeSop;
+
+  /// No description provided for @productTypeOtc.
+  ///
+  /// In it, this message translates to:
+  /// **'Medicinale OTC'**
+  String get productTypeOtc;
+
+  /// No description provided for @productTypeParafarmaco.
+  ///
+  /// In it, this message translates to:
+  /// **'Parafarmaco'**
+  String get productTypeParafarmaco;
+
+  /// No description provided for @productTypeIntegratore.
+  ///
+  /// In it, this message translates to:
+  /// **'Integratore'**
+  String get productTypeIntegratore;
+
+  /// No description provided for @productTypeCosmetico.
+  ///
+  /// In it, this message translates to:
+  /// **'Cosmetico'**
+  String get productTypeCosmetico;
+
+  /// No description provided for @productTypeDispositivoMedico.
+  ///
+  /// In it, this message translates to:
+  /// **'Dispositivo medico'**
+  String get productTypeDispositivoMedico;
+
+  /// No description provided for @statusDraft.
+  ///
+  /// In it, this message translates to:
+  /// **'Bozza'**
+  String get statusDraft;
+
+  /// No description provided for @statusPendingReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Da revisionare'**
+  String get statusPendingReview;
+
+  /// No description provided for @statusPublished.
+  ///
+  /// In it, this message translates to:
+  /// **'Pubblicato'**
+  String get statusPublished;
+
+  /// No description provided for @statusArchived.
+  ///
+  /// In it, this message translates to:
+  /// **'Archiviato'**
+  String get statusArchived;
 }
 
 class _AppLocalizationsDelegate

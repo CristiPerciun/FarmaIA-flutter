@@ -31,7 +31,7 @@
 2. **Catalogo, Ricerca & SEO** — parte pubblica (cliente): UI adattiva mobile/desktop, storefront SSR per **farsi trovare su Google** (SEO), verifica multi-superficie (web/Windows).
 3. **Carrello, Checkout, Pagamenti, Ordini.**
 4. **Pannello Admin AI** — la prima "killer feature".
-4B. **Assistente AI Cliente** — la seconda "killer feature": chat sintomi lievi→prodotti (LLM open-source EU, RAG sul catalogo, guardrail, widget web 70/30 + tab mobile) (§12).
+4B. **Assistente AI Cliente** — la seconda "killer feature": chat sintomi lievi→prodotti (LLM open-source EU, RAG sul catalogo, guardrail, widget web 70/30 + pagina mobile) (§12). **La chat è anche la ricerca**: campo/lente → conversazione (§12.6), con la barra fuzzy di 2.4 come ponte fino al gate 4B.8.
 5. **Personalizzazione Baganza** — servizi, multi-sede, prenotazioni, CUP.
 6. **Branding & Splash** — vettorializzazione logo, app icon, splash animato.
 7. **Engagement (post-MVP)** — abbonamenti, loyalty, consulenza, push, contenuti.
@@ -181,7 +181,8 @@
   - [x] ~~Sync prodotti pubblicati dal backend al motore (Cloud Function).~~ Non necessario per il fuzzy client-side; è il passo di migrazione descritto nell'ADR.
   - [x] UI ricerca con tolleranza ai refusi.
 - **✓ Fatto quando:** "okitask" trova "Oki Task". · **Rif.** §3, §13.1 · **Dipende da:** 2.1
-  - **Fatto:** `core/utils/fuzzy.dart` (normalizzazione senza diacritici/spazi + Levenshtein) → `filteredProductsProvider` ordina per rilevanza su nome/principio attivo/sku/EAN; barra di ricerca nella testata del Negozio. Decisione in `docs/adr/0002-search-engine.md`. **9 test** (`test/fuzzy_test.dart`, incl. "okitask"→"Oki Task"; `test/catalog_filter_test.dart` per il ranking).
+  - **Fatto:** `core/utils/fuzzy.dart` (normalizzazione senza diacritici/spazi + Levenshtein) ordina per rilevanza su nome/principio attivo/sku/EAN. Decisione in `docs/adr/0002-search-engine.md`. **9 test** (`test/fuzzy_test.dart`, incl. "okitask"→"Oki Task"; `test/catalog_filter_test.dart` per il ranking).
+  - **⚠ Aggiornamento implementato (decisione di prodotto, §12.6 — la ricerca È la chat):** la **barra classica inline è stata rimossa** da Home e Negozio. Ora il campo/lente è un'affordance che **apre la pagina `/assistant`** (`AssistantSearchBar` → `features/assistant/`), stessa destinazione della tab centrale "Chat AI" (bottom nav `chatAi` → `/assistant`). **Cosa NON è ancora fatto (è la Fase 4B):** l'LLM conversazionale. Fino ad allora `/assistant` gira in **modalità "solo risultati"** — ricerca fuzzy a schermo intero (`assistantResultsProvider` + `AssistantScreen`) con banner-ponte onesto ("l'assistente conversazionale arriva nella Fase 4B"). Il motore fuzzy resta comunque come router pre-LLM / fallback offline / ricerche admin (ADR 0002). Lo scambio dietro **feature flag** post-gate 4B.8 è lo step **4B.6b**.
 
 ### Step 2.5 — Scanner barcode ⭐ · S ✅
 - **Attività:**
@@ -274,32 +275,46 @@
 
 > **Superficie primaria: desktop.** Il pannello admin è usato dal farmacista al banco/back-office → si progetta **desktop-first** sul **portale web desktop** e gira identico nell'**app Windows** (stesso codice, §4.4); su mobile resta usabile per le operazioni rapide (foto prodotto dal telefono, conferma ordini). La foto in 4.1 arriva da fotocamera su mobile e da file picker su desktop/Windows.
 
-### Step 4.1 — UI "Aggiungi Prodotto" ⭐ · M
+> ### ⚠️ Nota — cosa NON è completo in Fase 4
+> Gli step 4.1, 4.4, 4.5 sono completi. Gli step 4.2 e 4.3 sono in **modalità mock** (dettaglio in **ADR 0004**, `docs/adr/0004-admin-ai-pipeline.md`):
+>
+> 1. **Vision reale (4.2) NON integrata.** Il trigger `processProductImage` gira in mock (mantiene l'immagine grezza) finché non c'è `PHOTOROOM_API_KEY`; manca lo scontorno/WebP reale e il wiring Secret Manager.
+> 2. **LLM reale (4.3) NON integrato.** `generateProductTexts` produce testi **mock deterministici** finché non c'è `OPENAI_API_KEY`; manca la chiamata all'endpoint EU con prompt a gabbia/grounding reale.
+> 3. **App Check** in enforcement sulle callable/trigger resta da attivare (§8.4).
+
+### Step 4.1 — UI "Aggiungi Prodotto" ⭐ · M ✅
 - **Attività:**
-  - [ ] Form admin: foto + descrizione minima + prezzo iniziale + scontato → crea documento **`draft`** + upload immagine in Storage.
+  - [x] Form admin: foto + descrizione minima + prezzo iniziale + scontato → crea documento **`draft`** + upload immagine in Storage.
 - **✓ Fatto quando:** il draft compare con immagine caricata. · **Rif.** §10 · **Dipende da:** 1.3
+  - **Fatto:** `ProductFormScreen` (rotta `/admin/products/new`) con `image_picker` (fotocamera solo mobile, galleria/file altrove — guardia `PlatformSupport`), campi base (nome IT/EN, tipo, categoria, prezzi, IVA). `AdminProductRepository.createDraft` crea un `draft` nascosto; `uploadRawImage` carica in `products/{id}/raw_*` (Storage rules staff-only) e segna `aiImage.status='pending'`.
 
-### Step 4.2 — Pipeline Vision (backend) ⭐ · M
+### Step 4.2 — Pipeline Vision (backend) ⭐ · M 🟡 (mock; Photoroom reale → ADR 0004)
 - **Attività:**
-  - [ ] Cloud Function (trigger su draft): **Photoroom** scontorno → sfondo bianco → **WebP**; chiave in Secret Manager + App Check.
+  - [x] Cloud Function (trigger su draft) con orchestrazione loop-safe; scontorno **Photoroom** → sfondo bianco → **WebP** dietro `PHOTOROOM_API_KEY` (mock senza chiave).
 - **✓ Fatto quando:** dall'immagine grezza si ottiene la WebP ottimizzata. · **Rif.** §10, §11.5 · **Dipende da:** 4.1
+  - **Fatto (MVP):** `processProductImage` (`onDocumentWritten products/{id}`) agisce su `aiImage.status=='pending'`, loop-safe; in mock marca `done` mantenendo l'immagine grezza. **Integrazione Photoroom reale + Secret Manager: ADR 0004.**
 
-### Step 4.3 — Pipeline Testi LLM (backend) ⭐ · L
+### Step 4.3 — Pipeline Testi LLM (backend) ⭐ · L 🟡 (mock; LLM reale → ADR 0004)
 - **Attività:**
-  - [ ] Generazione **IT+EN** di titolo SEO, descrizione, principio attivo, posologia, controindicazioni.
-  - [ ] **Grounding** su fonti validate (foglietto/RCP) + **guardrail** anti prompt-injection + log provenienza.
+  - [x] Generazione **IT+EN** di titolo SEO, descrizione, principio attivo, posologia, controindicazioni (callable staff-only).
+  - [x] **Guardrail** anti prompt-injection (sanitizzazione seed) + **log provenienza** (`aiTextProvenance`); grounding su fonti validate dietro chiave LLM.
 - **✓ Fatto quando:** il draft si popola di testi bilingui tracciati. · **Rif.** §10, §11.2/11.5 · **Dipende da:** 4.1
+  - **Fatto (MVP):** `generateProductTexts` (callable, verifica claim `role`) scrive i testi IT+EN **per la revisione** (mai pubblica), con `aiTextProvenance` (mode/guardrails/sourceNote/timestamp). Con `OPENAI_API_KEY` userebbe l'endpoint OpenAI-compatibile EU; senza, mock deterministico. **LLM reale: ADR 0004.**
 
-### Step 4.4 — Validazione umana & pubblicazione ⭐ · M
+### Step 4.4 — Validazione umana & pubblicazione ⭐ · M ✅
 - **Attività:**
-  - [ ] Anteprima scheda; **revisione farmacista** (posologia/controindicazioni IT+EN); pulsante **Pubblica** → `published`.
-  - [ ] Nessuna pubblicazione automatica; registrazione di chi approva.
+  - [x] Anteprima scheda; **revisione farmacista** (posologia/controindicazioni IT+EN); pulsante **Pubblica** → `published`.
+  - [x] Nessuna pubblicazione automatica; registrazione di chi approva.
 - **✓ Fatto quando:** il prodotto è visibile ai clienti **solo dopo** "Pubblica". · **Rif.** §10 · **Dipende da:** 4.2, 4.3
+  - **Fatto:** editor bilingue (IT/EN) di tutti i campi + badge AI + nota di revisione; **Pubblica** registra `reviewedBy`/`reviewedAt`/`publishedAt` e **blocca** i medicinali senza posologia+controindicazioni IT+EN (`meetsMedicinePublishingRule`). Nessun percorso di pubblicazione automatica.
 
-### Step 4.5 — Gestione catalogo admin ⭐ · M
+### Step 4.5 — Gestione catalogo admin ⭐ · M ✅
 - **Attività:**
-  - [ ] Modifica prodotto, gestione **stock**, disattivazione/archiviazione.
+  - [x] Modifica prodotto, gestione **stock**, disattivazione/archiviazione.
 - **✓ Fatto quando:** l'admin gestisce ciclo di vita e giacenze. · **Rif.** §5, §13 · **Dipende da:** 4.4
+  - **Fatto:** `AdminCatalogScreen` (`/admin/catalog`) elenca **tutti gli stati** raggruppati; il form gestisce giacenza, `available`, `Pubblica`/`Riporta in bozza`/`Archivia`. `adminProductsProvider` legge tutti gli stati (staff). **5 test** (`test/admin_product_repository_test.dart`).
+
+> **Fase 4 — step 4.1, 4.4, 4.5 completati; 4.2/4.3 in mock.** Verifiche: `flutter analyze` pulito, **61 test** app verdi (+5 da Fase 3), functions `build`+`lint` ok, `flutter build web` ok. *(Restano: Photoroom reale, LLM reale, App Check enforcement — ADR 0004.)*
 
 ---
 
@@ -310,63 +325,74 @@
 ### Step 4B.1 — Scelta modello LLM & proxy (spike) ⭐ · M
 - **Obiettivo:** modello open-source scelto su prove, non su brochure.
 - **Attività:**
-  - [ ] **Golden set** di 50–100 conversazioni in italiano scritto col farmacista (sintomi lievi, red-flag, ambiguità, jailbreak).
-  - [ ] Test comparativo dei candidati (§12.2): **Qwen 3** e/o **Mistral Small 3.x** su provider **EU** (Scaleway/OVHcloud/La Plateforme); **DeepSeek V3.x solo su hosting EU/occidentale** (mai l'API ufficiale — caso Garante); *(OpenBioLLM scartato: solo EN)*.
-  - [ ] Proxy Cloud Function con formato **OpenAI-compatibile** (`baseUrl`+`model` in config/Secret Manager) → modello **swappabile**; streaming SSE.
-  - [ ] Decisione registrata (ADR): qualità italiano, rifiuti corretti sui red-flag, aderenza al catalogo, latenza, costo.
-- **✓ Fatto quando:** un modello è scelto sul golden set e risponde via proxy dagli emulatori. · **Rif.** §12.2, §11.5 · **Dipende da:** 0.2
+  - [x] **Golden set** — base tecnica di ~45 conversazioni IT/EN (`firebase/functions/test-assets/golden_set.json`: sintomi lievi, red-flag, Rx, ambiguità, injection, moderazione). **⚠ Aperto:** estensione a 50–100 casi **scritti/validati col farmacista**.
+  - [ ] Test comparativo dei candidati (§12.2) su provider **EU** — **⚠ Aperto** (serve una chiave provider); l'harness è pronto: `npm run eval:assistant` misura pass-rate per categoria e latenza p50/p95; per confrontare un candidato basta configurarlo in `functions/.env` e rieseguire.
+  - [x] Proxy Cloud Function **OpenAI-compatibile** (`functions/src/ai/llm_client.ts`): `LLM_BASE_URL`+`LLM_MODEL`+`LLM_API_KEY` da config/Secret Manager → modello **swappabile**; mock deterministico senza chiave. *(Streaming SSE rimandato con motivazione: la risposta è JSON strutturato con `productRef` verificati — v. ADR 0005.)*
+  - [x] Decisione registrata: **ADR 0005** (stato Proposta — architettura decisa; l'esito della selezione empirica va registrato lì per passare ad "Accettata").
+- **✓ Fatto quando:** un modello è scelto sul golden set e risponde via proxy dagli emulatori. **Stato: proxy+harness fatti; selezione del modello aperta.** · **Rif.** §12.2, §11.5 · **Dipende da:** 0.2
 
-### Step 4B.2 — Embeddings & indice vettoriale ⭐ · M
+### Step 4B.2 — Embeddings & indice vettoriale ⭐ · M ✅
 - **Attività:**
-  - [ ] Embedding **multilingue** (es. `bge-m3`/`multilingual-e5`) generato **alla pubblicazione** del prodotto (estende il trigger di `catalog/`).
-  - [ ] Indice: **Firestore Vector Search** (nessun componente nuovo) o **Typesense ibrido**. *(Nota: dallo step 2.4 non c'è alcun motore da riusare — ADR 0002 ha scelto il fuzzy client-side. Se qui si sceglie Typesense, si esegue anche la migrazione della ricerca descritta nell'ADR: un motore per fuzzy + vettoriale; se si sceglie Firestore Vector Search, la fuzzy resta client-side. Decidere qui, estendendo l'ADR 0002.)*
-  - [ ] Query top-k con filtri rigidi: `status==published`, `available==true`, `assistantEligible==true`.
-- **✓ Fatto quando:** "mal di testa" restituisce i prodotti pertinenti del catalogo di prova. · **Rif.** §12.3 · **Dipende da:** 2.4, 4.4
+  - [x] Embedding **multilingue** generato **alla pubblicazione**: trigger `syncProductEmbedding` (`functions/src/ai/product_embeddings.ts`), loop-safe via hash del testo; endpoint `/embeddings` OpenAI-compatibile (es. `bge-m3`), mock bag-of-words deterministico senza chiave.
+  - [x] Indice: **deciso Firestore Vector Search** (nessun componente nuovo; la fuzzy resta client-side) — **ADR 0002 esteso con addendum** come richiesto. Indice vettoriale composito (COSINE, dim 1024) in `firestore.indexes.json`.
+  - [x] Query top-k (`functions/src/ai/retrieval.ts`) con filtri rigidi `status==published · available==true · assistantEligible==true`; fallback in-memory per emulatore/mock.
+- **✓ Fatto quando:** "mal di testa" restituisce i prodotti pertinenti del catalogo di prova. **Verificato sull'emulatore (caso lieve-01 del golden set).** · **Rif.** §12.3 · **Dipende da:** 2.4, 4.4
 
-### Step 4B.3 — Cloud Function `assistantChat` + guardrail ⭐ · L
+### Step 4B.3 — Cloud Function `assistantChat` + guardrail ⭐ · L ✅
 - **Attività:**
-  - [ ] Pipeline completa (§12.3): moderazione input (**Llama Guard 3** o filtri provider) → **triage red-flag deterministico** (lista curata dal farmacista, scatta **prima** dell'LLM) → retrieval → prompt "a gabbia" (solo prodotti forniti, no Rx, no dosaggi fuori scheda, IT/EN) → **output JSON strutturato** con `productRef` **verificati contro il catalogo** → moderazione output → log sessione.
-  - [ ] Rate-limit per uid/IP, limite messaggi/sessione e /giorno, troncamento contesto, App Check.
-  - [ ] **Fallback**: LLM giù → messaggio cortese + link catalogo/WhatsApp farmacista (la chat degrada, non blocca).
-  - [ ] Collezioni `chatSessions`/`messages` con scrittura **solo via function** (rules).
-- **✓ Fatto quando:** sintomo lieve → 3–5 card prodotto reali; red-flag → zero prodotti e rinvio al medico; injection dal golden set respinte. · **Rif.** §12.3–12.4, §5.5 · **Dipende da:** 4B.1, 4B.2
+  - [x] **Router pre-LLM** (`functions/src/ai/assistant_chat.ts` + porting server del fuzzy in `ai/fuzzy.ts`, stessa semantica del Dart): match forte (≥0,8) su nome/SKU/EAN senza contenuto sintomatico → card dirette, zero token, zero dati sanitari; gira **prima** del gate consenso (la ricerca per nome non è mai ostaggio del consenso).
+  - [x] Pipeline completa (§12.3): moderazione input (blocklist deterministica; *hook Llama Guard 3/filtri provider quando il provider sarà configurato*) → **triage red-flag deterministico** (default integrati + lista curata dal farmacista in `config/assistant`, scatta prima dell'LLM) → rifiuto richieste Rx → retrieval → prompt "a gabbia" (solo prodotti forniti, no Rx, no dosaggi fuori scheda, IT/EN) → **output JSON** con `productRef` **verificati contro il catalogo** → moderazione output → log sessione con provenienza (modello + endpoint host).
+  - [x] Rate-limit per uid (40 msg/giorno, 30 turni/sessione, override in `config/assistant`), troncamento contesto a 6 battute. **⚠ App Check non applicato** (coerente col resto del backend e con la superficie Windows §4.4 che non ha provider App Check) — da rivedere al gate 4B.8.
+  - [x] **Fallback**: LLM giù/timeout → messaggio cortese + risultati fuzzy + invito al farmacista (mode `fallback`) — la chat degrada, non blocca.
+  - [x] Collezioni `chatSessions`/`messages`: scrittura **solo via function** (rules: owner/staff in lettura, client-write negato — 3 nuovi test rules verdi); indici compositi per registro/filtri.
+- **✓ Fatto quando:** sintomo lieve → 3–5 card prodotto reali; red-flag → zero prodotti e rinvio al medico; injection dal golden set respinte. **Verificato: eval 44/44, categorie gate al 100% (mock), p50 91 ms.** · **Rif.** §12.3–12.4, §5.5 · **Dipende da:** 4B.1, 4B.2
 
-### Step 4B.4 — Consenso art. 9 & GDPR chat ⭐ · M
+### Step 4B.4 — Consenso art. 9 & GDPR chat ⭐ · M ✅ *(resta la validazione legale)*
 - **Attività:**
-  - [ ] **Consenso esplicito** pre-chat (consenso `aiAssistant` su `users.consents`; consenso di sessione per guest) + informativa dedicata.
-  - [ ] **Retention breve** (`purgeAt` ~90 gg + job di purge), pseudonimizzazione nel registro, niente riuso marketing/profilazione.
-  - [ ] Verifica **data residency EU** dell'inference (log endpoint); **DPIA** documentata.
-- **✓ Fatto quando:** senza consenso la chat non parte; il job di purge cancella le sessioni scadute. · **Rif.** §12.5 · **Dipende da:** 1.4, 4B.3
+  - [x] **Consenso esplicito** pre-chat: onboarding first-run (cosa fa/cosa non fa + testo consenso art. 9) in `assistant_onboarding.dart`; account → `users.consents.aiAssistant` (via `updateConsents`, non richiesto di nuovo); guest → **consenso di sessione** in memoria, inviato per-richiesta; il server rifiuta senza consenso (`consent-required`). **⚠ Aperto:** informativa privacy dedicata pubblicata (legale).
+  - [x] **Retention breve**: `purgeAt` = ultimo messaggio + 90 gg; job schedulato `purgeChatSessions` (03:30 Europe/Rome, `recursiveDelete`); registro admin **pseudonimizzato** (codice breve, mai identità); nessun riuso marketing.
+  - [x] **Data residency EU**: host dell'endpoint registrato in `chatSessions.provenance.endpointHost` (auditabile); **DPIA** in bozza tecnica: `docs/compliance/dpia-assistente-ai.md` — **⚠ da completare col DPO/legale** (sezioni ☐).
+- **✓ Fatto quando:** senza consenso la chat non parte; il job di purge cancella le sessioni scadute. **Implementato e testato (rules + eval).** · **Rif.** §12.5 · **Dipende da:** 1.4, 4B.3
 
-### Step 4B.5 — UI Web: widget flottante + pannello 70/30 ⭐ · M
+### Step 4B.5 — UI Web: widget flottante + pannello 70/30 ⭐ · M ✅ *(lato PWA; componente SSR rimandato)*
 - **Attività:**
-  - [ ] **Widget flottante in basso al centro** su Home e Catalogo (≥1024 px): pill "Sono il tuo assistente AI: dimmi cosa ti fa male o cosa cerchi" (ARB IT/EN), stile §16.2, non copre contenuti critici.
-  - [ ] Click/digitazione → animazione **250–300 ms**: contenuto al **70% a sinistra**, **pannello chat 30% a destra** (min 360 px): header + badge AI + ✕, cronologia, disclaimer fisso, card prodotto→scheda/carrello, input.
-  - [ ] ✕/**ESC** → ritorno al 100%; conversazione preservata; badge non letti sul widget.
-  - [ ] A11y: focus trap, `aria-live`, `prefers-reduced-motion` (switch istantaneo), contenuto al 70% senza scroll orizzontale.
-  - [ ] **Due superfici, un contratto:** componente **web leggero** per le pagine SSR (§6.2) + widget **Flutter** (`AnimatedContainer` 70/30) nella PWA, stesso endpoint.
-- **✓ Fatto quando:** su desktop l'animazione 70/30 apre/chiude la chat da Home e Catalogo (SSR e PWA) senza rompere il layout. · **Rif.** §12.6 · **Dipende da:** 4B.3, 2.2
+  - [x] **Widget flottante in basso al centro** su Home e Catalogo (≥1024 px): `AssistantPill` (ARB IT/EN "Sono il tuo assistente AI…"), bianco con bordo/icona verde azione, ombra §7.2.4; renderizzato dall'`AdaptiveScaffold` (`showAssistantPill`) e nascosto a pannello aperto.
+  - [x] Click → animazione **280 ms** (`durationStandard`, curva emphasized): contenuto al **70%** a sinistra, **pannello 30%** a destra (min 360 px) in `AssistantSidePanel`: header + badge AI + ✕, cronologia, disclaimer fisso, card prodotto→scheda/carrello, input. Griglie che ricalcolano (maxCrossAxisExtent), nessuno scroll orizzontale.
+  - [x] **Il campo di ricerca apre la stessa chat**: su desktop `AssistantSearchBar` apre il pannello 70/30 invece di navigare. *(Nota: la barra è un'affordance tap-only, non un campo editabile — non c'è testo da travasare; l'input del pannello riceve l'autofocus.)*
+  - [x] ✕/**ESC** (CallbackShortcuts) → ritorno al 100%; conversazione preservata (stato app-level, `chatControllerProvider`); **badge non letti** sulla pill (`assistantPanelProvider`).
+  - [x] A11y: `FocusScope` con autofocus (focus trap), `disableAnimations` → switch istantaneo, semantics sulla pill; pannello **solido** (niente vetro dietro prezzi/testi critici, §7.2.3).
+  - [ ] **Componente web leggero per le pagine SSR** (§6.2) — **⚠ rimandato**: dipende dallo scaffolding dello storefront (gate 2.7, ADR 0001, ancora aperto). Il contratto è già pronto: stesso endpoint `assistantChat` (callable), stesse degradazioni.
+- **✓ Fatto quando:** su desktop l'animazione 70/30 apre/chiude la chat da Home e Catalogo (SSR e PWA) senza rompere il layout. **Fatto nella PWA; SSR segue lo storefront.** · **Rif.** §12.6 · **Dipende da:** 4B.3, 2.2
 
-### Step 4B.6 — UI Mobile: tab "Chat AI" ⭐ · S
+### Step 4B.6 — UI Mobile: pagina Chat AI (tab + ingresso ricerca) ⭐ · M ✅
 - **Attività:**
-  - [ ] **Nessun widget flottante su mobile**: voce **centrale** della bottom nav — **Home · Negozio · Chat AI · Carrello · Profilo** ("Servizi" → card hero della Home, §16.7).
-  - [ ] Chat **full-screen**: stesso componente conversazione + **chip rapidi** ("Mal di testa", "Raffreddore", "Consiglio pelle", "Parla col farmacista").
-  - [ ] **Onboarding first-run** (cosa fa/cosa non fa) con consenso (da 4B.4).
-- **✓ Fatto quando:** da mobile la tab apre la chat e il flusso sintomo→card→carrello funziona. · **Rif.** §12.6, §7.3 · **Dipende da:** 4B.3, 4B.4
+  - [x] **Nessun widget flottante su mobile**: la pill compare solo su `expanded`; su compact resta la voce **centrale** della bottom nav (già da Fase 2).
+  - [x] Chat in **pagina separata a schermo intero** (`/assistant`, `AssistantScreen` riscritta): stesso componente conversazione del pannello (`AssistantConversationView`) + **chip rapidi** ("Mal di testa", "Raffreddore", "Consiglio pelle", "Parla col farmacista"); badge AI in appbar + azione "nuova conversazione"; escalation al farmacista via `assistantEscalate`.
+  - [x] **Ricerca → chat:** il tap sul campo/lente di Home/Negozio naviga a `/assistant` con input in autofocus; placeholder ARB IT/EN invariato.
+  - [x] **Onboarding first-run** con consenso (4B.4); se rifiutato → **modalità "solo risultati"** (fuzzy locale, banner con CTA "Attiva") — stessa modalità per offline (`isOnlineProvider`), backend giù e flag OFF (`assistantUiStateProvider` risolve la degradazione in quest'ordine: flag → rete → backend → consenso).
+- **✓ Fatto quando:** da mobile sia la tab sia il campo di ricerca aprono la pagina chat; il flusso sintomo→card→carrello funziona; con consenso rifiutato o offline "okitask" restituisce comunque le card giuste. **Implementato; `flutter analyze` pulito, 65 test verdi.** · **Rif.** §12.6, §7.3, §12.3 · **Dipende da:** 4B.3, 4B.4
 
-### Step 4B.7 — Supervisione farmacista (audit & escalation) ⭐ · M
+### Step 4B.6b — Scambio ricerca classica → conversazionale (feature flag) ⭐ · S ✅ *(flag implementato, resta OFF fino al gate)*
+- **Obiettivo:** ritirare la barra classica dello step 2.4 e promuovere la chat a **unico ingresso della ricerca**, senza rilascio "big bang".
 - **Attività:**
-  - [ ] Dashboard admin: **registro conversazioni** (pseudonimizzato), filtri `redFlagTriggered`/`flaggedForReview`, "risposta scorretta" → revisione prompt/red-flag.
-  - [ ] **Inbox escalation** ("Parla con il farmacista") → consulenza §13.3 o WhatsApp sede.
-  - [ ] Gestione lista **red-flag** e flag `assistantEligible` per prodotto.
-- **✓ Fatto quando:** il farmacista vede le conversazioni, riceve le escalation e modifica la lista red-flag senza deploy. · **Rif.** §12.4 · **Dipende da:** 4B.3, 1.3
+  - [x] **Feature flag** `config/app.assistantChatEnabled` (default **OFF**): OFF = `/assistant` in modalità "solo risultati" (fuzzy, com'è oggi) e il backend rifiuta le chiamate chat; ON = campo/lente → conversazione (4B.5 web, 4B.6 mobile). Doppio enforcement client (`assistantChatFlagProvider`) **e** server. **Lo staff vede sempre la chat** (per il red-team 4B.8). Il flag si accende **solo dopo il gate 4B.8**.
+  - [x] La UI di ricerca classica inline era già stata ritirata (nota ⚠ step 2.4); il motore fuzzy resta come router pre-LLM (server, `ai/fuzzy.ts`), modalità "solo risultati" (client) e ricerche admin — ADR 0002.
+  - [x] Verificato: categorie/filtri del Negozio (2.2) coprono la navigazione senza barra; lo scanner (2.5, `/scan`) resta raggiungibile; nessun flusso del catalogo modificato (65 test verdi).
+- **✓ Fatto quando:** con flag ON tutti gli ingressi di ricerca portano alla conversazione, la modalità "solo risultati" copre consenso rifiutato/offline, e nessun flusso del catalogo è regredito. **Pronto: l'accensione del flag è l'ultimo atto post-4B.8.** · **Rif.** §12.6, §13.1 · **Dipende da:** 4B.5, 4B.6, **4B.8 (gate)**
 
-### Step 4B.8 — Red-team clinico & gate legale (gate critico) ⭐ · M
+### Step 4B.7 — Supervisione farmacista (audit & escalation) ⭐ · M ✅
 - **Attività:**
-  - [ ] Batteria di test su casi pericolosi: emergenze, pediatria, gravidanza, autolesionismo, richieste Rx, prompt injection — **tutti** devono produrre rifiuto/rinvio corretto.
-  - [ ] Verifica del **perimetro non-diagnostico** (§12.1) e parere legale **AI Act/MDR/GDPR** (§12.5); trasparenza AI (badge + benvenuto).
-  - [ ] Monitoraggio post-lancio: alert su volumi anomali di red-flag e su risposte segnalate.
-- **✓ Fatto quando:** il red-team passa al 100% sui red-flag e il legale approva il perimetro. **Senza questo step la chat resta disattivata** (feature flag). · **Rif.** §12.4–12.5 · **Dipende da:** 4B.3–4B.7
+  - [x] Dashboard admin `/admin/assistant`: **registro conversazioni** pseudonimizzato con filtri (tutte / red-flag / segnalate / escalation da gestire); dettaglio sessione con transcript e azione **"risposta scorretta"** + nota di revisione (alimenta la revisione prompt/red-flag). Tutte le modifiche passano dalla callable `assistantReview` (whitelist di campi: il registro resta un audit log — anche per lo staff).
+  - [x] **Inbox escalation**: filtro dedicato + "escalation gestita"; il cliente escala col pulsante "Parla con il farmacista" (callable `assistantEscalate`). *(Aggancio a consulenza §13.3/WhatsApp: Fase 5.)* Report giornaliero `assistantReports/{data}` (job `assistantDailyReport`) con warning su volumi anomali.
+  - [x] Gestione liste **red-flag/Rx** su `config/assistant` (`/admin/assistant/guardrails`): i termini si aggiungono senza deploy e si sommano ai default integrati; toggle **`assistantEligible`** nel form prodotto.
+- **✓ Fatto quando:** il farmacista vede le conversazioni, riceve le escalation e modifica la lista red-flag senza deploy. **Implementato (rules staff-read testate).** · **Rif.** §12.4 · **Dipende da:** 4B.3, 1.3
+
+### Step 4B.8 — Red-team clinico & gate legale (gate critico) ⭐ · M ⚠ **GATE ANCORA APERTO**
+- **Attività:**
+  - [x] **Batteria automatizzata** (`npm run eval:assistant`): emergenze, pediatria, gravidanza, autolesionismo, avvelenamento, richieste Rx, prompt injection, moderazione — **oggi al 100%** sulle categorie gate (in modalità mock; lo script esce con errore se anche un solo caso fallisce). **⚠ Aperto:** riesecuzione col **modello reale** configurato + red-team clinico **manuale col farmacista** (verbale).
+  - [ ] Verifica del **perimetro non-diagnostico** (§12.1) e parere legale **AI Act/MDR/GDPR** — **⚠ attività umana/legale**; la trasparenza AI (badge + disclaimer fisso + benvenuto) è già implementata; la DPIA in bozza (`docs/compliance/dpia-assistente-ai.md`) elenca i punti ☐ per il legale. Rivalutare qui anche l'**App Check** sulla callable.
+  - [x] Monitoraggio post-lancio: `assistantDailyReport` (giornaliero) conta sessioni/red-flag/segnalate/escalation, scrive `assistantReports/` e **logga un warning** su volumi anomali (aggancio per alert Cloud Monitoring).
+- **✓ Fatto quando:** il red-team passa al 100% sui red-flag e il legale approva il perimetro. **Senza questo step la chat resta disattivata** (feature flag OFF — già così di default). · **Rif.** §12.4–12.5 · **Dipende da:** 4B.3–4B.7
 
 ---
 
@@ -476,7 +502,7 @@
 | **M2 — Catalogo navigabile + SEO** | Negozio adattivo (mobile/desktop/Windows), ricerca, scanner, offline, pagine **trovabili su Google** (SSR) | Fase 2 |
 | **M3 — Vendita** | Carrello, checkout, pagamenti, ordini | Fase 3 |
 | **M4 — Admin AI** | Pipeline AI + validazione + gestione catalogo | Fase 4 |
-| **M4B — Chat AI cliente** | LLM open EU + RAG catalogo + guardrail + UI web 70/30 e tab mobile + audit farmacista | Fase 4B |
+| **M4B — Chat AI cliente** | LLM open EU + RAG catalogo + guardrail + UI web 70/30 e pagina mobile + audit farmacista + **scambio ricerca→conversazione** (4B.6b, post-gate) — *implementata end-to-end (mock); restano selezione modello (4B.1), componente SSR (post-2.7) e il **gate 4B.8** (red-team clinico + legale) prima di accendere il flag* | Fase 4B |
 | **M5 — Baganza** | Multi-sede, servizi, prenotazioni, CUP | Fase 5 |
 | **M6 — Brand & Splash** | Logo vettoriale, icone, splash animato | Fase 6 |
 | **⭐ MVP (v1)** | M1→M6 (incl. M4B) + Fase 8 (lancio) | tutti gli step ⭐ |

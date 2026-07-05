@@ -247,6 +247,95 @@ async function seed() {
     shippingCost: 490,
     defaultVatRate: 22,
   });
+  // The app and `createOrder` read `config/app` (§5.4). The assistant chat
+  // feature flag ships OFF: it turns on only after the 4B.8 red-team gate
+  // (step 4B.6b). Staff can always test regardless of the flag.
+  batch.set(db.doc("config/app"), {
+    freeShippingThreshold: 4900,
+    shippingCost: 490,
+    defaultVatRate: 22,
+    assistantChatEnabled: false,
+  });
+  // Pharmacist-curated assistant lists (step 4B.7): merged with the
+  // built-in defaults in `ai/guardrails.ts`, editable without a deploy.
+  batch.set(db.doc("config/assistant"), {
+    redFlags: ["dolore addominale forte", "vomito con sangue"],
+    rxTerms: [],
+    maxPerDay: 40,
+    maxPerSession: 30,
+    updatedAt: now,
+  });
+
+  // --- assistant chat sessions (Fase 4B demo data for the admin registry) ---
+  const purgeAt = Timestamp.fromMillis(
+    now.toMillis() + 90 * 24 * 60 * 60 * 1000);
+  batch.set(db.doc("chatSessions/demo_session_ok"), {
+    userRef: "users/uid_cliente_77",
+    consentType: "account",
+    locale: "it",
+    surface: "mobile",
+    startedAt: now,
+    lastMessageAt: now,
+    turnCount: 1,
+    redFlagTriggered: false,
+    escalated: false,
+    escalationHandled: false,
+    flaggedForReview: false,
+    reviewNote: null,
+    provenance: {mode: "mock", model: "mock", endpointHost: "unconfigured"},
+    purgeAt,
+  });
+  batch.set(db.doc("chatSessions/demo_session_ok/messages/m1"), {
+    role: "user",
+    text: "Cosa posso prendere per il mal di testa?",
+    productIds: [],
+    mode: "mock",
+    redFlag: false,
+    createdAt: now,
+  });
+  batch.set(db.doc("chatSessions/demo_session_ok/messages/m2"), {
+    role: "assistant",
+    text: "Ecco alcuni prodotti del nostro catalogo che potrebbero " +
+      "esserti utili. Leggi sempre il foglietto illustrativo.",
+    productIds: ["prod_oki_task"],
+    mode: "mock",
+    redFlag: false,
+    createdAt: Timestamp.fromMillis(now.toMillis() + 1),
+  });
+  batch.set(db.doc("chatSessions/demo_session_redflag"), {
+    userRef: "users/uid_cliente_77",
+    consentType: "session",
+    locale: "it",
+    surface: "desktop",
+    startedAt: now,
+    lastMessageAt: now,
+    turnCount: 1,
+    redFlagTriggered: true,
+    escalated: true,
+    escalationHandled: false,
+    flaggedForReview: false,
+    reviewNote: null,
+    escalatedAt: now,
+    provenance: {mode: "redflag", model: "mock", endpointHost: "unconfigured"},
+    purgeAt,
+  });
+  batch.set(db.doc("chatSessions/demo_session_redflag/messages/m1"), {
+    role: "user",
+    text: "Ho un forte dolore al petto da stamattina",
+    productIds: [],
+    mode: "redflag",
+    redFlag: true,
+    createdAt: now,
+  });
+  batch.set(db.doc("chatSessions/demo_session_redflag/messages/m2"), {
+    role: "assistant",
+    text: "Quello che descrivi merita l'attenzione di un professionista. " +
+      "Se i sintomi sono gravi o improvvisi chiama il 112.",
+    productIds: [],
+    mode: "redflag",
+    redFlag: true,
+    createdAt: Timestamp.fromMillis(now.toMillis() + 1),
+  });
 
   await batch.commit();
 

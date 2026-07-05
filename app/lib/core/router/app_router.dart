@@ -4,7 +4,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/account/presentation/consents_screen.dart';
 import '../../features/account/presentation/profile_screen.dart';
+import '../../features/admin/presentation/admin_assistant_guardrails_screen.dart';
+import '../../features/admin/presentation/admin_assistant_screen.dart';
+import '../../features/admin/presentation/admin_assistant_session_screen.dart';
+import '../../features/admin/presentation/admin_catalog_screen.dart';
 import '../../features/admin/presentation/admin_dashboard_screen.dart';
+import '../../features/admin/presentation/product_form_screen.dart';
+import '../../features/assistant/presentation/assistant_screen.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
@@ -18,10 +24,8 @@ import '../../features/checkout/presentation/payment_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/orders/presentation/order_detail_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
-import '../../features/shell/presentation/coming_soon_screen.dart';
 import '../../features/style_guide/presentation/style_guide_screen.dart';
 import '../../l10n/app_localizations.dart';
-import '../widgets/adaptive_scaffold.dart';
 import 'transitions.dart';
 
 /// Route prefixes that require a signed-in user (§9.2). `/admin` additionally
@@ -99,17 +103,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ScanScreen(),
       ),
       GoRoute(
-        path: '/chat',
-        name: 'chat',
-        builder: (context, state) {
-          final l10n = AppLocalizations.of(context)!;
-          return ComingSoonScreen(
-            tab: AppTab.chatAi,
-            title: l10n.navChatAi,
-            message: l10n.comingSoonPhase4,
-            icon: Icons.chat_bubble_outline,
-          );
-        },
+        path: '/assistant',
+        name: 'assistant',
+        builder: (context, state) => const AssistantScreen(),
       ),
       GoRoute(
         path: '/cart',
@@ -187,6 +183,46 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/admin',
         name: 'admin',
         builder: (context, state) => const AdminDashboardScreen(),
+        routes: [
+          GoRoute(
+            path: 'catalog',
+            name: 'adminCatalog',
+            builder: (context, state) => const AdminCatalogScreen(),
+          ),
+          GoRoute(
+            path: 'products/new',
+            name: 'adminProductNew',
+            builder: (context, state) => const ProductFormScreen(),
+          ),
+          GoRoute(
+            path: 'products/:id',
+            name: 'adminProductEdit',
+            builder: (context, state) =>
+                ProductFormScreen(productId: state.pathParameters['id']),
+          ),
+          // Assistant supervision (§12.4, step 4B.7). 'guardrails' must stay
+          // before ':id' so it is not captured as a session id.
+          GoRoute(
+            path: 'assistant',
+            name: 'adminAssistant',
+            builder: (context, state) => const AdminAssistantScreen(),
+            routes: [
+              GoRoute(
+                path: 'guardrails',
+                name: 'adminAssistantGuardrails',
+                builder: (context, state) =>
+                    const AdminAssistantGuardrailsScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                name: 'adminAssistantSession',
+                builder: (context, state) => AdminAssistantSessionScreen(
+                  sessionId: state.pathParameters['id']!,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

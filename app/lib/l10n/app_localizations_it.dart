@@ -156,6 +156,79 @@ class AppLocalizationsIt extends AppLocalizations {
   String get adminManageOrders => 'Gestione ordini';
 
   @override
+  String get adminAssistantTitle => 'Assistente AI — supervisione';
+
+  @override
+  String get adminAssistantSubtitle =>
+      'Registro conversazioni, escalation, red-flag';
+
+  @override
+  String get adminAssistantGuardrails => 'Liste red-flag e ricetta';
+
+  @override
+  String get adminAssistantNoSessions => 'Nessuna conversazione registrata.';
+
+  @override
+  String get adminAssistantFilterAll => 'Tutte';
+
+  @override
+  String get adminAssistantFilterRedFlag => 'Red-flag';
+
+  @override
+  String get adminAssistantFilterFlagged => 'Segnalate';
+
+  @override
+  String get adminAssistantFilterEscalations => 'Escalation da gestire';
+
+  @override
+  String get adminAssistantUser => 'Utente';
+
+  @override
+  String get adminAssistantTurns => 'turni';
+
+  @override
+  String get adminAssistantTagRedFlag => 'RED-FLAG';
+
+  @override
+  String get adminAssistantTagFlagged => 'SEGNALATA';
+
+  @override
+  String get adminAssistantTagEscalated => 'ESCALATION';
+
+  @override
+  String get adminAssistantSession => 'Conversazione';
+
+  @override
+  String get adminAssistantFlagWrong => 'Risposta scorretta';
+
+  @override
+  String get adminAssistantUnflag => 'Rimuovi segnalazione';
+
+  @override
+  String get adminAssistantMarkHandled => 'Escalation gestita';
+
+  @override
+  String get adminAssistantReviewNote => 'Nota di revisione';
+
+  @override
+  String get adminAssistantReviewNoteHint =>
+      'Cosa c\'era di sbagliato? (alimenta la revisione di prompt e red-flag)';
+
+  @override
+  String get adminAssistantRedFlagList =>
+      'Red-flag aggiuntive (della farmacia)';
+
+  @override
+  String get adminAssistantRxList => 'Termini con ricetta aggiuntivi';
+
+  @override
+  String get adminAssistantAddTerm => 'Aggiungi termine…';
+
+  @override
+  String get adminAssistantBuiltinNote =>
+      'Le liste di base integrate nel sistema restano sempre attive: qui aggiungi solo termini specifici della farmacia. Le modifiche valgono dal prossimo messaggio, senza deploy.';
+
+  @override
   String get consentsTitle => 'Consensi e privacy';
 
   @override
@@ -338,6 +411,143 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get searchHint => 'Cerca prodotti, principi attivi…';
+
+  @override
+  String get searchAssistantHint => 'Cerca un prodotto o chiedi un consiglio…';
+
+  @override
+  String get assistantTitle => 'Assistente';
+
+  @override
+  String get assistantBridgeNote =>
+      'L\'assistente conversazionale AI arriva presto. Per ora ti mostro i prodotti che corrispondono alla ricerca.';
+
+  @override
+  String get assistantEmptyPrompt =>
+      'Scrivi il nome di un prodotto o un principio attivo per cercarlo nel catalogo.';
+
+  @override
+  String get assistantQuickChipHeadache => 'Mal di testa';
+
+  @override
+  String get assistantQuickChipCold => 'Raffreddore';
+
+  @override
+  String get assistantQuickChipSkin => 'Consiglio pelle';
+
+  @override
+  String get assistantQuickChipPharmacist => 'Parla col farmacista';
+
+  @override
+  String get assistantBadgeAi => 'AI';
+
+  @override
+  String get assistantDisclaimer =>
+      'Non sono un medico né un farmacista. Per casi seri rivolgiti al 112 o al tuo medico.';
+
+  @override
+  String get assistantWelcome =>
+      'Ciao! Dimmi cosa ti serve o descrivi un piccolo disturbo: ti propongo prodotti dal nostro catalogo.';
+
+  @override
+  String get assistantInputHint => 'Scrivi un messaggio…';
+
+  @override
+  String get assistantSend => 'Invia';
+
+  @override
+  String get assistantNewConversation => 'Nuova conversazione';
+
+  @override
+  String get assistantPanelTitle => 'Assistente AI';
+
+  @override
+  String get assistantClose => 'Chiudi';
+
+  @override
+  String get assistantPillLabel =>
+      'Sono il tuo assistente AI: dimmi cosa ti fa male o cosa cerchi';
+
+  @override
+  String get assistantTalkToPharmacist => 'Parla con il farmacista';
+
+  @override
+  String get assistantEscalationSent =>
+      'Richiesta inviata: un farmacista ti risponderà al più presto.';
+
+  @override
+  String get assistantRedFlagHint =>
+      'Caso serio: rivolgiti a un professionista';
+
+  @override
+  String get assistantRouterIntro => 'Trovato nel catalogo:';
+
+  @override
+  String get assistantOfflineFallback =>
+      'Non riesco a contattare l\'assistente. Ecco alcuni risultati dal catalogo; per un consiglio scrivi al farmacista.';
+
+  @override
+  String get assistantDailyLimit =>
+      'Hai raggiunto il limite giornaliero di messaggi. Riprova domani.';
+
+  @override
+  String get assistantSessionLimit =>
+      'Questa conversazione è troppo lunga: iniziane una nuova.';
+
+  @override
+  String get assistantErrorGeneric => 'Qualcosa è andato storto. Riprova.';
+
+  @override
+  String get assistantOfflineBanner =>
+      'Sei offline: ricerca sul catalogo salvato, senza assistente.';
+
+  @override
+  String get assistantResultsOnlyBanner =>
+      'Assistente disattivato: vedi solo i risultati di ricerca.';
+
+  @override
+  String get assistantUnavailableBanner =>
+      'L\'assistente non è al momento disponibile: ecco la ricerca classica.';
+
+  @override
+  String get assistantEnableCta => 'Attiva';
+
+  @override
+  String get assistantOnboardingTitle => 'Il tuo assistente AI';
+
+  @override
+  String get assistantDoes1 =>
+      'Ti suggerisce prodotti da banco del nostro catalogo, come farebbe un commesso esperto.';
+
+  @override
+  String get assistantDoes2 =>
+      'Riconosce i casi seri e ti indirizza subito a medico, 112 o farmacista.';
+
+  @override
+  String get assistantDoes3 =>
+      'Ha sempre il farmacista al tuo fianco: puoi chiamarlo in ogni momento.';
+
+  @override
+  String get assistantDoesnt1 =>
+      'Non fa diagnosi e non sostituisce il medico o il farmacista.';
+
+  @override
+  String get assistantDoesnt2 =>
+      'Non consiglia farmaci con obbligo di ricetta né dosaggi fuori scheda.';
+
+  @override
+  String get assistantConsentTitle =>
+      'Consenso ai dati sulla salute (art. 9 GDPR)';
+
+  @override
+  String get assistantConsentBody =>
+      'Quello che scrivi in chat può includere dati sulla salute. Con il tuo consenso viene inviato al nostro assistente su server in UE, usato solo per suggerirti prodotti e conservato al massimo 90 giorni. Puoi revocare il consenso quando vuoi dal profilo; senza consenso resta attiva la ricerca classica.';
+
+  @override
+  String get assistantConsentAccept => 'Accetto e inizio';
+
+  @override
+  String get assistantConsentDecline => 'Non ora: solo risultati';
 
   @override
   String searchNoResults(String query) {
@@ -584,4 +794,172 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get genericErrorRetry => 'Qualcosa è andato storto. Riprova.';
+
+  @override
+  String get adminNewProductTitle => 'Nuovo prodotto';
+
+  @override
+  String get adminEditProductTitle => 'Modifica prodotto';
+
+  @override
+  String get adminCatalogTitle => 'Gestione catalogo';
+
+  @override
+  String get adminProductNameIt => 'Nome prodotto (IT)';
+
+  @override
+  String get adminProductNameEn => 'Nome prodotto (EN)';
+
+  @override
+  String get adminProductType => 'Tipo';
+
+  @override
+  String get adminPriceList => 'Prezzo di listino (centesimi)';
+
+  @override
+  String get adminPriceSale => 'Prezzo scontato (centesimi, 0 = nessuno)';
+
+  @override
+  String get adminVatRate => 'Aliquota IVA (%)';
+
+  @override
+  String get adminStock => 'Giacenza';
+
+  @override
+  String get adminAvailable => 'Disponibile';
+
+  @override
+  String get adminAssistantEligible => 'Suggeribile dall\'assistente AI';
+
+  @override
+  String get adminAssistantEligibleHint =>
+      'Se disattivato, l\'assistente non proporrà mai questo prodotto (§12.3).';
+
+  @override
+  String get adminCeMarking => 'Marcatura CE (dispositivi)';
+
+  @override
+  String get adminPickImage => 'Scegli foto';
+
+  @override
+  String get adminTakePhoto => 'Scatta foto';
+
+  @override
+  String get adminImageSelected => 'Immagine pronta al caricamento';
+
+  @override
+  String get adminCreateDraft => 'Crea bozza';
+
+  @override
+  String get adminDraftCreated => 'Bozza creata';
+
+  @override
+  String get adminSave => 'Salva';
+
+  @override
+  String get adminSaved => 'Modifiche salvate';
+
+  @override
+  String get adminGenerateTexts => 'Genera testi con AI';
+
+  @override
+  String get adminGeneratingTexts => 'Generazione in corso…';
+
+  @override
+  String get adminTextsGenerated => 'Testi generati — da revisionare';
+
+  @override
+  String get adminAiGeneratedBadge => 'AI';
+
+  @override
+  String get adminAiImageStatusLabel => 'Immagine AI';
+
+  @override
+  String get adminReviewNote =>
+      'Revisiona posologia e controindicazioni (IT+EN) prima di pubblicare.';
+
+  @override
+  String get adminPublish => 'Pubblica';
+
+  @override
+  String get adminPublished => 'Prodotto pubblicato';
+
+  @override
+  String get adminCannotPublishMedicine =>
+      'Per pubblicare un medicinale servono posologia e controindicazioni in IT ed EN.';
+
+  @override
+  String get adminUnpublish => 'Riporta in bozza';
+
+  @override
+  String get adminArchive => 'Archivia';
+
+  @override
+  String get adminArchived => 'Prodotto archiviato';
+
+  @override
+  String get adminFieldShortDescription => 'Descrizione breve';
+
+  @override
+  String get adminFieldDescription => 'Descrizione';
+
+  @override
+  String get adminFieldActiveIngredient => 'Principio attivo';
+
+  @override
+  String get adminFieldPosology => 'Posologia';
+
+  @override
+  String get adminFieldContraindications => 'Controindicazioni';
+
+  @override
+  String get adminFieldWarnings => 'Avvertenze';
+
+  @override
+  String get adminSectionBasics => 'Dati di base';
+
+  @override
+  String get adminSectionTexts => 'Contenuti (IT / EN)';
+
+  @override
+  String get adminSectionPublish => 'Pubblicazione';
+
+  @override
+  String get adminNoProducts =>
+      'Nessun prodotto. Creane uno con \"Aggiungi prodotto\".';
+
+  @override
+  String adminReviewedBy(String uid) {
+    return 'Approvato da $uid';
+  }
+
+  @override
+  String get productTypeSop => 'Medicinale SOP';
+
+  @override
+  String get productTypeOtc => 'Medicinale OTC';
+
+  @override
+  String get productTypeParafarmaco => 'Parafarmaco';
+
+  @override
+  String get productTypeIntegratore => 'Integratore';
+
+  @override
+  String get productTypeCosmetico => 'Cosmetico';
+
+  @override
+  String get productTypeDispositivoMedico => 'Dispositivo medico';
+
+  @override
+  String get statusDraft => 'Bozza';
+
+  @override
+  String get statusPendingReview => 'Da revisionare';
+
+  @override
+  String get statusPublished => 'Pubblicato';
+
+  @override
+  String get statusArchived => 'Archiviato';
 }

@@ -9,6 +9,7 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "seed": "node scripts/seed.mjs",
+    "eval:assistant": "node scripts/eval_assistant.mjs",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },

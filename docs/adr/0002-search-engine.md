@@ -29,3 +29,26 @@ migrare a **Typesense** (copre fuzzy **e** vettoriale, §4B.2) con una Cloud
 Function `products/onWrite → sync` che indicizza solo i prodotti `published`.
 Il contratto pubblico lato app (`Fuzzy.fuzzyScore` / `filteredProductsProvider`)
 resta stabile: cambia solo la sorgente dei risultati.
+
+## Addendum 2026-07-05 — indice vettoriale per la chat (step 4B.2)
+
+Lo step 4B.2 richiedeva di decidere qui tra Firestore Vector Search e
+Typesense ibrido. **Decisione: Firestore Vector Search** (nessun componente
+nuovo); la fuzzy **resta client-side** come da MVP.
+
+- **Perché:** a questo volume di catalogo Typesense aggiungerebbe un servizio
+  da gestire solo per unificare due ricerche che funzionano già; Firestore
+  Vector Search riusa il database esistente e il trigger di pubblicazione.
+- **Implementato:** trigger `syncProductEmbedding`
+  (`functions/src/ai/product_embeddings.ts`) — embedding multilingue della
+  scheda validata alla pubblicazione (provider OpenAI-compatibile, es.
+  `bge-m3`; mock deterministico senza chiave); retrieval top-k
+  (`functions/src/ai/retrieval.ts`) con filtri rigidi
+  `status==published · available==true · assistantEligible==true`, indice
+  vettoriale composito in `firestore.indexes.json` (dimensione 1024, COSINE)
+  e fallback in-memory per emulatore/mock.
+- **Il porting server del fuzzy** (`functions/src/ai/fuzzy.ts`) serve il
+  router pre-LLM (§12.6) e mantiene la stessa semantica del Dart
+  (`okitask → Oki Task`): tenere i due file allineati.
+- La migrazione a Typesense resta il percorso quando il catalogo crescerà:
+  questo addendum non la esclude, la rimanda.

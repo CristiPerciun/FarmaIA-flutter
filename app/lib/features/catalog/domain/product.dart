@@ -123,6 +123,7 @@ class Product {
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
+    this.aiImageStatus,
   });
 
   factory Product.fromJson(Map<String, dynamic> json, String id) => Product(
@@ -160,6 +161,9 @@ class Product {
     publishedAt: dateFromJson(json['publishedAt']),
     createdAt: dateFromJson(json['createdAt']),
     updatedAt: dateFromJson(json['updatedAt']),
+    aiImageStatus: json['aiImage'] is Map
+        ? (json['aiImage'] as Map)['status'] as String?
+        : null,
   );
 
   final String id;
@@ -191,6 +195,10 @@ class Product {
   final DateTime? publishedAt;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+
+  /// Status of the AI Vision pipeline for the product image (§4.2), read from
+  /// the server-managed `aiImage.status` field. Not written back by the client.
+  final String? aiImageStatus;
 
   /// Whether this product carries the medicine treatment (page separation +
   /// ministerial logo, §9.2, §16.8).

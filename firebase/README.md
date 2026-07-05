@@ -69,8 +69,30 @@ I seguenti secret vanno configurati in Google Cloud Secret Manager e referenziat
 | `STRIPE_SECRET_KEY` | Pagamenti carta |
 | `PAYPAL_CLIENT_SECRET` | Pagamenti PayPal |
 | `SATISPAY_API_KEY` | Pagamenti Satispay |
+| `LLM_BASE_URL` / `LLM_MODEL` / `LLM_API_KEY` | Assistente cliente (Fase 4B, provider EU OpenAI-compatibile — ADR 0005) |
+| `EMBEDDING_BASE_URL` / `EMBEDDING_MODEL` / `EMBEDDING_API_KEY` | Embeddings RAG catalogo (default: endpoint LLM) |
 
 Copiare `functions/.env.example` in `functions/.env` per lo sviluppo locale con emulatori (non committare `.env`).
+
+## Assistente cliente (Fase 4B)
+
+Senza chiavi LLM le funzioni girano in **modalità mock deterministica**: tutta
+la pipeline (router pre-LLM → guardrail → retrieval → risposta → log su
+`chatSessions`) è testabile sugli emulatori. Il feature flag
+`config/app.assistantChatEnabled` è **OFF** di default (si accende solo dopo
+il gate 4B.8); lo staff bypassa il flag per il red-team.
+
+Harness golden set / red-team (emulatori attivi, catalogo seedato):
+
+```bash
+firebase --project=dbfarmacia emulators:exec --only functions,firestore,auth \
+  "npm --prefix functions run seed && npm --prefix functions run eval:assistant"
+```
+
+Le categorie red_flag/rx/injection/moderazione devono passare al **100%**
+(exit code ≠ 0 altrimenti). Nota: il primo deploy dell'indice vettoriale
+(`products.embedding`, dim 1024) avviene con `firebase deploy --only
+firestore:indexes`; sull'emulatore il retrieval usa il fallback in-memory.
 
 ## Struttura Functions
 

@@ -161,3 +161,46 @@ test("unmodeled collections are denied by default", async () => {
   await assertFails(setDoc(doc(as("staff1"), "secrets/x"), {a: 1}));
   await assertFails(deleteDoc(doc(as("staff1"), "users/cust1")));
 });
+
+test("chat sessions: owner and staff read; nobody writes from the client", async () => {
+  await seed("chatSessions/s1", {
+    userRef: "users/cust1",
+    redFlagTriggered: false,
+  });
+  await assertSucceeds(getDoc(doc(as("cust1"), "chatSessions/s1")));
+  await assertSucceeds(getDoc(doc(as("staff1"), "chatSessions/s1")));
+  await assertFails(getDoc(doc(as("cust2"), "chatSessions/s1")));
+  await assertFails(getDoc(doc(anon(), "chatSessions/s1")));
+  // Function-only writes: even the owner and staff cannot write directly
+  // (audit-log posture; staff edits go through `assistantReview`).
+  await assertFails(
+    setDoc(doc(as("cust1"), "chatSessions/s2"), {userRef: "users/cust1"}),
+  );
+  await assertFails(
+    updateDoc(doc(as("staff1"), "chatSessions/s1"), {flaggedForReview: true}),
+  );
+  await assertFails(deleteDoc(doc(as("cust1"), "chatSessions/s1")));
+});
+
+test("chat messages: owner and staff read; client writes denied", async () => {
+  await seed("chatSessions/s1", {userRef: "users/cust1"});
+  await seed("chatSessions/s1/messages/m1", {role: "user", text: "ciao"});
+  await assertSucceeds(getDoc(doc(as("cust1"), "chatSessions/s1/messages/m1")));
+  await assertSucceeds(getDoc(doc(as("staff1"), "chatSessions/s1/messages/m1")));
+  await assertFails(getDoc(doc(as("cust2"), "chatSessions/s1/messages/m1")));
+  await assertFails(
+    setDoc(doc(as("cust1"), "chatSessions/s1/messages/m2"), {
+      role: "user",
+      text: "inject",
+    }),
+  );
+});
+
+test("assistant reports: staff read-only, hidden from customers", async () => {
+  await seed("assistantReports/2026-07-05", {totalSessions: 3});
+  await assertSucceeds(getDoc(doc(as("staff1"), "assistantReports/2026-07-05")));
+  await assertFails(getDoc(doc(as("cust1"), "assistantReports/2026-07-05")));
+  await assertFails(
+    setDoc(doc(as("staff1"), "assistantReports/x"), {totalSessions: 0}),
+  );
+});
