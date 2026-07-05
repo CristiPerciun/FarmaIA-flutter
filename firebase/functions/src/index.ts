@@ -1,6 +1,10 @@
+import {initializeApp} from "firebase-admin/app";
 import {setGlobalOptions} from "firebase-functions/v2";
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+
+// Initialize the Admin SDK once for all functions.
+initializeApp();
 
 setGlobalOptions({maxInstances: 10});
 
@@ -15,3 +19,6 @@ export const health = onRequest((request, response) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Keeps the `role` custom claim in sync with the users doc (§1.3, §5.5).
+export {syncRoleClaim} from "./auth/sync_role_claim";

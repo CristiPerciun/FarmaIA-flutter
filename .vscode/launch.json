@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Farma Smart (dev)",
+      "cwd": "app",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--dart-define=ENV=dev"]
+    },
+    {
+      "name": "Farma Smart (dev · Chrome)",
+      "cwd": "app",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": ["--dart-define=ENV=dev"]
+    },
+    {
+      "name": "Farma Smart (prod)",
+      "cwd": "app",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "args": ["--dart-define=ENV=prod"]
+    },
+    {
+      "name": "Farma Smart (profile)",
+      "cwd": "app",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "args": ["--dart-define=ENV=dev"]
+    }
+  ]
+}

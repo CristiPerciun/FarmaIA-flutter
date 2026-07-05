@@ -1,11 +1,11 @@
 {
-    "name": "baganza_app",
-    "short_name": "baganza_app",
+    "name": "Farma Smart",
+    "short_name": "Farma Smart",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#1E7A3C",
+    "description": "Farma Smart — l'app di Baganza Farmacie: catalogo, servizi e assistente AI.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

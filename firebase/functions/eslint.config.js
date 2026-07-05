@@ -1,7 +1,14 @@
+const tsParser = require("@typescript-eslint/parser");
+
 module.exports = [
+  // Don't lint compiled output.
+  {
+    ignores: ["lib/**"],
+  },
   {
     files: ["**/*.ts"],
     languageOptions: {
+      parser: tsParser,
       ecmaVersion: 2020,
       sourceType: "module",
     },

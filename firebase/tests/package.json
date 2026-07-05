@@ -1,0 +1,14 @@
+{
+  "name": "baganza-rules-tests",
+  "description": "Firestore security-rules tests (Step 1.2) run against the emulator.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "test:emulator": "firebase --project=dbfarmacia emulators:exec --only firestore \"npm test\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "firebase": "^11.3.0"
+  }
+}

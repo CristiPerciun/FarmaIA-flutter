@@ -10,6 +10,7 @@
 - **Nessun backend preesistente:** il progetto comprende **due repository** — un progetto **frontend (Flutter)** e un progetto **backend (Firebase / Cloud Functions)**. Il backend, seppur "leggero", **serve** (sicurezza chiavi AI, pipeline di generazione, pagamenti, compliance: vedi §11).
 - **Offline:** è supportata **solo la consultazione del catalogo** già scaricato; tutte le azioni transazionali richiedono connessione (vedi §9).
 - **Lingue:** **italiano e inglese** (i18n: vedi §8).
+- **Due AI, due ruoli:** oltre alla pipeline AI **lato admin** (creazione catalogo da foto, §10), l'app include un **assistente AI lato cliente** — una chat che ascolta i bisogni/sintomi lievi dell'utente e propone **solo prodotti del catalogo** (SOP/OTC/parafarmaci), basata su **LLM open-weights su hosting EU** con guardrail clinici e escalation al farmacista (vedi **§12**). UI dedicata: widget flottante + pannello 70/30 su web, tab nella bottom bar su mobile (§12.6).
 
 ---
 
@@ -19,7 +20,9 @@ La soluzione è una **PWA (Progressive Web App)** e un'app per iOS, Android e Wi
 
 Oltre all'e-commerce, l'app integra i **servizi in farmacia** (prenotazione di autoanalisi, telemedicina, consulenze, info CUP e ritiro referti) e la **scelta della sede**, che per questa farmacia sono il vero elemento differenziante — vedi **§16**.
 
-L'elemento tecnico distintivo è un **pannello di amministrazione "AI-Driven"** che automatizza l'inserimento del catalogo: da una foto grezza e da una descrizione minima, il sistema genera immagine ottimizzata e scheda prodotto **bilingue (IT/EN)**. Per **sicurezza e tutela legale**, tutta la logica di IA risiede nel backend e ogni contenuto sanitario passa per la **validazione umana obbligatoria del farmacista** prima della pubblicazione.
+Gli elementi tecnici distintivi sono **due sistemi AI complementari**:
+1. **Pannello di amministrazione "AI-Driven"** che automatizza l'inserimento del catalogo: da una foto grezza e da una descrizione minima, il sistema genera immagine ottimizzata e scheda prodotto **bilingue (IT/EN)**. Per **sicurezza e tutela legale**, tutta la logica di IA risiede nel backend e ogni contenuto sanitario passa per la **validazione umana obbligatoria del farmacista** prima della pubblicazione.
+2. **Assistente AI per il cliente (§12):** una chat, alimentata da un **LLM open-weights ospitato in EU** e ancorata via **RAG al solo catalogo pubblicato**, che ascolta bisogni e disturbi lievi ("mi fa male la testa") e propone una lista di **prodotti da banco adatti**, con guardrail clinici (red-flag → rimando al medico), trasparenza AI e **escalation al farmacista** sempre disponibile. Non fa diagnosi: è un "commesso digitale", non un medico.
 
 Due scelte architetturali del piano originale vanno riviste: **l'hosting** (GitHub Pages non è adatto a un e-commerce — §3 e §6) e **il rendering** (Flutter Web "puro" è quasi invisibile a Google — §6).
 
@@ -47,6 +50,7 @@ Un e-commerce per una farmacia che permette ai clienti di **acquistare online pr
 3. **Aggiungere al carrello** e **completare l'acquisto** con pagamento online.
 4. **Gestire il proprio account**: ordini e stato spedizione, indirizzi, consensi (marketing e trattamento dati dei medicinali), abbonamenti.
 5. **Prenotare una consulenza** con farmacista o cosmetologo (chat/video).
+6. **Chattare con l'assistente AI** (web e mobile): descrivere un disturbo lieve o un bisogno ("mi fa male la testa", "cerco una crema per pelle secca") e ricevere una **lista di prodotti adatti dal catalogo**, con possibilità in ogni momento di **passare al farmacista umano**. L'assistente rifiuta i casi seri (red-flag) rimandando al medico.
 
 **Amministratore / Farmacista — deve poter:**
 1. **Aggiungere un prodotto** inserendo solo foto + descrizione minima + prezzo iniziale + prezzo scontato.
@@ -54,9 +58,10 @@ Un e-commerce per una farmacia che permette ai clienti di **acquistare online pr
 3. **Validare e pubblicare**: rivedere i contenuti sanitari e pubblicare; finché non pubblica, il prodotto resta invisibile ai clienti.
 4. **Gestire ordini** (stato, spedizione/tracking) e **gestire le richieste di consulenza** (slot, completamento).
 5. **Gestire il catalogo** (modifica, disattivazione, gestione stock).
+6. **Supervisionare l'assistente AI**: consultare il registro delle conversazioni, gestire le richieste di escalation, mantenere la lista dei sintomi "red-flag" e segnalare risposte scorrette (vedi §12.4).
 
-### 2.4 Le 3 cose che rendono il progetto distintivo
-Pipeline **AI per il data-entry**, **consulenza professionale** integrata, **bilinguismo IT/EN** del catalogo. *(Il posizionamento commerciale è nella Parte 2.)*
+### 2.4 Le 4 cose che rendono il progetto distintivo
+Pipeline **AI per il data-entry** (admin), **assistente AI sintomi→prodotti** (cliente, §12), **consulenza professionale** integrata, **bilinguismo IT/EN** del catalogo. *(Il posizionamento commerciale è nella Parte 2.)*
 
 ---
 
@@ -68,9 +73,12 @@ Pipeline **AI per il data-entry**, **consulenza professionale** integrata, **bil
 | **State Management** | Riverpod + Hooks | Riverpod (con `riverpod_generator`) per logica di business e chiamate API; `flutter_hooks` per stati effimeri della UI (animazioni, form), evitando il boilerplate del `setState`. |
 | **Backend & Database** | Firebase | Cloud Firestore (NoSQL flessibile), Cloud Storage (immagini), Firebase Auth (autenticazione). |
 | **Logica server** | Firebase Cloud Functions | Ambiente serverless Node.js/TypeScript: indispensabile per nascondere le chiavi API e processare i dati AI in sicurezza (vedi §10–§11). |
-| **Integrazioni AI** | API immagini + LLM | API per scontorno/ottimizzazione immagini (es. Photoroom) + LLM (es. GPT-4o) per testi commerciali e sanitari, generati in **IT ed EN**. |
+| **Integrazioni AI (admin)** | API immagini + LLM | API per scontorno/ottimizzazione immagini (es. Photoroom) + LLM (es. GPT-4o) per testi commerciali e sanitari, generati in **IT ed EN**. |
+| **AI conversazionale (cliente)** | **LLM open-weights** via endpoint OpenAI-compatibile su **hosting EU** | Modello consigliato: **Qwen 3** (miglior open per l'italiano) o **Mistral Small 3.x** (alternativa EU-native, Apache 2.0); **DeepSeek V3.x** come alternativa frontier **solo su hosting EU/occidentale, mai l'API ufficiale cinese** (caso Garante); **OpenBioLLM scartato** come primario (solo EN). Architettura **model-agnostic** (base URL + nome modello configurabili). Dettagli e confronto in **§12.2**. |
+| **RAG & embeddings (chat)** | Embedding multilingue open (es. `bge-m3`/`multilingual-e5`) + **Firestore Vector Search o Typesense (ibrido)** | Grounding della chat **sul solo catalogo pubblicato**; se si sceglie Typesense per la ricerca fuzzy, lo stesso motore copre anche il vettoriale (un componente in meno). Vedi §12.3. |
+| **Moderazione AI (chat)** | Llama Guard 3 (o filtri del provider) | Guardrail su input/output della chat cliente; supporta l'**italiano**. Vedi §12.4. |
 | **Routing** | go_router | Navigazione nativa e web; routing **basato su path** (non hash) per favorire l'indicizzazione e prevenire 404 sulla PWA. |
-| **Ricerca** | Algolia / Typesense / estensione Firebase | Fuzzy search con tolleranza ai refusi. Algolia premium; Typesense (self-hosted) o l'estensione Firebase più economiche per cataloghi piccoli/medi. |
+| **Ricerca** | Algolia / Typesense / estensione Firebase | Fuzzy search con tolleranza ai refusi. Algolia premium; Typesense (self-hosted) o l'estensione Firebase più economiche per cataloghi piccoli/medi. **Nota:** se serve anche il vettoriale per la chat (§12.3), Typesense li copre entrambi. |
 | **Internazionalizzazione** | `flutter_localizations` + ARB (`intl`) | Stringhe UI esternalizzate in `.arb` per IT/EN; contenuti di catalogo bilingui nel dato (vedi §5 e §8). |
 | **Persistenza offline** | Firestore offline persistence + cache immagini | Solo per la **consultazione catalogo** (vedi §9). |
 | **Hosting** | **Firebase Hosting o Vercel/Netlify** *(rivisto)* | GitHub Pages è sconsigliato per un e-commerce (vedi §6.4). Firebase Hosting si integra nativamente col backend; Vercel/Netlify offrono SSR/prerendering per la SEO. |
@@ -97,9 +105,10 @@ app/ (Flutter)
     │   ├── catalog/            # Lista, filtri, ricerca, scanner barcode
     │   ├── product/            # Dettaglio prodotto (bilingue)
     │   ├── cart/               # Carrello e checkout
+    │   ├── assistant/          # Chat AI cliente: widget web + pannello 70/30, tab mobile (§12.6)
     │   ├── account/            # Ordini, indirizzi, consensi, abbonamenti
     │   ├── consultations/      # Prenotazione e chat/video
-    │   ├── admin/              # Dashboard: aggiunta prodotto (AI), validazione, ordini
+    │   ├── admin/              # Dashboard: aggiunta prodotto (AI), validazione, ordini, audit chat AI
     │   └── content/            # Blog/guide alla salute (E-E-A-T)
     └── main.dart               # Entry point, init Firebase + App Check
 ```
@@ -111,8 +120,9 @@ Backend "thin" ma necessario: ospita chiavi e logica AI, webhook di pagamento, s
 firebase/ (Firebase)
 ├── functions/
 │   └── src/
-│       ├── ai/                 # Pipeline: vision (Photoroom) + generazione testi LLM (IT/EN), grounding, guardrail
-│       ├── catalog/            # Trigger onProductDraftCreated; workflow di pubblicazione
+│       ├── ai/                 # Pipeline admin: vision (Photoroom) + generazione testi LLM (IT/EN), grounding, guardrail
+│       ├── assistant/          # Chat AI cliente: endpoint chat (streaming), retrieval RAG, red-flag triage, moderazione, sessioni (§12)
+│       ├── catalog/            # Trigger onProductDraftCreated; workflow di pubblicazione; embedding alla pubblicazione (§12.3)
 │       ├── orders/             # Creazione ordine, calcolo totali/IVA, email transazionali
 │       ├── payments/           # Webhook gateway (Stripe/PayPal/Satispay), idempotenza
 │       ├── search/             # Sync prodotti pubblicati verso Algolia/Typesense
@@ -134,9 +144,10 @@ firebase/ (Firebase)
         ▼
 [ Cloud Functions (logica server, chiavi API, pipeline AI, webhook pagamenti) ]
         │
-        ├──► API LLM (es. GPT-4o)        → testi IT/EN
+        ├──► API LLM (es. GPT-4o)        → testi IT/EN (pipeline admin, §10)
+        ├──► LLM open-weights su hosting EU (Qwen/Mistral/DeepSeek) → chat AI cliente (§12)
         ├──► API Immagini (es. Photoroom)→ scontorno + WebP
-        ├──► Motore di ricerca (Algolia/Typesense)
+        ├──► Motore di ricerca (Algolia/Typesense) + indice vettoriale (RAG chat, §12.3)
         └──► Gateway di pagamento (Stripe/PayPal/Satispay)
 ```
 
@@ -149,13 +160,13 @@ firebase/ (Firebase)
 ### 5.1 Entità principali e campi
 
 **`Product` (collezione `products`)**
-`id`, `sku`, `barcode` (EAN), `categoryRef`, `type` (`SOP|OTC|parafarmaco|integratore|cosmetico|dispositivo_medico`), `isMedicine` (bool → governa separazione pagina e logo), `name{it,en}`, `shortDescription{it,en}`, `description{it,en}`, `activeIngredient{it,en}`, `posology{it,en}`, `contraindications{it,en}`, `warnings{it,en}`, `ceMarking` (bool, per dispositivi), `priceList` (int, cent), `priceSale` (int, cent), `currency` (`EUR`), `vatRate` (es. 4, 10, 22), `stockQty` (int), `available` (bool), `images[]` (`{url, alt{it,en}}`), `seo{slug{it,en}, title{it,en}, metaDescription{it,en}}`, `status` (`draft|pending_review|published|archived`), `aiGenerated` (bool), `reviewedBy` (ref adminUser), `reviewedAt`, `publishedAt`, `createdAt`, `updatedAt`.
+`id`, `sku`, `barcode` (EAN), `categoryRef`, `type` (`SOP|OTC|parafarmaco|integratore|cosmetico|dispositivo_medico`), `isMedicine` (bool → governa separazione pagina e logo), `name{it,en}`, `shortDescription{it,en}`, `description{it,en}`, `activeIngredient{it,en}`, `posology{it,en}`, `contraindications{it,en}`, `warnings{it,en}`, `ceMarking` (bool, per dispositivi), `priceList` (int, cent), `priceSale` (int, cent), `currency` (`EUR`), `vatRate` (es. 4, 10, 22), `stockQty` (int), `available` (bool), `images[]` (`{url, alt{it,en}}`), `seo{slug{it,en}, title{it,en}, metaDescription{it,en}}`, `status` (`draft|pending_review|published|archived`), `aiGenerated` (bool), `reviewedBy` (ref adminUser), `reviewedAt`, `publishedAt`, `createdAt`, `updatedAt`, `embedding` (vettore multilingue generato **alla pubblicazione** per il retrieval della chat AI, §12.3 — non serializzato verso il client), `assistantEligible` (bool, default true: il farmacista può escludere un prodotto dai suggerimenti della chat).
 
 **`Category` (collezione `categories`)**
 `id`, `name{it,en}`, `slug{it,en}`, `parentRef` (nullable), `isMedicineCategory` (bool), `order` (int).
 
 **`User` (collezione `users`, doc = `uid` di Firebase Auth)**
-`uid`, `role` (`customer|pharmacist|admin`), `email`, `displayName`, `phone`, `locale` (`it|en`), `addresses[]` (`{label, recipient, street, city, zip, province, country, phone}`), `consents{marketing(bool), medicineDataProcessing(bool), updatedAt}`, `loyaltyPoints` (int), `createdAt`.
+`uid`, `role` (`customer|pharmacist|admin`), `email`, `displayName`, `phone`, `locale` (`it|en`), `addresses[]` (`{label, recipient, street, city, zip, province, country, phone}`), `consents{marketing(bool), medicineDataProcessing(bool), aiAssistant(bool → consenso esplicito art. 9 GDPR per i dati sanitari digitati in chat, §12.5), updatedAt}`, `loyaltyPoints` (int), `createdAt`.
 
 **`Cart` (collezione `carts`, doc = `uid`)**
 `userRef`, `items[]` (`{productRef, qty, priceSnapshot}`), `updatedAt`. *(La modifica richiede connessione: §9.)*
@@ -168,6 +179,12 @@ firebase/ (Firebase)
 
 **`Subscription` (collezione `subscriptions`)**
 `id`, `userRef`, `productRef`, `frequencyDays` (int), `nextRun`, `discountPct`, `status` (`active|paused|cancelled`).
+
+**`ChatSession` (collezione `chatSessions` — assistente AI cliente, §12)**
+`id`, `userRef` (nullable per guest → `anonId` di sessione), `locale` (`it|en`), `consentAt` (timestamp del consenso art. 9, obbligatorio prima del primo messaggio), `status` (`active|closed|escalated`), `escalation{requested(bool), handledBy(ref), handledAt}`, `redFlagTriggered` (bool), `flaggedForReview` (bool), `reviewedBy` (nullable), `startedAt`, `lastMessageAt`, `purgeAt` (retention breve, es. +90 giorni, §12.5).
+
+**`ChatMessage` (sub-collezione `chatSessions/{id}/messages`)**
+`id`, `role` (`user|assistant`), `text`, `suggestedProducts[]` (`{productRef, reason}` — solo prodotti `published` e `assistantEligible`), `redFlag` (bool), `moderation{inputFlagged, outputFlagged, categories[]}`, `modelInfo{provider, model, promptVersion}` (log di provenienza), `createdAt`. *(Scrittura **solo** via Cloud Function: il client non scrive mai direttamente i messaggi dell'assistente — §5.5, §12.3.)*
 
 **`Article` (collezione `articles` — blog/E-E-A-T)**
 `id`, `slug{it,en}`, `title{it,en}`, `body{it,en}`, `authorRef` (farmacista), `reviewedBy`, `lastReviewedAt`, `status` (`draft|published`).
@@ -238,6 +255,7 @@ parametri operativi (es. `freeShippingThreshold`, costi di spedizione, aliquote 
 /orders/{orderId}
 /consultations/{consultationId}
 /subscriptions/{subscriptionId}
+/chatSessions/{sessionId}/messages/{messageId}
 /articles/{articleId}
 /config/{docId}
 ```
@@ -246,6 +264,7 @@ parametri operativi (es. `freeShippingThreshold`, costi di spedizione, aliquote 
 - **`products`/`categories`/`articles`:** lettura pubblica **solo per `status == "published"`**; le bozze (`draft`/`pending_review`) sono leggibili solo da `admin`/`pharmacist`. Scrittura/pubblicazione **solo** `admin`/`pharmacist`.
 - **`users`:** ogni utente legge/scrive **solo** il proprio documento; il campo `role` non è modificabile dal client.
 - **`carts`/`orders`/`subscriptions`/`consultations`:** accessibili **solo** al proprietario (`userRef == uid`); creazione ordini e cambi di stato sensibili passano da Cloud Functions. Le note di consulenza sono **cifrate** e accessibili solo al personale autorizzato.
+- **`chatSessions` (+ `messages`):** lettura **solo** proprietario (o `anonId` di sessione per i guest) e `admin`/`pharmacist` (audit); **scrittura esclusivamente via Cloud Function** — il client non crea/modifica messaggi direttamente, così la pipeline guardrail (§12.3–12.4) non è aggirabile. Il campo `products.embedding` non è esposto nelle letture client.
 - **Chiavi API e segreti:** mai in Firestore né nel client → **Secret Manager**, usate solo dalle Cloud Functions (vedi §10–§11).
 
 ---
@@ -282,14 +301,17 @@ Pubblico tendenzialmente **maturo** → **accessibilità = conversione**: caratt
 
 **Raccomandazione:** base **flat/Material ad alto contrasto**, palette calma (verde smeraldo o blu ospedaliero), ampio spazio bianco; glassmorphism solo su superfici decorative; niente neumorfismo sui controlli.
 
-### 7.3 Bottom Navigation Bar
-4 sezioni sempre visibili: **Home** · **Negozio** (catalogo, filtri, ricerca) · **Carrello** (badge) · **Profilo** (switch Cliente/Admin).
+### 7.3 Bottom Navigation Bar (mobile)
+5 sezioni sempre visibili: **Home** · **Negozio** (catalogo, filtri, ricerca) · **Chat AI** (assistente, §12.6 — voce centrale evidenziata) · **Carrello** (badge) · **Profilo** (switch Cliente/Admin).
+> "Servizi" non è una tab: è la **card hero della Home** (alternativa già prevista in §16.7), per non superare le 5 voci raccomandate da Material. Su **web desktop** la chat non è una tab ma un **widget flottante + pannello 70/30** (specifica completa in §12.6).
 
 ### 7.4 Schermate principali e flusso
 ```
 Splash → Home
 Home ├─ Negozio → (ricerca | scanner barcode | filtri) → Dettaglio prodotto → Aggiungi al carrello
      ├─ Offerte / Più richiesti → Dettaglio prodotto
+     ├─ Chat AI (widget web / tab mobile) → consenso → conversazione → card prodotti → Dettaglio/Carrello
+     │                                                              └─ escalation → Farmacista (chat/WhatsApp)
      └─ Consulenza → Prenota slot → Chat/Video
 
 Carrello → Checkout → Pagamento → Conferma ordine
@@ -322,7 +344,7 @@ Logo ministeriale + link di verifica, credenziali/foto del farmacista, recension
 
 ### 9.1 Offline (ambito confermato: solo consultazione catalogo)
 - **Disponibile offline:** sfogliare il **catalogo già scaricato** (prodotti pubblicati e relative immagini) tramite **persistenza offline di Firestore** + cache immagini; ricerca limitata ai dati in cache.
-- **Richiede connessione (bloccato con messaggio chiaro se offline):** login/registrazione, carrello e checkout, pagamenti, prenotazione consulenze, area amministrativa e pipeline AI.
+- **Richiede connessione (bloccato con messaggio chiaro se offline):** login/registrazione, carrello e checkout, pagamenti, prenotazione consulenze, **chat con l'assistente AI** (§12), area amministrativa e pipeline AI.
 - **Comportamento:** banner non invasivo "Sei offline: puoi sfogliare il catalogo, ma per acquistare serve la connessione". Nessuna coda di transazioni offline (fuori scope).
 
 ### 9.2 Casi limite
@@ -340,7 +362,7 @@ Logo ministeriale + link di verifica, credenziali/foto del farmacista, recension
 
 ---
 
-## 10. La "Killer Feature": Flusso Admin AI-Driven
+## 10. La prima "Killer Feature": Flusso Admin AI-Driven *(la seconda, lato cliente, è nel §12)*
 
 Il frontend raccoglie i dati grezzi; **tutta la logica di IA avviene nel backend (Cloud Functions)** per sicurezza e tutela legale.
 
@@ -400,12 +422,99 @@ Qui il backend è **necessità di sicurezza e compliance**, non un costo evitabi
 
 ---
 
-## 12. Funzionalità AI Aggiuntive
+## 12. Assistente AI per il Cliente («Chat AI» — seconda killer feature)
 
+Una chat conversazionale, disponibile su web e mobile, in cui il cliente descrive un **disturbo lieve o un bisogno** ("mi fa male la testa", "ho la pelle secca", "cosa prendo per il raffreddore?") e riceve una **lista di prodotti adatti presi esclusivamente dal catalogo pubblicato** (SOP/OTC, parafarmaci, integratori, cosmetici), con link diretto a scheda e carrello. È il complemento lato cliente della pipeline admin del §10.
+
+### 12.1 Perimetro: cosa fa e cosa NON fa (decisione di design, non solo legale)
+| ✅ Fa | ❌ Non fa |
+|---|---|
+| Ascolta il bisogno espresso e propone **prodotti da banco del catalogo**, come farebbe un commesso esperto | **Diagnosi**, valutazioni cliniche, interpretazione di referti/esami |
+| Spiega **a partire dalla scheda prodotto validata** (indicazioni, avvertenze, "leggere il foglietto illustrativo") | Posologie diverse dalla scheda, interazioni farmacologiche personalizzate, consigli su farmaci **con ricetta** |
+| Riconosce i **sintomi "red-flag"** e in quel caso **si ferma**: nessun prodotto, invito a contattare medico/112 o il farmacista | Rassicurare su sintomi seri, gestire emergenze, pediatria sotto soglia d'età senza rimando al medico |
+| Offre **sempre** l'escalation a un umano ("Parla con il farmacista") | Sostituire il farmacista o presentarsi come "medico virtuale" |
+
+> Questo perimetro non è solo prudenza legale (§12.5): mantiene il sistema nella categoria "**assistente all'acquisto**" (come una ricerca in linguaggio naturale sul catalogo) e fuori dalla categoria "**software con finalità medica**", che farebbe scattare MDR e obblighi da dispositivo medico.
+
+### 12.2 Scelta del modello LLM open-source *(valutazione richiesta: OpenBioLLM vs DeepSeek — esito ricerca 2026)*
+
+**Criterio chiave (contro-intuitivo ma decisivo):** in questo caso d'uso la conoscenza medica "parametrica" del modello conta **meno** della qualità dell'**italiano**, dell'**instruction following** e del **tool use/output strutturato** — perché la verità arriva dal **RAG sul catalogo validato dal farmacista** (§12.3), non dalla memoria del modello. Un modello biomedico che ragiona in inglese è la scelta sbagliata per una chat paziente in italiano.
+
+| Modello (open) | Licenza | Italiano | Dominio medico | Verdetto per questo progetto |
+|---|---|---|---|---|
+| **Qwen 3** (8B→235B, ottimo 30B‑A3B/32B) | Apache 2.0 | ⭐⭐⭐ — risulta il **miglior open-source per l'italiano** nei benchmark 2025‑26 | Buono (generalista forte) | **Consigliato come primario**, servito da provider EU |
+| **Mistral Small 3.x** (24B) | Apache 2.0 | ⭐⭐⭐ | Discreto | **Alternativa "EU-native"**: azienda europea, hosting EU nativo (La Plateforme) — il percorso GDPR più semplice |
+| **DeepSeek V3.x / R1** | MIT/permissiva | ⭐⭐⭐ | **Ottimo** nei benchmark clinici (pari o sopra GPT‑4o nel clinical decision support, *Nature Medicine* 2025) | Valido **solo come pesi aperti su hosting EU/occidentale**. ⚠️ **Mai l'API ufficiale**: il Garante ha disposto la **limitazione definitiva** del trattamento per DeepSeek in Italia (provv. 33/2025, trasferimento dati in Cina) — inaccettabile per dati sanitari di utenti italiani |
+| **MedGemma 27B** (Google, base Gemma 3) | Gemma (open) | ⭐⭐ (medicale addestrato in EN) | Specializzato, multimodale | Non primario (inglese-centrico, "not clinical-grade out of the box"); possibile **secondo stadio di verifica** opzionale post-MVP |
+| **OpenBioLLM 8B/70B** (base Llama 3) | Llama 3 Community | ⭐ — di fatto **solo inglese** | Specializzato (QA biomedico EN) | **Scartato come primario**: niente italiano, base datata (apr 2024), sotto i generalisti nei task lunghi, nessuna validazione clinica reale. Il suo vantaggio (conoscenza biomedica EN) qui non serve: la conoscenza arriva dal catalogo |
+
+**Decisione proposta:**
+1. **Primario: Qwen 3 32B** (o 30B‑A3B per costi minori) **oppure Mistral Small 3.x**, servito tramite **provider di inference con data residency EU** (es. Scaleway Generative APIs, OVHcloud AI Endpoints, Mistral La Plateforme; in subordine provider US con region EU). Costi indicativi 2026: **€0,1–0,8 per milione di token** → per una farmacia (migliaia di chat/mese) è una voce di costo **trascurabile** (pochi €/mese).
+2. **Alternativa frontier: DeepSeek V3.x open-weights su hosting EU** (Together/Fireworks/DeepInfra con endpoint EU o provider europei che lo servono) se il golden set (v. sotto) mostra un gap di qualità clinica.
+3. **Architettura model-agnostic:** il backend parla il **formato OpenAI-compatibile** (tutti i provider citati lo espongono); `baseUrl` + `model` stanno in **config/Secret Manager** → cambiare modello = cambiare una config, zero refactoring. Nessun lock-in.
+4. **Selezione empirica, non di catalogo:** prima della scelta definitiva, un **golden set di 50–100 conversazioni in italiano** scritte dal farmacista (sintomi lievi, red-flag, richieste ambigue, tentativi di jailbreak) valuta i 2–3 candidati su: correttezza del rifiuto sui red-flag, aderenza al catalogo (zero prodotti inventati), qualità dell'italiano, latenza e costo. La decisione va registrata (ADR).
+
+> **Perché non self-hosting GPU?** Una VM GPU dedicata costa centinaia di €/mese e va gestita; l'inference serverless a consumo su cloud EU dà lo stesso modello open-weights con GDPR a posto e costi di due ordini di grandezza inferiori a questi volumi. Il self-hosting resta un'opzione futura proprio perché i pesi sono aperti.
+
+### 12.3 Architettura RAG: la chat è ancorata al catalogo
+
+```
+[ Widget/Tab Chat (client) ]
+   │ 1. consenso art. 9 verificato (§12.5) — poi messaggio utente
+   ▼
+[ Cloud Function `assistantChat` (App Check · rate-limit per uid/IP · streaming SSE) ]
+   ├─ 2. Moderazione input (Llama Guard 3 / filtri provider — supporta l'italiano)
+   ├─ 3. Triage red-flag (lista curata dal farmacista: dolore toracico, dispnea,
+   │      sanguinamento, gravidanza/allattamento, età pediatrica, febbre alta persistente…)
+   │      → se red-flag: STOP prodotti, messaggio di rinvio a medico/112/farmacista
+   ├─ 4. Retrieval: embedding della richiesta → top-k prodotti dal catalogo
+   │      (filtri rigidi: status==published · available==true · assistantEligible==true)
+   ├─ 5. LLM (EU-hosted) con prompt vincolato: "proponi SOLO tra i prodotti forniti,
+   │      cita indicazioni/avvertenze dalla scheda, max 3–5 prodotti, tono empatico,
+   │      lingua dell'utente (IT/EN), chiudi sempre con disclaimer + opzione farmacista"
+   ├─ 6. Validazione output: JSON strutturato {messaggio, prodotti[], escalation} —
+   │      gli ID prodotto vengono verificati contro il catalogo (zero allucinazioni),
+   │      moderazione output
+   └─ 7. Log su `chatSessions` (provenienza modello/prompt) → risposta al client
+```
+
+- **Indice vettoriale:** embedding **multilingue** open (es. `bge-m3` o `multilingual-e5`) generato **alla pubblicazione** del prodotto (trigger già esistente in `catalog/`); ricerca con **Firestore Vector Search** (nativo, zero componenti nuovi) **oppure Typesense ibrido** se Typesense è già stato scelto per la fuzzy search (§13.1) — un solo motore per entrambe. La scelta si fa nello spike (Per step, Fase 4B).
+- **Perché le card prodotto sono "vere":** il client riceve **riferimenti** (`productRef`) verificati, non testo libero — la UI renderizza le card dal dato Firestore reale (prezzo, foto, stato stock aggiornati).
+- **Fallback:** provider LLM giù o timeout → messaggio cortese + scorciatoie ("Cerca nel catalogo", "Scrivi al farmacista su WhatsApp"). La chat **degrada, non blocca** il resto dell'app.
+- **Costi sotto controllo:** limite di messaggi per sessione e per utente/giorno, contesto troncato alle ultime N battute + riassunto, cache dei suggerimenti per le richieste più frequenti.
+
+### 12.4 Guardrail clinici e supervisione del farmacista
+- **Doppio filtro AI** (input e output) + **lista red-flag deterministica** (regex/classificatore leggero) che scatta **prima** dell'LLM: sui casi seri non si lascia decidere al modello.
+- **Prompt "a gabbia":** il modello non può proporre prodotti fuori lista, non può indicare dosaggi diversi dalla scheda, non può nominare farmaci Rx; le risposte citano il campo scheda da cui provengono (grounding §10).
+- **Trasparenza:** header della chat con badge "Assistente AI" + disclaimer fisso ("Non sono un medico né un farmacista. Per casi seri rivolgiti al 112 o al tuo medico"); primo messaggio di benvenuto che lo ripete.
+- **Escalation sempre a un tap:** pulsante "Parla con il farmacista" in ogni risposta → apre consulenza (§13.3) o WhatsApp della sede; le sessioni `escalated` finiscono nella inbox admin.
+- **Supervisione (human oversight):** dashboard admin con **registro conversazioni** (pseudonimizzate), filtro per `redFlagTriggered`/`flaggedForReview`, pulsante "risposta scorretta" che alimenta la revisione di prompt e lista red-flag. Il farmacista **mantiene** la lista red-flag e può **escludere prodotti** dai suggerimenti (`assistantEligible`).
+- **Red-team pre-lancio:** batteria di test su casi pericolosi (emergenze, pediatria, gravidanza, autolesionismo, richieste di Rx, prompt injection "ignora le istruzioni") — **gate di lancio**, come la SEO per il §6.
+
+### 12.5 Compliance specifica della chat *(da validare con il legale prima del lancio)*
+- **GDPR art. 9 (dato sanitario):** i sintomi digitati sono **categorie particolari di dati** → **consenso esplicito** prima del primo messaggio (nuovo consenso `aiAssistant` su `users.consents`, o consenso di sessione per i guest), **finalità limitata** (niente marketing/profilazione sui contenuti chat), **retention breve** (es. 90 giorni, campo `purgeAt` + job di purge), pseudonimizzazione nel registro admin, **DPIA** documentata. **Tutta l'elaborazione resta in EU** (inference EU — motivo per cui l'API ufficiale DeepSeek è esclusa, §12.2).
+- **AI Act:** obbligo di **trasparenza** (l'utente sa di parlare con un'AI — badge e benvenuto, art. 50). Mantenendo il perimetro §12.1 (orientamento all'acquisto + rinvio al professionista, nessuna finalità diagnostica/terapeutica) il sistema **non** è progettato come dispositivo medico; se il perimetro si allargasse (triage, diagnosi, consigli clinici personalizzati) scatterebbero **MDR (SaMD, verosimilmente classe IIa)** e la qualifica **high-risk** dell'AI Act — da evitare esplicitamente in v1.
+- **Coerenza col §11:** chiavi e logica **solo lato server** (proxy Cloud Function, Secret Manager, App Check); vale l'intero verdetto anti-BYOK.
+
+### 12.6 UI/UX della chat *(specifica confermata)*
+
+**Web desktop (breakpoint ≥ 1024 px) — pagine Home e Catalogo:**
+- **Widget flottante in basso al centro**: pill arrotondata con icona assistente e testo invitante — IT: *"Sono il tuo assistente AI: dimmi cosa ti fa male o cosa cerchi"* / EN: *"I'm your AI assistant: tell me what hurts or what you're looking for"* (stringhe in ARB, §8). Stile: fondo bianco, bordo/icona **verde azione** `#1E7A3C`, ombra leggera; **non copre** contenuti critici né i pulsanti di acquisto; resta visibile allo scroll.
+- **Apertura:** al click (o appena l'utente inizia a digitare nel campo del widget) parte un'**animazione di 250–300 ms (ease-in-out)**: il contenuto della pagina si **restringe al 70%** della larghezza ancorandosi **a sinistra**, e nel **30% a destra** (larghezza minima 360 px) si apre il **pannello chat** a tutta altezza: header (nome assistente + badge "AI" + ✕), cronologia messaggi, **disclaimer fisso**, card prodotto suggerite (tap → scheda/carrello), input in basso con invio.
+- **Chiusura:** ✕ o tasto **ESC** → animazione inversa al 100%; la conversazione **resta viva** nella sessione (il widget mostra un badge "1" se ci sono risposte non lette).
+- **Qualità/accessibilità:** il contenuto al 70% deve **restare usabile** (griglie responsive che ricalcolano le colonne, niente scroll orizzontale); `prefers-reduced-motion` → transizione istantanea senza animazione; **focus trap** nel pannello, `aria-live="polite"` sui messaggi, contrasto testo ≥ 4,5:1 (§7.2).
+- **Nota di architettura (conseguenza del §6):** Home e Catalogo web pubblici sono **SSR/prerender**, non Flutter → il widget va costruito come **componente web leggero** (JS/TS, pochi KB) incluso nelle pagine SSR, che parla con lo **stesso endpoint** `assistantChat`; dentro la PWA/app Flutter la stessa esperienza è resa nativamente (Row 70/30 con `AnimatedContainer`). **Un solo backend e un solo "contratto" di conversazione, due superfici di UI.**
+
+**Mobile (app iOS/Android e web < 1024 px):**
+- **Nessun widget flottante.** La chat è una **voce della BottomNavigationBar**: **Home · Negozio · Chat AI · Carrello · Profilo** (§7.3; "Servizi" diventa card hero della Home come da alternativa §16.7). Icona assistente, posizione **centrale** evidenziata.
+- La tab apre la chat **a schermo intero**: stesso componente conversazione (header con badge AI, disclaimer, card prodotto, input) + **chip di avvio rapido** ("Mal di testa", "Raffreddore", "Consiglio pelle", "Parla col farmacista").
+- **Primo utilizzo:** una schermata di onboarding (cosa fa/cosa non fa l'assistente) con **consenso esplicito** (§12.5) prima del primo messaggio; il consenso non viene richiesto di nuovo.
+
+### 12.7 Altre funzionalità AI (post-MVP)
 - **Raccomandazioni di prodotto** (su dati commerciali, non sanitari).
-- **Chatbot di assistenza** (FAQ, stato ordine, reso) con escalation al farmacista.
+- **FAQ operative nella stessa chat** (stato ordine, resi, orari sedi) — estensione naturale dell'assistente.
 - **Previsione della domanda** per il riassortimento.
-- *(Opzionale, alto rischio)* **"check sintomi"** sconsigliato; se offerto, fortemente disclaimerizzato, su fonti validate e **mediato dal farmacista**.
+- **Secondo stadio di verifica medica** (es. MedGemma come "revisore" delle risposte) se l'audit del farmacista ne mostra il bisogno.
 
 Tutte seguono il principio del §11: **logica e chiavi lato server**, contenuti sensibili sotto controllo umano.
 
@@ -431,10 +540,10 @@ Chat e **video-consulenza** con farmacista e cosmetologo, con **prenotazione a s
 ## 14. Scope e Fuori-Scope (MVP)
 
 ### 14.1 In scope (versione 1)
-Catalogo bilingue con ricerca e scanner; dettaglio prodotto; carrello e checkout con pagamento (PayPal + carte + Satispay); account cliente (auth, indirizzi, ordini, consensi); **pannello admin AI con validazione e pubblicazione**; consultazione catalogo **offline**; SEO in SSR/prerender per catalogo e blog; compliance di base (logo, separazione medicinali/non-medicinali, consenso dati medicinali, pulsante recesso). **Personalizzazione Baganza (§16):** brand e **logo rifinito con splash animato**, **modulo Servizi + Prenotazioni** (autoanalisi, telemedicina, consulenze), **selettore di sede** (3 farmacie) e **deep-link ai sistemi regionali** (CUPWeb/ER Salute) per CUP e referti.
+Catalogo bilingue con ricerca e scanner; dettaglio prodotto; carrello e checkout con pagamento (PayPal + carte + Satispay); account cliente (auth, indirizzi, ordini, consensi); **pannello admin AI con validazione e pubblicazione**; **assistente AI cliente (§12)**: chat sintomi lievi→prodotti dal catalogo con guardrail, consenso art. 9, escalation al farmacista, **widget web 70/30 + tab mobile** e registro conversazioni lato admin; consultazione catalogo **offline**; SEO in SSR/prerender per catalogo e blog; compliance di base (logo, separazione medicinali/non-medicinali, consenso dati medicinali, pulsante recesso). **Personalizzazione Baganza (§16):** brand e **logo rifinito con splash animato**, **modulo Servizi + Prenotazioni** (autoanalisi, telemedicina, consulenze), **selettore di sede** (3 farmacie) e **deep-link ai sistemi regionali** (CUPWeb/ER Salute) per CUP e referti.
 
 ### 14.2 Fuori scope (per ora)
-Farmaci con prescrizione; **marketplace multi-farmacia**; **video-consulenza** avanzata (può seguire dopo la chat); **abbonamenti** e **loyalty** avanzati (fase successiva); raccomandazioni AI e check sintomi; coda transazioni offline; distribuzione su store desktop. *(Allineato alla roadmap della Parte 2.)*
+Farmaci con prescrizione; **marketplace multi-farmacia**; **video-consulenza** avanzata (può seguire dopo la chat); **abbonamenti** e **loyalty** avanzati (fase successiva); raccomandazioni AI proattive e **qualunque "check sintomi" con finalità diagnostica/triage clinico** (l'assistente §12 resta orientamento all'acquisto — il confine è vincolante, §12.1/§12.5); FAQ operative in chat (stato ordine/resi, §12.7); coda transazioni offline; distribuzione su store desktop. *(Allineato alla roadmap della Parte 2.)*
 
 ---
 
@@ -445,6 +554,13 @@ Farmaci con prescrizione; **marketplace multi-farmacia**; **video-consulenza** a
 - **Offline**, il catalogo già scaricato è navigabile; le azioni transazionali sono bloccate con messaggio chiaro.
 - L'admin può creare un prodotto da **foto + descrizione**, il backend genera **immagine WebP + testi IT/EN**, e il prodotto diventa visibile **solo dopo** il clic "Pubblica" del farmacista.
 - Un utente **non autorizzato** non raggiunge l'area admin e non può pubblicare.
+
+**Assistente AI cliente (§12)**
+- A un sintomo lieve ("mal di testa") la chat risponde in italiano con **massimo 3–5 prodotti, tutti esistenti nel catalogo pubblicato** (card reali con prezzo/foto); a un **red-flag** (es. "dolore al petto") **non propone prodotti** e rimanda a medico/112/farmacista.
+- La chat **non parte senza consenso esplicito** (art. 9); il badge/disclaimer AI è sempre visibile; il pulsante "Parla con il farmacista" è presente in ogni risposta.
+- **Web ≥1024 px:** su Home e Catalogo il widget flottante in basso al centro apre il pannello con l'animazione **70/30** (contenuto a sinistra, chat a destra), ESC/✕ la chiude, `prefers-reduced-motion` rispettato. **Mobile:** la chat è la **tab centrale** della bottom bar, a schermo intero.
+- Il farmacista vede il **registro conversazioni** (pseudonimizzato) e la inbox delle **escalation**; la batteria di **red-team clinico** (emergenze, pediatria, Rx, prompt injection) passa prima del lancio.
+- Il modello è **open-weights su inference EU**; nessuna chiamata a endpoint extra-UE per i messaggi chat (verificato dai log).
 
 **Compliance**
 - Logo ministeriale presente sulle pagine dei **medicinali**; **separazione** medicinali/non-medicinali rispettata; **consenso esplicito** per i dati d'ordine dei medicinali raccolto; **pulsante di recesso** presente.
@@ -561,7 +677,8 @@ Esempio JSON — `services/{id}`:
 - **Cosa NON può fare:** **prenotare nativamente il CUP**. CUPWeb/ER Salute sono **sistemi statali con accesso SPID** e non espongono un'integrazione per app private. Niente promesse di prenotazione "dentro" l'app per le prestazioni SSN.
 
 ### 16.7 Navigazione aggiornata
-Aggiunta della destinazione **"Servizi"** come voce di primo livello. Bottom nav consigliata a **5 voci**: **Home · Negozio · Servizi · Carrello · Profilo** (in alternativa, mantenere 4 voci e rendere "Servizi e Prenotazioni" la **card principale** della Home). La Home mostra anche il **selettore di sede** (con orari e "apri in mappa"/chiama).
+Con l'introduzione della **Chat AI come tab mobile** (§12.6) le voci candidate diventano 6: per restare nel limite delle **5 voci** raccomandate, la bottom nav definitiva è **Home · Negozio · Chat AI · Carrello · Profilo**, e **"Servizi e Prenotazioni" diventa la card principale (hero) della Home** — l'alternativa già prevista in questa sezione, ora promossa a scelta. La Home mostra anche il **selettore di sede** (con orari e "apri in mappa"/chiama). Su **web desktop** la chat non occupa la navigazione: è il **widget flottante + pannello 70/30** (§12.6), mentre "Servizi" resta voce del menu orizzontale.
+> Se dai dati d'uso emergesse che "Servizi" merita la tab più della chat, lo scambio è a basso costo: entrambe le destinazioni esistono comunque come route.
 
 ### 16.8 Compliance e accessibilità specifiche
 - **Vendita online dei medicinali:** dato che `benesserefarmacia.it` propone già OTC/SOP, **verificare l'autorizzazione** del Ministero della Salute e la presenza del **logo identificativo nazionale** prima di abilitare la vendita SOP/OTC in app. Se l'autorizzazione non c'è (o finché non c'è), partire con **parafarmaci/cosmetici/integratori** (che non la richiedono) e aggiungere SOP/OTC dopo. *(Regole complete nella Parte 2.)*
@@ -573,6 +690,7 @@ Aggiunta della destinazione **"Servizi"** come voce di primo livello. Bottom nav
 - **Prezzi, orari e disponibilità** dei servizi per sede (qui come da sito, giugno 2026).
 - **Font istituzionale** e eventuali colori secondari ufficiali (oltre al verde confermato).
 - Quali servizi di **Priorità 2/3** includere già nella v1.
+- **Chat AI (§12):** lista dei **sintomi red-flag** e golden set di prova da redigere **col farmacista**; canale preferito per l'escalation (consulenza in-app vs WhatsApp per sede); validazione legale del perimetro (§12.5) prima del lancio.
 
 ---
 

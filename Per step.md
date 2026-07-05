@@ -18,7 +18,7 @@
 - **Fette verticali:** quando possibile si completa un flusso end-to-end (UI → dato → backend) invece di costruire a strati orizzontali.
 - **Un branch per step**, PR piccola, test inclusi; niente chiavi/segreti nel client (sempre lato Cloud Functions).
 - **Due progetti in monorepo:** `app/` (Flutter) e `firebase/` (Firebase) — vedi §4.
-- **Gate critici (non superabili senza):** (a) le pagine SEO devono rendere HTML reale prima di investire in traffico (§6.2); (b) prima del lancio della vendita medicinali servono autorizzazione + logo ministeriale (§16.8, Parte 2).
+- **Gate critici (non superabili senza):** (a) le pagine SEO devono rendere HTML reale prima di investire in traffico (§6.2); (b) prima del lancio della vendita medicinali servono autorizzazione + logo ministeriale (§16.8, Parte 2); (c) la **Chat AI cliente** non va esposta al pubblico senza **red-team clinico + consenso art. 9 + validazione legale del perimetro** (§12.4–12.5, step 4B.8).
 
 ---
 
@@ -27,7 +27,8 @@
 1. **Dati, Auth & Compliance** — modello dati, regole, ruoli, impianto GDPR/logo.
 2. **Catalogo, Ricerca & SEO** — parte pubblica (cliente).
 3. **Carrello, Checkout, Pagamenti, Ordini.**
-4. **Pannello Admin AI** — la "killer feature".
+4. **Pannello Admin AI** — la prima "killer feature".
+4B. **Assistente AI Cliente** — la seconda "killer feature": chat sintomi lievi→prodotti (LLM open-source EU, RAG sul catalogo, guardrail, widget web 70/30 + tab mobile) (§12).
 5. **Personalizzazione Baganza** — servizi, multi-sede, prenotazioni, CUP.
 6. **Branding & Splash** — vettorializzazione logo, app icon, splash animato.
 7. **Engagement (post-MVP)** — abbonamenti, loyalty, consulenza, push, contenuti.
@@ -89,37 +90,41 @@
 
 ## FASE 1 — Dati, Autenticazione & Compliance
 
-### Step 1.1 — Modello dati Firestore ⭐ · L
+### Step 1.1 — Modello dati Firestore ⭐ · L ✅
 - **Obiettivo:** schema dati completo.
 - **Attività:**
-  - [ ] Crea le collezioni: `products`, `categories`, `users`, `carts`, `orders`, `services`, `locations`, `appointments`, `articles`, `config` (campi come §5 e §16.5).
-  - [ ] Campi testuali utente come **mappe `{it,en}`**; importi in **centesimi**.
-  - [ ] Indici compositi (`firestore.indexes.json`) per liste/filtri.
+  - [x] Crea le collezioni: `products`, `categories`, `users`, `carts`, `orders`, `services`, `locations`, `appointments`, `articles`, `config` (campi come §5 e §16.5). → modelli Dart in `app/lib/features/*/domain/` + `core/models/`.
+  - [x] Campi testuali utente come **mappe `{it,en}`** (`LocalizedText`); importi in **centesimi** (int).
+  - [x] Indici compositi (`firestore.indexes.json`) per liste/filtri (products/orders/appointments/articles).
 - **✓ Fatto quando:** documenti di esempio creati e letti via emulatore. · **Rif.** §5, §16.5
+  - **Fatto:** seed `firebase/functions/scripts/seed.mjs` (`npm run seed`) → 2 prodotti pubblicati riletti, 1 bozza nascosta; 14 test modelli (`test/models_test.dart`).
 
-### Step 1.2 — Security Rules & Storage Rules ⭐ · L
+### Step 1.2 — Security Rules & Storage Rules ⭐ · L ✅
 - **Obiettivo:** accesso ai dati sicuro.
 - **Attività:**
-  - [ ] `products/categories/articles`: lettura pubblica **solo `published`**; scrittura/pubblicazione solo `admin/pharmacist`.
-  - [ ] `users/carts/orders/subscriptions/appointments`: accesso **solo al proprietario**; `role` non modificabile dal client.
-  - [ ] `storage.rules` per immagini prodotto; test delle regole.
+  - [x] `products/categories/articles`: lettura pubblica **solo `published`**; scrittura/pubblicazione solo `admin/pharmacist`.
+  - [x] `users/carts/orders/subscriptions/appointments`: accesso **solo al proprietario**; `role` non modificabile dal client (create solo `customer`, update a `role` invariato).
+  - [x] `storage.rules` per immagini prodotto (staff via custom claim `role`, sincronizzato dalla Cloud Function `syncRoleClaim`); test delle regole.
 - **✓ Fatto quando:** i test delle rules negano gli accessi incrociati e le bozze ai non-admin. · **Rif.** §5.5 · **Dipende da:** 1.1
+  - **Fatto:** 11 test in `firebase/tests/` (`@firebase/rules-unit-testing`) verdi via `npm run test:emulator` (richiede **JDK ≥ 21**).
 
-### Step 1.3 — Autenticazione & ruoli ⭐ · M
+### Step 1.3 — Autenticazione & ruoli ⭐ · M ✅
 - **Obiettivo:** login e distinzione Cliente/Admin.
 - **Attività:**
-  - [ ] Firebase Auth (email/registrazione); creazione doc `users` con `role`.
-  - [ ] **Route guard** (cliente non accede alle rotte admin) e **switch** nel Profilo.
-  - [ ] Gestione sessione scaduta (redirect mantenendo il contesto).
+  - [x] Firebase Auth (email/registrazione); creazione doc `users` con `role: customer` (`features/auth/data/auth_repository.dart`).
+  - [x] **Route guard** (cliente non accede alle rotte admin) e **switch** Cliente/Admin nel Profilo (`app_router.dart` redirect + `viewModeProvider`).
+  - [x] Gestione sessione scaduta (redirect a `/login?from=…` mantenendo il contesto).
 - **✓ Fatto quando:** un cliente e un admin vedono interfacce diverse; le rotte admin sono protette. · **Rif.** §2.2, §7.4, §9.2 · **Dipende da:** 1.2
 
-### Step 1.4 — Impianto Compliance & Privacy ⭐ · L
+### Step 1.4 — Impianto Compliance & Privacy ⭐ · L ✅
 - **Obiettivo:** scheletro legale pronto (dettagli normativi in Parte 2).
 - **Attività:**
-  - [ ] Slot **logo ministeriale** sulle pagine dei **medicinali** + **separazione** pagine medicinali/non-medicinali.
-  - [ ] **Consensi GDPR** (marketing + **trattamento dati medicinali**, cfr. C-21/23) e cookie banner.
-  - [ ] **Pulsante di recesso** (art. 54-bis) e flusso conferma tracciata.
+  - [x] Slot **logo ministeriale** sulle pagine dei **medicinali** (`MinisterialLogo`, si mostra solo se `isMedicine`) + helper **separazione** medicinali/non-medicinali (`MedicineSeparation`).
+  - [x] **Consensi GDPR** (marketing + **trattamento dati medicinali** + **assistente AI art. 9**) su `users.consents` e **cookie banner** app-wide.
+  - [x] **Pulsante di recesso** (art. 54-bis) con dialog di **conferma tracciata** (`WithdrawalButton`, si aggancia agli ordini in Fase 3).
 - **✓ Fatto quando:** consensi salvati su `users.consents`; logo e separazione presenti dove dovuto. · **Rif.** §9.2, §16.8 + Parte 2 (compliance) · **Dipende da:** 1.1
+
+> **Fase 1 completata.** Verifiche: `flutter analyze` pulito, **20 test** app verdi, **11 test** regole verdi, `flutter build web` ok, functions `build`+`lint` ok. *(Rimane, quando disponibili: font istituzionale, asset logo ministeriale reale e conferma autorizzazione §16.8-16.9.)*
 
 ---
 
@@ -233,6 +238,73 @@
 
 ---
 
+## FASE 4B — Assistente AI Cliente (chat sintomi→prodotti)
+
+> La seconda killer feature (§12): il cliente descrive un disturbo lieve e la chat propone **solo prodotti del catalogo pubblicato**, con guardrail clinici e escalation al farmacista. Perimetro vincolante: **orientamento all'acquisto, mai diagnosi** (§12.1).
+
+### Step 4B.1 — Scelta modello LLM & proxy (spike) ⭐ · M
+- **Obiettivo:** modello open-source scelto su prove, non su brochure.
+- **Attività:**
+  - [ ] **Golden set** di 50–100 conversazioni in italiano scritto col farmacista (sintomi lievi, red-flag, ambiguità, jailbreak).
+  - [ ] Test comparativo dei candidati (§12.2): **Qwen 3** e/o **Mistral Small 3.x** su provider **EU** (Scaleway/OVHcloud/La Plateforme); **DeepSeek V3.x solo su hosting EU/occidentale** (mai l'API ufficiale — caso Garante); *(OpenBioLLM scartato: solo EN)*.
+  - [ ] Proxy Cloud Function con formato **OpenAI-compatibile** (`baseUrl`+`model` in config/Secret Manager) → modello **swappabile**; streaming SSE.
+  - [ ] Decisione registrata (ADR): qualità italiano, rifiuti corretti sui red-flag, aderenza al catalogo, latenza, costo.
+- **✓ Fatto quando:** un modello è scelto sul golden set e risponde via proxy dagli emulatori. · **Rif.** §12.2, §11.5 · **Dipende da:** 0.2
+
+### Step 4B.2 — Embeddings & indice vettoriale ⭐ · M
+- **Attività:**
+  - [ ] Embedding **multilingue** (es. `bge-m3`/`multilingual-e5`) generato **alla pubblicazione** del prodotto (estende il trigger di `catalog/`).
+  - [ ] Indice: **Firestore Vector Search** o **Typesense ibrido** (riuso del motore di 2.4 — scegliere qui).
+  - [ ] Query top-k con filtri rigidi: `status==published`, `available==true`, `assistantEligible==true`.
+- **✓ Fatto quando:** "mal di testa" restituisce i prodotti pertinenti del catalogo di prova. · **Rif.** §12.3 · **Dipende da:** 2.4, 4.4
+
+### Step 4B.3 — Cloud Function `assistantChat` + guardrail ⭐ · L
+- **Attività:**
+  - [ ] Pipeline completa (§12.3): moderazione input (**Llama Guard 3** o filtri provider) → **triage red-flag deterministico** (lista curata dal farmacista, scatta **prima** dell'LLM) → retrieval → prompt "a gabbia" (solo prodotti forniti, no Rx, no dosaggi fuori scheda, IT/EN) → **output JSON strutturato** con `productRef` **verificati contro il catalogo** → moderazione output → log sessione.
+  - [ ] Rate-limit per uid/IP, limite messaggi/sessione e /giorno, troncamento contesto, App Check.
+  - [ ] **Fallback**: LLM giù → messaggio cortese + link catalogo/WhatsApp farmacista (la chat degrada, non blocca).
+  - [ ] Collezioni `chatSessions`/`messages` con scrittura **solo via function** (rules).
+- **✓ Fatto quando:** sintomo lieve → 3–5 card prodotto reali; red-flag → zero prodotti e rinvio al medico; injection dal golden set respinte. · **Rif.** §12.3–12.4, §5.5 · **Dipende da:** 4B.1, 4B.2
+
+### Step 4B.4 — Consenso art. 9 & GDPR chat ⭐ · M
+- **Attività:**
+  - [ ] **Consenso esplicito** pre-chat (consenso `aiAssistant` su `users.consents`; consenso di sessione per guest) + informativa dedicata.
+  - [ ] **Retention breve** (`purgeAt` ~90 gg + job di purge), pseudonimizzazione nel registro, niente riuso marketing/profilazione.
+  - [ ] Verifica **data residency EU** dell'inference (log endpoint); **DPIA** documentata.
+- **✓ Fatto quando:** senza consenso la chat non parte; il job di purge cancella le sessioni scadute. · **Rif.** §12.5 · **Dipende da:** 1.4, 4B.3
+
+### Step 4B.5 — UI Web: widget flottante + pannello 70/30 ⭐ · M
+- **Attività:**
+  - [ ] **Widget flottante in basso al centro** su Home e Catalogo (≥1024 px): pill "Sono il tuo assistente AI: dimmi cosa ti fa male o cosa cerchi" (ARB IT/EN), stile §16.2, non copre contenuti critici.
+  - [ ] Click/digitazione → animazione **250–300 ms**: contenuto al **70% a sinistra**, **pannello chat 30% a destra** (min 360 px): header + badge AI + ✕, cronologia, disclaimer fisso, card prodotto→scheda/carrello, input.
+  - [ ] ✕/**ESC** → ritorno al 100%; conversazione preservata; badge non letti sul widget.
+  - [ ] A11y: focus trap, `aria-live`, `prefers-reduced-motion` (switch istantaneo), contenuto al 70% senza scroll orizzontale.
+  - [ ] **Due superfici, un contratto:** componente **web leggero** per le pagine SSR (§6.2) + widget **Flutter** (`AnimatedContainer` 70/30) nella PWA, stesso endpoint.
+- **✓ Fatto quando:** su desktop l'animazione 70/30 apre/chiude la chat da Home e Catalogo (SSR e PWA) senza rompere il layout. · **Rif.** §12.6 · **Dipende da:** 4B.3, 2.2
+
+### Step 4B.6 — UI Mobile: tab "Chat AI" ⭐ · S
+- **Attività:**
+  - [ ] **Nessun widget flottante su mobile**: voce **centrale** della bottom nav — **Home · Negozio · Chat AI · Carrello · Profilo** ("Servizi" → card hero della Home, §16.7).
+  - [ ] Chat **full-screen**: stesso componente conversazione + **chip rapidi** ("Mal di testa", "Raffreddore", "Consiglio pelle", "Parla col farmacista").
+  - [ ] **Onboarding first-run** (cosa fa/cosa non fa) con consenso (da 4B.4).
+- **✓ Fatto quando:** da mobile la tab apre la chat e il flusso sintomo→card→carrello funziona. · **Rif.** §12.6, §7.3 · **Dipende da:** 4B.3, 4B.4
+
+### Step 4B.7 — Supervisione farmacista (audit & escalation) ⭐ · M
+- **Attività:**
+  - [ ] Dashboard admin: **registro conversazioni** (pseudonimizzato), filtri `redFlagTriggered`/`flaggedForReview`, "risposta scorretta" → revisione prompt/red-flag.
+  - [ ] **Inbox escalation** ("Parla con il farmacista") → consulenza §13.3 o WhatsApp sede.
+  - [ ] Gestione lista **red-flag** e flag `assistantEligible` per prodotto.
+- **✓ Fatto quando:** il farmacista vede le conversazioni, riceve le escalation e modifica la lista red-flag senza deploy. · **Rif.** §12.4 · **Dipende da:** 4B.3, 1.3
+
+### Step 4B.8 — Red-team clinico & gate legale (gate critico) ⭐ · M
+- **Attività:**
+  - [ ] Batteria di test su casi pericolosi: emergenze, pediatria, gravidanza, autolesionismo, richieste Rx, prompt injection — **tutti** devono produrre rifiuto/rinvio corretto.
+  - [ ] Verifica del **perimetro non-diagnostico** (§12.1) e parere legale **AI Act/MDR/GDPR** (§12.5); trasparenza AI (badge + benvenuto).
+  - [ ] Monitoraggio post-lancio: alert su volumi anomali di red-flag e su risposte segnalate.
+- **✓ Fatto quando:** il red-team passa al 100% sui red-flag e il legale approva il perimetro. **Senza questo step la chat resta disattivata** (feature flag). · **Rif.** §12.4–12.5 · **Dipende da:** 4B.3–4B.7
+
+---
+
 ## FASE 5 — Personalizzazione Baganza: Servizi, Multi-sede, Prenotazioni
 
 ### Step 5.1 — Multi-sede & selettore ⭐ · M
@@ -261,8 +333,9 @@
 
 ### Step 5.5 — Navigazione aggiornata ⭐ · S
 - **Attività:**
-  - [ ] Aggiungi destinazione **"Servizi"** (5° tab o card principale in Home).
-- **✓ Fatto quando:** "Servizi" è raggiungibile dalla navigazione principale. · **Rif.** §16.7 · **Dipende da:** 5.2
+  - [ ] Bottom nav definitiva: **Home · Negozio · Chat AI · Carrello · Profilo**; **"Servizi" = card hero della Home** (decisione §16.7, per non superare 5 voci).
+  - [ ] Su web desktop "Servizi" resta voce del menu orizzontale; la chat è il widget 70/30 (step 4B.5), non una voce di navigazione.
+- **✓ Fatto quando:** "Servizi" è raggiungibile dalla Home/menu e la tab Chat AI è al suo posto su mobile. · **Rif.** §16.7, §12.6 · **Dipende da:** 5.2
 
 ---
 
@@ -299,8 +372,8 @@
 ### Step 7.3 — Consulenza chat/video · L
 - [ ] Chat/video con farmacista e cosmetologo, prenotazione a slot, note **cifrate**. · **Rif.** §13.3, §16.4
 
-### Step 7.4 — Notifiche push & AI assistance · M
-- [ ] FCM + **web push (VAPID)**; chatbot assistenza (escalation al farmacista); raccomandazioni su dati commerciali. · **Rif.** §12
+### Step 7.4 — Notifiche push & estensioni AI · M
+- [ ] FCM + **web push (VAPID)**; estensioni dell'assistente (FAQ operative: stato ordine/resi/orari in chat); raccomandazioni su dati commerciali. *(La chat AI di base è già in Fase 4B.)* · **Rif.** §12.7
 
 ### Step 7.5 — Blog / contenuti E-E-A-T · M
 - [ ] Articoli firmati/revisionati dal farmacista, data di revisione, in SSR. · **Rif.** §6.3
@@ -337,9 +410,10 @@
 | **M2 — Catalogo navigabile + SEO** | Negozio, ricerca, scanner, offline, pagine indicizzabili | Fase 2 |
 | **M3 — Vendita** | Carrello, checkout, pagamenti, ordini | Fase 3 |
 | **M4 — Admin AI** | Pipeline AI + validazione + gestione catalogo | Fase 4 |
+| **M4B — Chat AI cliente** | LLM open EU + RAG catalogo + guardrail + UI web 70/30 e tab mobile + audit farmacista | Fase 4B |
 | **M5 — Baganza** | Multi-sede, servizi, prenotazioni, CUP | Fase 5 |
 | **M6 — Brand & Splash** | Logo vettoriale, icone, splash animato | Fase 6 |
-| **⭐ MVP (v1)** | M1→M6 + Fase 8 (lancio) | tutti gli step ⭐ |
+| **⭐ MVP (v1)** | M1→M6 (incl. M4B) + Fase 8 (lancio) | tutti gli step ⭐ |
 | **v1.1+** | Engagement | Fase 7 |
 
 ---
@@ -348,9 +422,10 @@
 - **Sequenza portante:** 0 → 1 → 2 → 3 → 8 (lancio).
 - **In parallelo** (dopo la Fase 1):
   - un profilo **backend** può lavorare alla **Fase 4 (Admin AI)** mentre il frontend fa la **Fase 2**;
+  - lo **spike 4B.1** (scelta LLM) non ha dipendenze di prodotto: può partire subito dopo la Fase 0; il resto della **Fase 4B** richiede catalogo e ricerca (2.4) e può procedere in parallelo alle Fasi 3 e 5;
   - la **Fase 5 (Baganza/servizi)** è abbastanza indipendente e può procedere in parallelo alla 3;
   - la **Fase 6 (branding/splash)** dipende dall'asset vettoriale del logo (design): avviarla appena pronto, senza bloccare le altre.
-- **Non saltare i due gate:** SEO reale (2.7) prima del marketing; autorizzazione + logo (8.6) prima di vendere medicinali.
+- **Non saltare i tre gate:** SEO reale (2.7) prima del marketing; autorizzazione + logo (8.6) prima di vendere medicinali; **red-team + gate legale (4B.8) prima di esporre la Chat AI**.
 
 ---
 

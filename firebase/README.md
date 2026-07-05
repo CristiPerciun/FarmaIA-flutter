@@ -8,6 +8,10 @@ Progetto Firebase: **dbFarmacia** (alias `dev`).
 - Firebase CLI: `npm install -g firebase-tools`
 - Login: `firebase login`
 
+> **Nota JDK:** gli emulatori Firebase (Firestore/Storage) richiedono **Java ≥ 21**.
+> Se non presente a sistema, si può usare il JDK incluso in Android Studio:
+> `export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"`.
+
 ## Avvio emulatori
 
 ```bash
@@ -24,6 +28,29 @@ firebase emulators:start
 | Storage | 9199 |
 | Functions | 5001 |
 | Hosting | 5000 |
+
+## Dati di esempio (seed) — Step 1.1
+
+Popola l'emulatore con documenti di esempio per tutte le collezioni e li rilegge
+(l'Admin SDK bypassa le security rules):
+
+```bash
+# con emulatori attivi
+npm --prefix functions run seed
+# oppure one-shot (avvia un emulatore firestore solo per il seed)
+firebase emulators:exec --only firestore "npm --prefix functions run seed"
+```
+
+## Test delle Security Rules — Step 1.2
+
+```bash
+cd tests
+npm install                 # una tantum (@firebase/rules-unit-testing)
+npm run test:emulator       # avvia un emulatore firestore ed esegue i test
+```
+
+Verificano: bozze invisibili ai non-staff, isolamento per-utente, `role` non
+modificabile dal client, ordini scrivibili solo lato Functions.
 
 ## Deploy
 
@@ -49,6 +76,7 @@ Copiare `functions/.env.example` in `functions/.env` per lo sviluppo locale con 
 
 ```
 functions/src/
+├── auth/         # syncRoleClaim: mirror users.role → custom claim (Fase 1)
 ├── ai/           # Pipeline vision + LLM (Fase 4)
 ├── catalog/      # Trigger draft prodotto
 ├── orders/       # Creazione ordine, IVA

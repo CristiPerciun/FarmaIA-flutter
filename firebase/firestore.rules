@@ -1,8 +1,104 @@
 rules_version = '2';
 
+// Firestore security rules (§5.5). Posture: deny by default; public reads only
+// for published catalog/content; per-user isolation for private data; role is
+// server-controlled and never client-writable. Order creation and sensitive
+// status changes go through Cloud Functions (Admin SDK bypasses these rules).
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Placeholder deny-all — regole complete in Fase 1 (Step 1.2)
+
+    // --- helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // A ref field stored as the path string "users/<uid>".
+    function ownsRef(refValue) {
+      return isSignedIn() && refValue == ('users/' + request.auth.uid);
+    }
+
+    function userData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Staff = pharmacist or admin (§2.2). Guarded by exists() so a signed-in
+    // user without a profile doc is simply not staff (no rule error).
+    function isStaff() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && (userData().role == 'pharmacist' || userData().role == 'admin');
+    }
+
+    // --- catalog: public reads only for published; writes staff-only ---
+    match /products/{productId} {
+      allow read: if resource.data.status == 'published' || isStaff();
+      allow create, update, delete: if isStaff();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // --- blog / E-E-A-T (§6.3) ---
+    match /articles/{articleId} {
+      allow read: if resource.data.status == 'published' || isStaff();
+      allow write: if isStaff();
+    }
+
+    // --- users: owner-only; role immutable from the client (§5.5) ---
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      // Self-registration can only create a customer profile.
+      allow create: if isOwner(uid)
+        && request.resource.data.role == 'customer';
+      // Any update must leave role unchanged (blocks client role escalation).
+      allow update: if isOwner(uid)
+        && request.resource.data.role == resource.data.role;
+      allow delete: if false;
+    }
+
+    // --- cart: private to its owner (doc id = uid) ---
+    match /carts/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // --- orders: read own (or staff); created/mutated by Cloud Functions ---
+    match /orders/{orderId} {
+      allow read: if ownsRef(resource.data.userRef) || isStaff();
+      allow create, update, delete: if false;
+    }
+
+    // --- appointments: owner creates a request; staff manage the lifecycle ---
+    match /appointments/{appointmentId} {
+      allow read: if ownsRef(resource.data.userRef) || isStaff();
+      allow create: if ownsRef(request.resource.data.userRef)
+        && request.resource.data.status == 'requested';
+      allow update, delete: if isStaff();
+    }
+
+    // --- services & locations: public read, staff write ---
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /locations/{locationId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // --- operational config: public read, staff write ---
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // --- deny by default (also covers collections not yet modeled) ---
     match /{document=**} {
       allow read, write: if false;
     }

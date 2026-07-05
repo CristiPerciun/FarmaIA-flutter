@@ -27,5 +27,73 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "signIn": "Accedi",
+  "createAccount": "Crea un account",
+  "alreadyHaveAccount": "Hai già un account? Accedi",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "displayNameLabel": "Nome",
+  "fieldRequired": "Campo obbligatorio",
+  "invalidEmail": "Inserisci un'email valida",
+  "passwordTooShort": "La password deve avere almeno 6 caratteri",
+  "authErrorGeneric": "Si è verificato un errore. Riprova.",
+  "authErrorInvalidCredentials": "Email o password non corretti.",
+  "authErrorTooManyRequests": "Troppi tentativi. Riprova più tardi.",
+  "authErrorEmailInUse": "Esiste già un account con questa email.",
+
+  "profileTitle": "Profilo",
+  "guestProfileMessage": "Accedi o registrati per gestire ordini, indirizzi e consensi.",
+  "signOut": "Esci",
+  "viewModeLabel": "Vista",
+  "viewAsCustomer": "Cliente",
+  "viewAsAdmin": "Admin",
+  "roleCustomer": "Cliente",
+  "rolePharmacist": "Farmacista",
+  "roleAdmin": "Admin",
+  "ordersTitle": "I miei ordini",
+  "comingSoonPhase3": "Disponibile nella Fase 3",
+  "comingSoonPhase4": "Disponibile nella Fase 4",
+
+  "adminAreaTitle": "Area amministrazione",
+  "adminWelcome": "Benvenuto, {name}",
+  "@adminWelcome": {
+    "description": "Saluto nella dashboard admin",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminAddProduct": "Aggiungi prodotto (AI)",
+  "adminManageCatalog": "Gestione catalogo",
+  "adminManageOrders": "Gestione ordini",
+
+  "consentsTitle": "Consensi e privacy",
+  "consentsIntro": "Gestisci i tuoi consensi. Puoi modificarli o revocarli in qualsiasi momento.",
+  "consentsSaved": "Consensi aggiornati",
+  "saveConsents": "Salva consensi",
+  "consentMarketingTitle": "Comunicazioni marketing",
+  "consentMarketingBody": "Ricevi offerte e novità via email.",
+  "consentMedicineDataTitle": "Trattamento dati dei medicinali",
+  "consentMedicineDataBody": "Necessario per ordinare medicinali SOP/OTC (dato sanitario).",
+  "consentAiAssistantTitle": "Assistente AI (dati sanitari)",
+  "consentAiAssistantBody": "Consenso esplicito al trattamento dei sintomi digitati nella chat (art. 9 GDPR).",
+
+  "ministerialLogoTitle": "Vendita online di medicinali",
+  "ministerialLogoSemantics": "Logo identificativo nazionale per la vendita online di medicinali",
+  "ministerialLogoAuthorized": "Farmacia autorizzata dal Ministero della Salute.",
+  "ministerialLogoPending": "Autorizzazione ministeriale da confermare prima della vendita.",
+
+  "cookieBannerTitle": "Cookie e privacy",
+  "cookieBannerBody": "Usiamo cookie tecnici e, previo consenso, cookie di analisi per migliorare il servizio.",
+  "cookieAccept": "Accetta tutti",
+  "cookieReject": "Solo essenziali",
+
+  "withdrawalButton": "Richiedi recesso",
+  "withdrawalConfirm": "Conferma recesso",
+  "withdrawalConfirmBody": "Vuoi esercitare il diritto di recesso per questo ordine (art. 54-bis)? La richiesta verrà registrata.",
+  "withdrawalRequested": "Recesso richiesto. Ti contatteremo per completare la procedura.",
+  "cancel": "Annulla"
 }

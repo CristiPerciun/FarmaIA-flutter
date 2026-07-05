@@ -21,6 +21,11 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.homeTitle),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined),
+            tooltip: l10n.profileTitle,
+            onPressed: () => context.go('/profile'),
+          ),
           _LanguageToggle(
             locale: locale,
             onToggle: () => ref.read(localeProvider.notifier).toggleLocale(),

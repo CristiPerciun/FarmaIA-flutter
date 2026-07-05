@@ -1,8 +1,27 @@
 rules_version = '2';
 
+// Cloud Storage rules (§5.5). Product images are publicly readable (needed to
+// render the catalog); writes are staff-only. Storage rules cannot read
+// Firestore, so "staff" is checked via the `role` custom claim kept in sync
+// with the users doc by the syncRoleClaim Cloud Function (§1.3).
 service firebase.storage {
   match /b/{bucket}/o {
-    // Placeholder deny-all — regole complete in Fase 1 (Step 1.2)
+
+    function isStaff() {
+      return request.auth != null
+        && (request.auth.token.role == 'pharmacist'
+            || request.auth.token.role == 'admin');
+    }
+
+    // Raw uploads and optimized product images (AI pipeline, §10).
+    match /products/{productId}/{fileName} {
+      allow read: if true;
+      allow write: if isStaff()
+        && request.resource.size < 15 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Deny everything else by default.
     match /{allPaths=**} {
       allow read, write: if false;
     }

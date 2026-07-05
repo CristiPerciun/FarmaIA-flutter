@@ -6,6 +6,7 @@ import 'core/config/app_env.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'features/compliance/presentation/cookie_banner.dart';
 import 'l10n/app_localizations.dart';
 
 class BaganzaApp extends ConsumerWidget {
@@ -19,7 +20,7 @@ class BaganzaApp extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
-      title: 'Baganza Farmacie',
+      title: 'Farma Smart',
       debugShowCheckedModeBanner: env.isDev,
       theme: AppTheme.light,
       locale: locale,
@@ -31,6 +32,20 @@ class BaganzaApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: router,
+      // App-wide overlay for the cookie banner (§1.4) — it renders above every
+      // route and collapses to nothing once the user decides.
+      builder: (context, child) => Stack(
+        children: [
+          child ?? const SizedBox.shrink(),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: const CookieBanner(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
