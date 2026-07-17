@@ -36,6 +36,7 @@ export function embeddingConfig(): {
   baseUrl: string;
   model: string;
   apiKey: string;
+  dimensions: number | null;
   configured: boolean;
 } {
   const baseUrl = (
@@ -44,10 +45,16 @@ export function embeddingConfig(): {
   const model = process.env.EMBEDDING_MODEL ?? "";
   const apiKey = process.env.EMBEDDING_API_KEY ??
     process.env.LLM_API_KEY ?? process.env.OPENAI_API_KEY ?? "";
+  // Matryoshka truncation (e.g. qwen3-embedding-8b): keeps the vector within
+  // the Firestore vector-index limit of 2048 dimensions.
+  const rawDims = Number(process.env.EMBEDDING_DIMENSIONS ?? "");
+  const dimensions =
+    Number.isInteger(rawDims) && rawDims > 0 ? rawDims : null;
   return {
     baseUrl,
     model,
     apiKey,
+    dimensions,
     configured: baseUrl.length > 0 && model.length > 0 && apiKey.length > 0,
   };
 }
@@ -106,21 +113,33 @@ export async function embedText(
   }
   try {
     const fetchImpl = (globalThis as unknown as {fetch: FetchLike}).fetch;
+    const body: Record<string, unknown> = {model: cfg.model, input: text};
+    if (cfg.dimensions !== null) body.dimensions = cfg.dimensions;
     const res = await fetchImpl(`${cfg.baseUrl}/embeddings`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${cfg.apiKey}`,
       },
-      body: JSON.stringify({model: cfg.model, input: text}),
+      body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(`embeddings-http-${res.status}`);
     const payload = JSON.parse(await res.text()) as {
       data?: {embedding?: number[]}[];
     };
-    const vector = payload.data?.[0]?.embedding;
+    let vector = payload.data?.[0]?.embedding;
     if (!Array.isArray(vector) || vector.length === 0) {
       throw new Error("embeddings-empty-response");
+    }
+    // If the provider ignored the `dimensions` request param, truncate and
+    // re-normalize (Matryoshka models are trained for exactly this) so the
+    // vector always fits the Firestore index.
+    if (cfg.dimensions !== null && vector.length > cfg.dimensions) {
+      vector = vector.slice(0, cfg.dimensions);
+      let sumSquares = 0;
+      for (const v of vector) sumSquares += v * v;
+      const norm = Math.sqrt(sumSquares);
+      if (norm > 0) vector = vector.map((v) => v / norm);
     }
     return {vector, model: cfg.model};
   } catch (err) {

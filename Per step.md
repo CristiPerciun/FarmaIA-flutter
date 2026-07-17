@@ -130,16 +130,16 @@
   - [x] **Pulsante di recesso** (art. 54-bis) con dialog di **conferma tracciata** (`WithdrawalButton`, si aggancia agli ordini in Fase 3).
 - **✓ Fatto quando:** consensi salvati su `users.consents`; logo e separazione presenti dove dovuto. · **Rif.** §9.2, §16.8 + Parte 2 (compliance) · **Dipende da:** 1.1
 
-### Step 1.5 — Login con Google (SSO) ⭐ · S
+### Step 1.5 — Login con Google (SSO) ⭐ · S 🟡 (codice fatto; config OAuth in console → attività umana)
 - **Obiettivo:** accesso in un tap con l'account Google, accanto a email/password. *(È l'**SSO**: comodità di login. Non c'entra con la SEO/step 2.7, che è farsi trovare su Google.)*
 - **Attività:**
-  - [ ] Abilita il provider **Google** in Firebase Auth (console dev+prod) e configura OAuth per **web** (popup/redirect), **Android** (SHA-1/SHA-256), **iOS** e **Windows/desktop** (flusso browser esterno — guardia di piattaforma se il plugin non copre il target).
-  - [ ] `signInWithGoogle()` nell'`AuthRepository` esistente: primo accesso → crea il doc `users` con `role: customer` (stesso percorso di 1.3); accessi successivi → riusa il doc.
-  - [ ] **Account linking:** stessa email già registrata via password → collega le credenziali invece di creare un duplicato; messaggi d'errore localizzati IT/EN.
-  - [ ] Pulsante "Continua con Google" nelle schermate di login/registrazione secondo le linee guida di brand Google.
-- **✓ Fatto quando:** un utente nuovo entra con Google e ottiene il doc `users` corretto; un utente esistente con la stessa email non viene duplicato; il flusso funziona su web mobile, web desktop e (o con fallback dichiarato) Windows. · **Rif.** §6 (nota SEO≠SSO) · **Dipende da:** 1.3
+  - [ ] Abilita il provider **Google** in Firebase Auth (console dev+prod) e configura gli OAuth client per **web**, **Android** (SHA-1/SHA-256), **iOS** — **attività umana (console)**. *(Windows/desktop: pulsante nascosto via guardia di piattaforma, resta email/password — fallback dichiarato §4.4.)*
+  - [x] `signInWithGoogle()` in `AuthRepository`: **web** `signInWithPopup`, **mobile** `signInWithProvider` (flusso OAuth di Firebase, **zero plugin aggiuntivi** — niente `google_sign_in`); primo accesso → crea il doc `users` con `role: customer` (`_ensureProfile`, stesso shape di 1.3), accessi successivi → riusa il doc.
+  - [x] **Account linking (base):** con "un account per email" (default Firebase) la stessa email già registrata via password **non viene duplicata** → `account-exists-with-different-credential` mappato a un messaggio localizzato IT/EN che invita ad accedere con la password. *(Auto-relink con prompt password: follow-up.)*
+  - [x] Pulsante **"Continua con Google"** (`GoogleSignInButton`, condiviso da login e registrazione), nascosto dove il flusso non è supportato (desktop/Windows). *(Icona `Icons.g_mobiledata`; il logo brand ufficiale resta un asset di design opzionale.)*
+- **✓ Fatto quando:** un utente nuovo entra con Google e ottiene il doc `users` corretto; un utente esistente con la stessa email non viene duplicato; il flusso funziona su web mobile, web desktop e (o con fallback dichiarato) Windows. **Codice fatto** (`flutter analyze` pulito, **75 test** verdi); **la verifica end-to-end richiede la config OAuth in console (umana).** · **Rif.** §6 (nota SEO≠SSO) · **Dipende da:** 1.3
 
-> **Fase 1 completata (step 1.1–1.4).** Verifiche: `flutter analyze` pulito, **20 test** app verdi, **11 test** regole verdi, `flutter build web` ok, functions `build`+`lint` ok. *(Rimane: step 1.5 — login Google; e, quando disponibili: font istituzionale, asset logo ministeriale reale e conferma autorizzazione §16.8-16.9.)*
+> **Fase 1 completata (step 1.1–1.4; step 1.5 codice fatto, resta la config OAuth in console).** Verifiche: `flutter analyze` pulito, **20 test** app verdi, **11 test** regole verdi, `flutter build web` ok, functions `build`+`lint` ok. *(Rimane: config OAuth Google in Firebase Console per attivare l'SSO — il codice del 1.5 è implementato; e, quando disponibili: font istituzionale, asset logo ministeriale reale e conferma autorizzazione §16.8-16.9.)*
 
 ---
 
@@ -400,33 +400,35 @@
 
 ### Step 5.1 — Multi-sede & selettore ⭐ · M
 - **Attività:**
-  - [ ] Modello `locations` (3 farmacie: indirizzi, orari, geo, `isCupPoint`).
-  - [ ] **Selettore di sede** con orari, "apri in mappa", "chiama", WhatsApp.
+  - [x] Modello `locations` (3 farmacie: indirizzi, orari, geo, `isCupPoint`).
+  - [x] **Selettore di sede** con orari, "apri in mappa", "chiama", WhatsApp.
 - **✓ Fatto quando:** l'utente sceglie la sede e ne vede contatti/orari. · **Rif.** §16.1, §16.5, §16.7 · **Dipende da:** 1.1
 
 ### Step 5.2 — Modulo Servizi ⭐ · M
 - **Attività:**
-  - [ ] Modello `services`; schede con **prezzo**, **sede/i**, **preparazione**, tipo (`free_access`/`appointment`/`external_link`).
-  - [ ] Servizi di **Priorità 1** (autoanalisi, telemedicina ECG/Holter/dermatoscopia/MOC) + CUP.
+  - [x] Modello `services`; schede con **prezzo**, **sede/i**, **preparazione**, tipo (`free_access`/`appointment`/`external_link`).
+  - [x] Servizi di **Priorità 1** (autoanalisi, telemedicina ECG/Holter/dermatoscopia/MOC) + CUP.
 - **✓ Fatto quando:** elenco servizi navigabile con dettagli corretti. · **Rif.** §16.4, §16.5 · **Dipende da:** 5.1
 
 ### Step 5.3 — Prenotazioni / appuntamenti ⭐ · L
 - **Attività:**
-  - [ ] Modello `appointments`; richiesta **slot** per servizio/sede; gestione lato admin (conferma/annulla/completa).
-  - [ ] Notifica al personale; nessuna prenotazione che sottrae tempo al banco non gestita.
+  - [x] Modello `appointments`; richiesta **slot** per servizio/sede; gestione lato admin (conferma/annulla/completa).
+  - [x] Notifica al personale; nessuna prenotazione che sottrae tempo al banco non gestita.
 - **✓ Fatto quando:** un cliente richiede uno slot e l'admin lo conferma. · **Rif.** §16.4–16.5, §13.3 · **Dipende da:** 5.2
 
 ### Step 5.4 — Integrazione sistemi regionali ⭐ · S
 - **Attività:**
-  - [ ] **Deep-link** a CUPWeb/ER Salute/FSE; schede informative su CUP e ritiro referti per sede.
-  - [ ] Nessuna promessa di prenotazione CUP "in-app" (sistemi statali con SPID).
+  - [x] **Deep-link** a CUPWeb/ER Salute/FSE; schede informative su CUP e ritiro referti per sede.
+  - [x] Nessuna promessa di prenotazione CUP "in-app" (sistemi statali con SPID).
 - **✓ Fatto quando:** i link aprono correttamente i servizi regionali. · **Rif.** §16.6 · **Dipende da:** 5.2
 
 ### Step 5.5 — Navigazione aggiornata ⭐ · S
 - **Attività:**
-  - [ ] Bottom nav definitiva: **Home · Negozio · Chat AI · Carrello · Profilo**; **"Servizi" = card hero della Home** (decisione §16.7, per non superare 5 voci).
-  - [ ] Su web desktop "Servizi" resta voce del menu orizzontale; la chat è il widget 70/30 (step 4B.5), non una voce di navigazione.
+  - [x] Bottom nav definitiva: **Home · Negozio · Chat AI · Carrello · Profilo**; **"Servizi" = card hero della Home** (decisione §16.7, per non superare 5 voci).
+  - [x] Su web desktop "Servizi" resta voce del menu orizzontale; la chat è il widget 70/30 (step 4B.5), non una voce di navigazione.
 - **✓ Fatto quando:** "Servizi" è raggiungibile dalla Home/menu e la tab Chat AI è al suo posto su mobile. · **Rif.** §16.7, §12.6 · **Dipende da:** 5.2
+
+> **Fase 5 completata.** Multi-sede, servizi (Priorità 1: autoanalisi ad accesso libero, telemedicina ECG/Holter/dermatoscopia/MOC su appuntamento, CUP via deep-link), prenotazioni cliente + coda di gestione admin, integrazione regionale (CUPWeb/ER Salute/FSE) e navigazione (Servizi = card hero della Home + selettore sede) implementati end-to-end su Firestore (rules + indici già presenti dalla Fase 1). Verifiche: `flutter analyze` pulito, **72 test** app verdi (+11), `flutter build web` ok. Aggiunta dipendenza `url_launcher` per tel/WhatsApp/mappe/portali. Seed esteso con orari sedi e catalogo servizi. *(Restano assunzioni §16.9: prezzi/orari/servizi da confermare con la farmacia; il menu orizzontale desktop resta il rail a 5 voci + card Servizi, non una barra separata.)*
 
 ---
 
@@ -434,21 +436,23 @@
 
 ### Step 6.1 — Vettorializzazione logo & icone ⭐ · M
 - **Attività:**
-  - [ ] **Ricostruzione vettoriale (SVG)** dell'emblema con elementi su layer separati (anello, ali, serpenti, asta, "S", maschera, wordmark).
-  - [ ] **App icon / favicon / maskable** PWA (192/512px) usando una **versione semplificata** (solo emblema).
+  - [x] **Ricostruzione vettoriale (SVG)** dell'emblema con elementi su layer separati (anello, ali, serpenti, asta, "S", maschera, wordmark). *(Semplificata, autoriale — `assets/images/emblem.svg` + `emblem_mono.svg`; la versione premium fedele resta opzione da illustratore, nota §16.2.)*
+  - [x] **App icon / favicon / maskable** PWA (192/512px) usando una **versione semplificata** (solo emblema). *(Pipeline `tool/branding/generate_icons.py` → web + `flutter_launcher_icons` per Android adaptive/iOS/Windows/macOS.)*
 - **✓ Fatto quando:** icone nitide a tutte le misure; SVG pronto per l'animazione. · **Rif.** §16.2 (richiede asset esterno design)
 
 ### Step 6.2 — Splash nativo ⭐ · S
 - **Attività:**
-  - [ ] `flutter_native_splash`: sfondo bianco + emblema; blocco **Android 12+**, storyboard iOS, tema web.
-  - [ ] Niente Activity di splash legacy; disattiva il fade di sistema su Android 12+.
+  - [x] `flutter_native_splash`: sfondo bianco + emblema; blocco **Android 12+** (1152px, cerchio 768px), storyboard iOS, tema web.
+  - [x] Niente Activity di splash legacy; il passaggio su Android 12+ è invisibile perché nativo e reveal condividono bianco+emblema (`preserve()`/`remove()`).
 - **✓ Fatto quando:** nessun "doppio splash"; avvio pulito su Android/iOS/web. · **Rif.** §16.3 · **Dipende da:** 6.1
 
 ### Step 6.3 — Reveal animato ⭐ · M
 - **Attività:**
-  - [ ] **Strada A (Rive)** o **B (PNG + `flutter_animate`)**: coreografia (anello che si disegna → ali → serpenti → "S" → wordmark → shimmer), **≤1,2–1,8 s, non in loop**.
-  - [ ] **Hand-off** alla Home appena pronti init Firebase + primi dati.
+  - [x] **Strada B** (raster ufficiale + anello vettoriale disegnato via `CustomPainter`): coreografia (anello che si disegna → emblema fade+scale → wordmark → shimmer), **~1,75 s, non in loop**; rispetta `disableAnimations`.
+  - [x] **Hand-off** alla Home appena pronti init Firebase + primi dati (Firebase inizializza prima di `runApp`; l'overlay sfuma e si rimuove).
 - **✓ Fatto quando:** lo splash animato gira fluido e cede il passo senza ritardi. · **Rif.** §16.3 · **Dipende da:** 6.2
+
+> **Fase 6 completata.** Emblema vettoriale semplificato a layer (`emblem.svg`, + mono per fondi scuri) con pipeline icone rigenerabile (`tool/branding/generate_icons.py` → favicon, PWA 192/512 + maskable con safe-zone, master per `flutter_launcher_icons`: Android adaptive, iOS, Windows, macOS); splash nativo `flutter_native_splash` (bianco+emblema, Android 12+, iOS, web) e reveal in-app `SplashReveal` (~1,75 s, una sola volta per avvio, reduce-motion ok) con hand-off senza doppio splash. Verifiche: `flutter analyze` pulito, **75 test** app verdi (+3), `flutter build web` ok. *(Resta opzionale da designer: ricostruzione vettoriale "premium" fedele al raster AI e Strada A/Rive, §16.2–16.3.)*
 
 ---
 
@@ -503,8 +507,8 @@
 | **M3 — Vendita** | Carrello, checkout, pagamenti, ordini | Fase 3 |
 | **M4 — Admin AI** | Pipeline AI + validazione + gestione catalogo | Fase 4 |
 | **M4B — Chat AI cliente** | LLM open EU + RAG catalogo + guardrail + UI web 70/30 e pagina mobile + audit farmacista + **scambio ricerca→conversazione** (4B.6b, post-gate) — *implementata end-to-end (mock); restano selezione modello (4B.1), componente SSR (post-2.7) e il **gate 4B.8** (red-team clinico + legale) prima di accendere il flag* | Fase 4B |
-| **M5 — Baganza** | Multi-sede, servizi, prenotazioni, CUP | Fase 5 |
-| **M6 — Brand & Splash** | Logo vettoriale, icone, splash animato | Fase 6 |
+| **M5 — Baganza** | Multi-sede, servizi, prenotazioni, CUP — *implementata end-to-end (Fase 5 completata)* | Fase 5 |
+| **M6 — Brand & Splash** | Logo vettoriale, icone, splash animato — *implementata (Fase 6 completata; resta opzionale il vettoriale "premium" da illustratore)* | Fase 6 |
 | **⭐ MVP (v1)** | M1→M6 (incl. M4B) + Fase 8 (lancio) | tutti gli step ⭐ |
 | **v1.1+** | Engagement | Fase 7 |
 

@@ -278,6 +278,24 @@ abstract class AppLocalizations {
   /// **'Esiste già un account con questa email.'**
   String get authErrorEmailInUse;
 
+  /// No description provided for @authErrorAccountExists.
+  ///
+  /// In it, this message translates to:
+  /// **'Esiste già un account con questa email, registrato con un altro metodo di accesso. Accedi con email e password.'**
+  String get authErrorAccountExists;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In it, this message translates to:
+  /// **'Continua con Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @orSeparator.
+  ///
+  /// In it, this message translates to:
+  /// **'oppure'**
+  String get orSeparator;
+
   /// No description provided for @profileTitle.
   ///
   /// In it, this message translates to:
@@ -1849,6 +1867,498 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Archiviato'**
   String get statusArchived;
+
+  /// No description provided for @navToServices.
+  ///
+  /// In it, this message translates to:
+  /// **'Servizi'**
+  String get navToServices;
+
+  /// No description provided for @homeServicesCardTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Servizi e prenotazioni'**
+  String get homeServicesCardTitle;
+
+  /// No description provided for @homeServicesCardSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Autoanalisi, telemedicina, CUP e referti'**
+  String get homeServicesCardSubtitle;
+
+  /// No description provided for @homeLocationsCardSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Orari, mappa e contatti delle nostre sedi'**
+  String get homeLocationsCardSubtitle;
+
+  /// No description provided for @servicesTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Servizi e prenotazioni'**
+  String get servicesTitle;
+
+  /// No description provided for @servicesLoadError.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile caricare i servizi. Riprova.'**
+  String get servicesLoadError;
+
+  /// No description provided for @servicesEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun servizio disponibile al momento.'**
+  String get servicesEmpty;
+
+  /// No description provided for @serviceAllCategories.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get serviceAllCategories;
+
+  /// No description provided for @servicePriceFree.
+  ///
+  /// In it, this message translates to:
+  /// **'Gratuito'**
+  String get servicePriceFree;
+
+  /// No description provided for @servicePrepTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Preparazione'**
+  String get servicePrepTitle;
+
+  /// No description provided for @serviceDurationLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'{min} min'**
+  String serviceDurationLabel(int min);
+
+  /// No description provided for @serviceRequiresFasting.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiede digiuno'**
+  String get serviceRequiresFasting;
+
+  /// No description provided for @serviceAvailableAtTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Disponibile presso'**
+  String get serviceAvailableAtTitle;
+
+  /// No description provided for @serviceCategoryAutoanalisi.
+  ///
+  /// In it, this message translates to:
+  /// **'Autoanalisi'**
+  String get serviceCategoryAutoanalisi;
+
+  /// No description provided for @serviceCategoryTelemedicina.
+  ///
+  /// In it, this message translates to:
+  /// **'Telemedicina'**
+  String get serviceCategoryTelemedicina;
+
+  /// No description provided for @serviceCategoryConsulenza.
+  ///
+  /// In it, this message translates to:
+  /// **'Consulenze'**
+  String get serviceCategoryConsulenza;
+
+  /// No description provided for @serviceCategoryTampone.
+  ///
+  /// In it, this message translates to:
+  /// **'Tamponi'**
+  String get serviceCategoryTampone;
+
+  /// No description provided for @serviceCategoryCup.
+  ///
+  /// In it, this message translates to:
+  /// **'CUP e referti'**
+  String get serviceCategoryCup;
+
+  /// No description provided for @serviceCategoryAltro.
+  ///
+  /// In it, this message translates to:
+  /// **'Altri servizi'**
+  String get serviceCategoryAltro;
+
+  /// No description provided for @serviceBookingFreeAccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Accesso libero'**
+  String get serviceBookingFreeAccess;
+
+  /// No description provided for @serviceBookingAppointment.
+  ///
+  /// In it, this message translates to:
+  /// **'Su appuntamento'**
+  String get serviceBookingAppointment;
+
+  /// No description provided for @serviceBookingExternalLink.
+  ///
+  /// In it, this message translates to:
+  /// **'Servizio esterno'**
+  String get serviceBookingExternalLink;
+
+  /// No description provided for @serviceBookAppointment.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiedi appuntamento'**
+  String get serviceBookAppointment;
+
+  /// No description provided for @serviceFreeAccessInfo.
+  ///
+  /// In it, this message translates to:
+  /// **'Accesso libero: nessuna prenotazione necessaria.'**
+  String get serviceFreeAccessInfo;
+
+  /// No description provided for @serviceOpenExternal.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri il servizio'**
+  String get serviceOpenExternal;
+
+  /// No description provided for @serviceNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Servizio non trovato.'**
+  String get serviceNotFound;
+
+  /// No description provided for @locationsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Le nostre sedi'**
+  String get locationsTitle;
+
+  /// No description provided for @locationsLoadError.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile caricare le sedi. Riprova.'**
+  String get locationsLoadError;
+
+  /// No description provided for @locationsEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna sede disponibile.'**
+  String get locationsEmpty;
+
+  /// No description provided for @locationSelectorTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sede di riferimento'**
+  String get locationSelectorTitle;
+
+  /// No description provided for @locationChange.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambia'**
+  String get locationChange;
+
+  /// No description provided for @locationCall.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiama'**
+  String get locationCall;
+
+  /// No description provided for @locationWhatsApp.
+  ///
+  /// In it, this message translates to:
+  /// **'WhatsApp'**
+  String get locationWhatsApp;
+
+  /// No description provided for @locationOpenMap.
+  ///
+  /// In it, this message translates to:
+  /// **'Mappa'**
+  String get locationOpenMap;
+
+  /// No description provided for @locationEmail.
+  ///
+  /// In it, this message translates to:
+  /// **'Email'**
+  String get locationEmail;
+
+  /// No description provided for @locationCupPoint.
+  ///
+  /// In it, this message translates to:
+  /// **'Punto CUP'**
+  String get locationCupPoint;
+
+  /// No description provided for @locationHoursTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Orari'**
+  String get locationHoursTitle;
+
+  /// No description provided for @locationHoursClosed.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiuso'**
+  String get locationHoursClosed;
+
+  /// No description provided for @locationNoHours.
+  ///
+  /// In it, this message translates to:
+  /// **'Orari non disponibili'**
+  String get locationNoHours;
+
+  /// No description provided for @locationChooseTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli la sede'**
+  String get locationChooseTitle;
+
+  /// No description provided for @launchFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile aprire il collegamento.'**
+  String get launchFailed;
+
+  /// No description provided for @bookingTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiesta appuntamento'**
+  String get bookingTitle;
+
+  /// No description provided for @bookingSignInRequired.
+  ///
+  /// In it, this message translates to:
+  /// **'Accedi per richiedere un appuntamento.'**
+  String get bookingSignInRequired;
+
+  /// No description provided for @bookingChooseLocation.
+  ///
+  /// In it, this message translates to:
+  /// **'Sede'**
+  String get bookingChooseLocation;
+
+  /// No description provided for @bookingChooseDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data'**
+  String get bookingChooseDate;
+
+  /// No description provided for @bookingChooseTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Orario'**
+  String get bookingChooseTime;
+
+  /// No description provided for @bookingPickDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli la data'**
+  String get bookingPickDate;
+
+  /// No description provided for @bookingPickTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli l\'orario'**
+  String get bookingPickTime;
+
+  /// No description provided for @bookingContactPhone.
+  ///
+  /// In it, this message translates to:
+  /// **'Telefono di contatto'**
+  String get bookingContactPhone;
+
+  /// No description provided for @bookingNotes.
+  ///
+  /// In it, this message translates to:
+  /// **'Note (facoltative)'**
+  String get bookingNotes;
+
+  /// No description provided for @bookingSubmit.
+  ///
+  /// In it, this message translates to:
+  /// **'Invia richiesta'**
+  String get bookingSubmit;
+
+  /// No description provided for @bookingSubmitted.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiesta inviata: ti contatteremo per confermare.'**
+  String get bookingSubmitted;
+
+  /// No description provided for @bookingIncomplete.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona sede, data e orario.'**
+  String get bookingIncomplete;
+
+  /// No description provided for @bookingError.
+  ///
+  /// In it, this message translates to:
+  /// **'Invio non riuscito. Riprova.'**
+  String get bookingError;
+
+  /// No description provided for @bookingDisclaimer.
+  ///
+  /// In it, this message translates to:
+  /// **'La prenotazione è una richiesta di slot gestita dal personale della farmacia, che ti confermerà l\'appuntamento.'**
+  String get bookingDisclaimer;
+
+  /// No description provided for @appointmentsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Le mie prenotazioni'**
+  String get appointmentsTitle;
+
+  /// No description provided for @appointmentsSignIn.
+  ///
+  /// In it, this message translates to:
+  /// **'Accedi per vedere le tue prenotazioni.'**
+  String get appointmentsSignIn;
+
+  /// No description provided for @appointmentsEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Non hai ancora prenotazioni.'**
+  String get appointmentsEmpty;
+
+  /// No description provided for @apptStatusRequested.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa'**
+  String get apptStatusRequested;
+
+  /// No description provided for @apptStatusConfirmed.
+  ///
+  /// In it, this message translates to:
+  /// **'Confermato'**
+  String get apptStatusConfirmed;
+
+  /// No description provided for @apptStatusCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Completato'**
+  String get apptStatusCompleted;
+
+  /// No description provided for @apptStatusCancelled.
+  ///
+  /// In it, this message translates to:
+  /// **'Annullato'**
+  String get apptStatusCancelled;
+
+  /// No description provided for @apptStatusNoShow.
+  ///
+  /// In it, this message translates to:
+  /// **'Mancata presentazione'**
+  String get apptStatusNoShow;
+
+  /// No description provided for @adminManageAppointments.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestione prenotazioni'**
+  String get adminManageAppointments;
+
+  /// No description provided for @adminAppointmentsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Prenotazioni'**
+  String get adminAppointmentsTitle;
+
+  /// No description provided for @adminAppointmentsEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna prenotazione per questa sede.'**
+  String get adminAppointmentsEmpty;
+
+  /// No description provided for @adminApptConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma'**
+  String get adminApptConfirm;
+
+  /// No description provided for @adminApptCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get adminApptCancel;
+
+  /// No description provided for @adminApptComplete.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa'**
+  String get adminApptComplete;
+
+  /// No description provided for @adminApptNoShow.
+  ///
+  /// In it, this message translates to:
+  /// **'Assente'**
+  String get adminApptNoShow;
+
+  /// No description provided for @adminApptUpdated.
+  ///
+  /// In it, this message translates to:
+  /// **'Stato aggiornato.'**
+  String get adminApptUpdated;
+
+  /// No description provided for @adminApptContactLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Contatto: {phone}'**
+  String adminApptContactLabel(String phone);
+
+  /// No description provided for @cupInfoTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Prenotazioni CUP e referti'**
+  String get cupInfoTitle;
+
+  /// No description provided for @cupInfoIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Ti guidiamo verso i servizi sanitari regionali. La prenotazione delle prestazioni SSN avviene sui portali statali con accesso SPID, non dentro l\'app.'**
+  String get cupInfoIntro;
+
+  /// No description provided for @cupOpenCupWeb.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri CUPWeb'**
+  String get cupOpenCupWeb;
+
+  /// No description provided for @cupOpenErSalute.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri ER Salute'**
+  String get cupOpenErSalute;
+
+  /// No description provided for @cupOpenFse.
+  ///
+  /// In it, this message translates to:
+  /// **'Fascicolo Sanitario (FSE)'**
+  String get cupOpenFse;
+
+  /// No description provided for @cupPrepareDocsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Prepara i documenti'**
+  String get cupPrepareDocsTitle;
+
+  /// No description provided for @cupPrepareDocsBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricetta/NRE, tessera sanitaria ed eventuale codice di esenzione.'**
+  String get cupPrepareDocsBody;
+
+  /// No description provided for @cupPointsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Dove prenotare (FarmaCUP)'**
+  String get cupPointsTitle;
+
+  /// No description provided for @cupPointYes.
+  ///
+  /// In it, this message translates to:
+  /// **'Punto CUP attivo'**
+  String get cupPointYes;
+
+  /// No description provided for @cupPointNo.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun punto CUP in questa sede'**
+  String get cupPointNo;
 }
 
 class _AppLocalizationsDelegate

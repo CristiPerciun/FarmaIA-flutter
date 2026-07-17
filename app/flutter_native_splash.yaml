@@ -1,0 +1,14 @@
+# Step 6.2 (§16.3) — splash nativo statico: sfondo bianco + emblema centrato.
+# Android 12+: icona 1152px con contenuto nel cerchio da 768px (regola OS).
+# Rigenerare con: dart run flutter_native_splash:create
+# Il reveal animato in-app (step 6.3) parte appena il primo frame Flutter è
+# pronto: main.dart usa preserve()/remove() per un hand-off senza doppio splash.
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/branding/splash_emblem.png
+
+  android_12:
+    color: "#FFFFFF"
+    image: assets/branding/splash_android12.png
+
+  web: true

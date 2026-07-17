@@ -102,6 +102,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get authErrorEmailInUse => 'Esiste già un account con questa email.';
 
   @override
+  String get authErrorAccountExists =>
+      'Esiste già un account con questa email, registrato con un altro metodo di accesso. Accedi con email e password.';
+
+  @override
+  String get continueWithGoogle => 'Continua con Google';
+
+  @override
+  String get orSeparator => 'oppure';
+
+  @override
   String get profileTitle => 'Profilo';
 
   @override
@@ -962,4 +972,261 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get statusArchived => 'Archiviato';
+
+  @override
+  String get navToServices => 'Servizi';
+
+  @override
+  String get homeServicesCardTitle => 'Servizi e prenotazioni';
+
+  @override
+  String get homeServicesCardSubtitle =>
+      'Autoanalisi, telemedicina, CUP e referti';
+
+  @override
+  String get homeLocationsCardSubtitle =>
+      'Orari, mappa e contatti delle nostre sedi';
+
+  @override
+  String get servicesTitle => 'Servizi e prenotazioni';
+
+  @override
+  String get servicesLoadError => 'Impossibile caricare i servizi. Riprova.';
+
+  @override
+  String get servicesEmpty => 'Nessun servizio disponibile al momento.';
+
+  @override
+  String get serviceAllCategories => 'Tutti';
+
+  @override
+  String get servicePriceFree => 'Gratuito';
+
+  @override
+  String get servicePrepTitle => 'Preparazione';
+
+  @override
+  String serviceDurationLabel(int min) {
+    return '$min min';
+  }
+
+  @override
+  String get serviceRequiresFasting => 'Richiede digiuno';
+
+  @override
+  String get serviceAvailableAtTitle => 'Disponibile presso';
+
+  @override
+  String get serviceCategoryAutoanalisi => 'Autoanalisi';
+
+  @override
+  String get serviceCategoryTelemedicina => 'Telemedicina';
+
+  @override
+  String get serviceCategoryConsulenza => 'Consulenze';
+
+  @override
+  String get serviceCategoryTampone => 'Tamponi';
+
+  @override
+  String get serviceCategoryCup => 'CUP e referti';
+
+  @override
+  String get serviceCategoryAltro => 'Altri servizi';
+
+  @override
+  String get serviceBookingFreeAccess => 'Accesso libero';
+
+  @override
+  String get serviceBookingAppointment => 'Su appuntamento';
+
+  @override
+  String get serviceBookingExternalLink => 'Servizio esterno';
+
+  @override
+  String get serviceBookAppointment => 'Richiedi appuntamento';
+
+  @override
+  String get serviceFreeAccessInfo =>
+      'Accesso libero: nessuna prenotazione necessaria.';
+
+  @override
+  String get serviceOpenExternal => 'Apri il servizio';
+
+  @override
+  String get serviceNotFound => 'Servizio non trovato.';
+
+  @override
+  String get locationsTitle => 'Le nostre sedi';
+
+  @override
+  String get locationsLoadError => 'Impossibile caricare le sedi. Riprova.';
+
+  @override
+  String get locationsEmpty => 'Nessuna sede disponibile.';
+
+  @override
+  String get locationSelectorTitle => 'Sede di riferimento';
+
+  @override
+  String get locationChange => 'Cambia';
+
+  @override
+  String get locationCall => 'Chiama';
+
+  @override
+  String get locationWhatsApp => 'WhatsApp';
+
+  @override
+  String get locationOpenMap => 'Mappa';
+
+  @override
+  String get locationEmail => 'Email';
+
+  @override
+  String get locationCupPoint => 'Punto CUP';
+
+  @override
+  String get locationHoursTitle => 'Orari';
+
+  @override
+  String get locationHoursClosed => 'Chiuso';
+
+  @override
+  String get locationNoHours => 'Orari non disponibili';
+
+  @override
+  String get locationChooseTitle => 'Scegli la sede';
+
+  @override
+  String get launchFailed => 'Impossibile aprire il collegamento.';
+
+  @override
+  String get bookingTitle => 'Richiesta appuntamento';
+
+  @override
+  String get bookingSignInRequired => 'Accedi per richiedere un appuntamento.';
+
+  @override
+  String get bookingChooseLocation => 'Sede';
+
+  @override
+  String get bookingChooseDate => 'Data';
+
+  @override
+  String get bookingChooseTime => 'Orario';
+
+  @override
+  String get bookingPickDate => 'Scegli la data';
+
+  @override
+  String get bookingPickTime => 'Scegli l\'orario';
+
+  @override
+  String get bookingContactPhone => 'Telefono di contatto';
+
+  @override
+  String get bookingNotes => 'Note (facoltative)';
+
+  @override
+  String get bookingSubmit => 'Invia richiesta';
+
+  @override
+  String get bookingSubmitted =>
+      'Richiesta inviata: ti contatteremo per confermare.';
+
+  @override
+  String get bookingIncomplete => 'Seleziona sede, data e orario.';
+
+  @override
+  String get bookingError => 'Invio non riuscito. Riprova.';
+
+  @override
+  String get bookingDisclaimer =>
+      'La prenotazione è una richiesta di slot gestita dal personale della farmacia, che ti confermerà l\'appuntamento.';
+
+  @override
+  String get appointmentsTitle => 'Le mie prenotazioni';
+
+  @override
+  String get appointmentsSignIn => 'Accedi per vedere le tue prenotazioni.';
+
+  @override
+  String get appointmentsEmpty => 'Non hai ancora prenotazioni.';
+
+  @override
+  String get apptStatusRequested => 'In attesa';
+
+  @override
+  String get apptStatusConfirmed => 'Confermato';
+
+  @override
+  String get apptStatusCompleted => 'Completato';
+
+  @override
+  String get apptStatusCancelled => 'Annullato';
+
+  @override
+  String get apptStatusNoShow => 'Mancata presentazione';
+
+  @override
+  String get adminManageAppointments => 'Gestione prenotazioni';
+
+  @override
+  String get adminAppointmentsTitle => 'Prenotazioni';
+
+  @override
+  String get adminAppointmentsEmpty => 'Nessuna prenotazione per questa sede.';
+
+  @override
+  String get adminApptConfirm => 'Conferma';
+
+  @override
+  String get adminApptCancel => 'Annulla';
+
+  @override
+  String get adminApptComplete => 'Completa';
+
+  @override
+  String get adminApptNoShow => 'Assente';
+
+  @override
+  String get adminApptUpdated => 'Stato aggiornato.';
+
+  @override
+  String adminApptContactLabel(String phone) {
+    return 'Contatto: $phone';
+  }
+
+  @override
+  String get cupInfoTitle => 'Prenotazioni CUP e referti';
+
+  @override
+  String get cupInfoIntro =>
+      'Ti guidiamo verso i servizi sanitari regionali. La prenotazione delle prestazioni SSN avviene sui portali statali con accesso SPID, non dentro l\'app.';
+
+  @override
+  String get cupOpenCupWeb => 'Apri CUPWeb';
+
+  @override
+  String get cupOpenErSalute => 'Apri ER Salute';
+
+  @override
+  String get cupOpenFse => 'Fascicolo Sanitario (FSE)';
+
+  @override
+  String get cupPrepareDocsTitle => 'Prepara i documenti';
+
+  @override
+  String get cupPrepareDocsBody =>
+      'Ricetta/NRE, tessera sanitaria ed eventuale codice di esenzione.';
+
+  @override
+  String get cupPointsTitle => 'Dove prenotare (FarmaCUP)';
+
+  @override
+  String get cupPointYes => 'Punto CUP attivo';
+
+  @override
+  String get cupPointNo => 'Nessun punto CUP in questa sede';
 }

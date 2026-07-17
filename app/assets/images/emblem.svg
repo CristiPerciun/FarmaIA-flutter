@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Baganza Farmacie — emblema vettoriale SEMPLIFICATO (step 6.1, §16.2).
+
+  Ricostruzione stilizzata del caduceo del logo ufficiale, con gli elementi su
+  layer separati (id) pronti per l'animazione del reveal (§16.3):
+    #ring · #wings · #staff · #snakes · #mask · #letter-s
+  La versione fedele "premium" resta un'attività da illustratore (nota §16.2);
+  questa semplificazione è pensata per app icon / favicon / maskable, dove il
+  dettaglio del raster AI a 48px sarebbe comunque illeggibile.
+
+  La "S" usa un serif di sistema (Georgia); per un uso cross-platform del file
+  al di fuori della pipeline icone va convertita in tracciato da un designer.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E6C76A"/>
+      <stop offset="0.5" stop-color="#C9A227"/>
+      <stop offset="1" stop-color="#8A6D1B"/>
+    </linearGradient>
+    <linearGradient id="goldH" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8A6D1B"/>
+      <stop offset="0.5" stop-color="#E6C76A"/>
+      <stop offset="1" stop-color="#8A6D1B"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="0.35" cy="0.3" r="1">
+      <stop offset="0" stop-color="#F2DFA0"/>
+      <stop offset="0.6" stop-color="#C9A227"/>
+      <stop offset="1" stop-color="#8A6D1B"/>
+    </radialGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2E9B52"/>
+      <stop offset="1" stop-color="#14532D"/>
+    </linearGradient>
+    <linearGradient id="crimson" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C13A52"/>
+      <stop offset="0.55" stop-color="#9E1B32"/>
+      <stop offset="1" stop-color="#6E1222"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Anello d'oro -->
+  <g id="ring" fill="none">
+    <circle cx="512" cy="512" r="440" stroke="url(#gold)" stroke-width="26"/>
+    <circle cx="512" cy="512" r="456" stroke="#8A6D1B" stroke-width="3"/>
+    <circle cx="512" cy="512" r="424" stroke="#8A6D1B" stroke-width="3"/>
+  </g>
+
+  <!-- Ali spiegate (sinistra + specchio) -->
+  <g id="wings">
+    <g id="wing-left">
+      <path fill="url(#gold)" stroke="#8A6D1B" stroke-width="4" d="
+        M 502 330
+        C 450 240, 350 160, 148 142
+        C 190 185, 228 212, 266 230
+        C 224 232, 184 226, 148 214
+        C 196 262, 250 290, 302 300
+        C 272 312, 240 316, 210 314
+        C 266 352, 332 366, 392 356
+        C 380 374, 362 388, 344 398
+        C 404 410, 460 396, 502 368
+        Z"/>
+      <path fill="#F4E9CF" opacity="0.55" d="
+        M 496 330
+        C 452 250, 360 176, 200 152
+        C 310 186, 420 262, 472 336
+        Z"/>
+      <path fill="none" stroke="#8A6D1B" stroke-width="4" opacity="0.6" d="M 302 300 C 362 318, 432 336, 492 348"/>
+      <path fill="none" stroke="#8A6D1B" stroke-width="4" opacity="0.6" d="M 266 230 C 340 256, 430 296, 494 328"/>
+    </g>
+    <use href="#wing-left" transform="translate(1024 0) scale(-1 1)"/>
+  </g>
+
+  <!-- Asta con sfera apicale -->
+  <g id="staff">
+    <circle cx="512" cy="150" r="36" fill="url(#orb)" stroke="#8A6D1B" stroke-width="3"/>
+    <rect x="494" y="192" width="36" height="14" rx="6" fill="url(#goldH)" stroke="#8A6D1B" stroke-width="2"/>
+    <rect x="499" y="200" width="26" height="640" rx="13" fill="url(#goldH)" stroke="#8A6D1B" stroke-width="3"/>
+  </g>
+
+  <!-- Serpenti verdi intrecciati -->
+  <g id="snakes" fill="none" stroke-linecap="round">
+    <path stroke="url(#green)" stroke-width="24" d="
+      M 512 800
+      C 420 762, 420 706, 512 668
+      C 604 630, 604 574, 512 540
+      C 420 506, 420 452, 512 420
+      C 585 394, 596 352, 548 322"/>
+    <path stroke="url(#green)" stroke-width="24" d="
+      M 512 772
+      C 604 738, 604 682, 512 646
+      C 420 610, 420 556, 512 524
+      C 604 492, 604 438, 512 408
+      C 442 384, 432 348, 478 320"/>
+    <!-- teste affrontate -->
+    <ellipse cx="550" cy="306" rx="20" ry="13" fill="url(#green)" stroke="none" transform="rotate(-26 550 306)"/>
+    <ellipse cx="474" cy="304" rx="20" ry="13" fill="url(#green)" stroke="none" transform="rotate(26 474 304)"/>
+    <circle cx="557" cy="301" r="2.5" fill="#DFF3E4" stroke="none"/>
+    <circle cx="467" cy="299" r="2.5" fill="#DFF3E4" stroke="none"/>
+  </g>
+
+  <!-- Maschera barbuta alla base -->
+  <g id="mask">
+    <circle cx="512" cy="852" r="38" fill="url(#gold)" stroke="#8A6D1B" stroke-width="3"/>
+    <path fill="url(#gold)" stroke="#8A6D1B" stroke-width="3" d="
+      M 476 868
+      C 478 918, 502 942, 512 950
+      C 522 942, 546 918, 548 868
+      C 536 884, 488 884, 476 868 Z"/>
+    <path fill="none" stroke="#8A6D1B" stroke-width="4" d="M 494 842 q 7 -6 15 0"/>
+    <path fill="none" stroke="#8A6D1B" stroke-width="4" d="M 515 842 q 7 -6 15 0"/>
+    <!-- barba: ciocche verticali -->
+    <path fill="none" stroke="#8A6D1B" stroke-width="3" opacity="0.8" d="M 496 876 q -2 28 8 52"/>
+    <path fill="none" stroke="#8A6D1B" stroke-width="3" opacity="0.8" d="M 512 880 q 0 30 0 56"/>
+    <path fill="none" stroke="#8A6D1B" stroke-width="3" opacity="0.8" d="M 528 876 q 2 28 -8 52"/>
+  </g>
+
+  <!-- "S" cremisi -->
+  <g id="letter-s">
+    <text x="512" y="700" text-anchor="middle"
+          font-family="Georgia, 'Times New Roman', serif" font-weight="bold"
+          font-size="430" fill="url(#crimson)" stroke="#6E1222" stroke-width="5">S</text>
+  </g>
+</svg>

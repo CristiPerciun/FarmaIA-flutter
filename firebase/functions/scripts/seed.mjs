@@ -27,6 +27,18 @@ const db = getFirestore();
 const now = Timestamp.now();
 const l = (it, en) => ({it, en});
 
+// Weekday opening hours (0 = Monday … 6 = Sunday). Mon–Sat split shift, closed
+// Sunday — a typical Parma pharmacy schedule (§16.5; confirm with the farmacia).
+const weekdayHours = () => [
+  ...[0, 1, 2, 3, 4, 5].map((weekday) => ({
+    weekday,
+    open: "08:30",
+    close: "19:30",
+    closed: false,
+  })),
+  {weekday: 6, open: "", close: "", closed: true},
+];
+
 async function seed() {
   const batch = db.batch();
 
@@ -182,8 +194,8 @@ async function seed() {
     whatsapp: "3311532690",
     email: "info@farmaciabaganza.com",
     geo: {lat: 44.79, lng: 10.31},
-    openingHours: [],
-    isCupPoint: false,
+    openingHours: weekdayHours(),
+    isCupPoint: true,
     services: [],
     order: 1,
   });
@@ -194,10 +206,18 @@ async function seed() {
     province: "PR",
     zip: "43126",
     phone: "0521292905",
+    whatsapp: "3311532690",
+    email: "info@farmaciabaganza.com",
     geo: {lat: 44.80, lng: 10.30},
-    openingHours: [],
+    openingHours: weekdayHours(),
     isCupPoint: true,
-    services: ["services/ecg-refertazione"],
+    services: [
+      "services/ecg-refertazione",
+      "services/holter-cardiaco",
+      "services/holter-pressorio",
+      "services/dermatoscopia",
+      "services/moc-calcaneare",
+    ],
     order: 2,
   });
   batch.set(db.doc("locations/baganza3"), {
@@ -208,13 +228,47 @@ async function seed() {
     zip: "43121",
     phone: "0521233178",
     geo: {lat: 44.80, lng: 10.33},
-    openingHours: [],
+    openingHours: weekdayHours(),
     isCupPoint: false,
     services: [],
     order: 3,
   });
 
-  // --- services ---
+  // --- services (Priorità 1, §16.4) ---
+  // Autoanalisi del sangue — accesso libero (glicemia / colesterolo €6).
+  batch.set(db.doc("services/autoanalisi-glicemia"), {
+    slug: l("autoanalisi-glicemia", "blood-glucose-self-test"),
+    name: l("Autoanalisi glicemia", "Blood glucose self-test"),
+    description: l(
+      "Misurazione della glicemia capillare.",
+      "Capillary blood glucose measurement."),
+    category: "autoanalisi",
+    price: 600,
+    bookingType: "free_access",
+    externalUrl: null,
+    availableAt: ["locations/baganza", "locations/baganza2", "locations/baganza3"],
+    prep: l("Digiuno da almeno 8 ore.", "Fast for at least 8 hours."),
+    durationMin: 10,
+    requiresFasting: true,
+    active: true,
+  });
+  batch.set(db.doc("services/autoanalisi-colesterolo"), {
+    slug: l("autoanalisi-colesterolo", "cholesterol-self-test"),
+    name: l("Autoanalisi colesterolo", "Cholesterol self-test"),
+    description: l(
+      "Misurazione del colesterolo totale.",
+      "Total cholesterol measurement."),
+    category: "autoanalisi",
+    price: 600,
+    bookingType: "free_access",
+    externalUrl: null,
+    availableAt: ["locations/baganza", "locations/baganza2", "locations/baganza3"],
+    prep: l("Digiuno da almeno 12 ore.", "Fast for at least 12 hours."),
+    durationMin: 10,
+    requiresFasting: true,
+    active: true,
+  });
+  // Telemedicina (sede Baganza2) — su prenotazione.
   batch.set(db.doc("services/ecg-refertazione"), {
     slug: l("ecg-refertazione", "ecg-with-report"),
     name: l("Elettrocardiogramma con refertazione", "ECG with report"),
@@ -226,6 +280,90 @@ async function seed() {
     availableAt: ["locations/baganza2"],
     prep: l("Presentarsi a riposo.", "Come rested."),
     durationMin: 20,
+    requiresFasting: false,
+    active: true,
+  });
+  batch.set(db.doc("services/holter-cardiaco"), {
+    slug: l("holter-cardiaco", "cardiac-holter"),
+    name: l("Holter cardiaco 24/48/72h", "Cardiac Holter 24/48/72h"),
+    description: l(
+      "Monitoraggio ECG dinamico con refertazione.",
+      "Dynamic ECG monitoring with report."),
+    category: "telemedicina",
+    price: 7500,
+    bookingType: "appointment",
+    externalUrl: null,
+    availableAt: ["locations/baganza2"],
+    prep: l("Nessuna preparazione particolare.", "No special preparation."),
+    durationMin: 30,
+    requiresFasting: false,
+    active: true,
+  });
+  batch.set(db.doc("services/holter-pressorio"), {
+    slug: l("holter-pressorio", "abpm-holter"),
+    name: l("Holter pressorio 24h", "Blood-pressure Holter 24h"),
+    description: l(
+      "Monitoraggio della pressione nelle 24 ore.",
+      "24-hour blood-pressure monitoring."),
+    category: "telemedicina",
+    price: 5000,
+    bookingType: "appointment",
+    externalUrl: null,
+    availableAt: ["locations/baganza2"],
+    prep: l("Indossare una maglietta leggera.", "Wear a light t-shirt."),
+    durationMin: 20,
+    requiresFasting: false,
+    active: true,
+  });
+  batch.set(db.doc("services/dermatoscopia"), {
+    slug: l("dermatoscopia", "dermatoscopy"),
+    name: l("Dermatoscopia", "Dermatoscopy"),
+    description: l(
+      "Mappatura dei nei con refertazione dermatologica.",
+      "Mole mapping with dermatology report."),
+    category: "telemedicina",
+    price: 5500,
+    bookingType: "appointment",
+    externalUrl: null,
+    availableAt: ["locations/baganza2"],
+    prep: l("Struccarsi prima dell'esame.", "Remove make-up before the exam."),
+    durationMin: 30,
+    requiresFasting: false,
+    active: true,
+  });
+  batch.set(db.doc("services/moc-calcaneare"), {
+    slug: l("moc-calcaneare", "heel-bone-densitometry"),
+    name: l("MOC calcaneare", "Heel bone densitometry (MOC)"),
+    description: l(
+      "Densitometria ossea a ultrasuoni del calcagno.",
+      "Ultrasound bone densitometry of the heel."),
+    category: "telemedicina",
+    price: 1500,
+    bookingType: "appointment",
+    externalUrl: null,
+    availableAt: ["locations/baganza2"],
+    prep: l("Nessuna preparazione particolare.", "No special preparation."),
+    durationMin: 15,
+    requiresFasting: false,
+    active: true,
+  });
+  // CUP & referti — deep-link al servizio regionale (§16.6): mai prenotazione
+  // nativa in app.
+  batch.set(db.doc("services/cup-prenotazioni"), {
+    slug: l("cup-prenotazioni-referti", "cup-bookings-reports"),
+    name: l("Prenotazioni CUP e ritiro referti", "CUP bookings & report pickup"),
+    description: l(
+      "Ti guidiamo alla prenotazione CUP e al ritiro referti sui portali regionali.",
+      "We guide you to CUP booking and report pickup on the regional portals."),
+    category: "cup",
+    price: null,
+    bookingType: "external_link",
+    externalUrl: "https://www.cupweb.it",
+    availableAt: ["locations/baganza", "locations/baganza2"],
+    prep: l(
+      "Prepara ricetta/NRE, tessera sanitaria ed eventuale esenzione.",
+      "Prepare prescription/NRE, health card and any exemption."),
+    durationMin: null,
     requiresFasting: false,
     active: true,
   });

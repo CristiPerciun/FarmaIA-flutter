@@ -4,10 +4,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../l10n/app_localizations.dart';
 import '../application/auth_providers.dart';
+import 'google_sign_in_button.dart';
+
+const _log = AppLogger('auth.register');
 
 /// Account registration (§1.3). Creates the Firebase user and the
 /// `users/{uid}` profile with `role: customer` (§5.5).
@@ -39,10 +43,12 @@ class RegisterScreen extends HookConsumerWidget {
               displayName: name.text,
               locale: locale,
             );
+        _log.info('register success -> /profile');
         if (context.mounted) context.go('/profile');
       } on FirebaseAuthException catch (e) {
         error.value = _messageFor(e.code, l10n);
-      } catch (_) {
+      } catch (e) {
+        _log.error('register unexpected error', error: e);
         error.value = l10n.authErrorGeneric;
       } finally {
         if (context.mounted) isLoading.value = false;
@@ -93,6 +99,7 @@ class RegisterScreen extends HookConsumerWidget {
                     isLoading: isLoading.value,
                     onPressed: submit,
                   ),
+                  GoogleSignInButton(onError: (m) => error.value = m),
                   const SizedBox(height: 12),
                   AppButton(
                     label: l10n.alreadyHaveAccount,

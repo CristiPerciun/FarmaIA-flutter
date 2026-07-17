@@ -9,6 +9,7 @@ import '../../../core/widgets/ambient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../assistant/presentation/assistant_search_bar.dart';
+import '../../services/presentation/widgets/home_service_entry.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -64,6 +65,11 @@ class HomeScreen extends ConsumerWidget {
                     // Search = the assistant (§12.6): opens /assistant on tap.
                     const AssistantSearchBar(),
                     const SizedBox(height: 24),
+                    // Servizi = the Home hero (§16.7), not a nav tab.
+                    const ServicesHeroCard(),
+                    const SizedBox(height: 12),
+                    const LocationSummaryCard(),
+                    const SizedBox(height: 12),
                     AppButton(
                       label: l10n.navToCatalog,
                       icon: Icons.storefront_outlined,

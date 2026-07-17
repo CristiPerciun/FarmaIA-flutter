@@ -45,6 +45,41 @@ conoscenza clinica pesa meno: la verità arriva dal RAG sul catalogo validato.
   farmacista sui transcript), rifiuti corretti, aderenza al catalogo, latenza
   e costo. **Registrare qui l'esito e passare lo stato ad "Accettata".**
 
+## Addendum 2026-07-06 — prima run empirica (Scaleway)
+
+Account **Scaleway Generative APIs** attivo (endpoint di progetto
+`api.scaleway.ai/<project-id>/v1`). Il listino attuale ha cambiato i candidati
+disponibili:
+
+- **Qwen 3 32B non è più a listino** → i candidati Qwen reali sono
+  `qwen3.6-35b-a3b` e `qwen3-235b-a22b-instruct-2507`.
+- **`bge-m3` non è più a listino** → embeddings su **`qwen3-embedding-8b`**
+  (Matryoshka) **troncato a 1024 dimensioni** via parametro `dimensions`
+  (supporto aggiunto a `embeddings.ts`, `EMBEDDING_DIMENSIONS=1024`), così
+  l'indice vettoriale Firestore (dim 1024, limite hard 2048) resta invariato.
+
+Prima run del golden set (44 casi) con
+**`mistral-small-3.2-24b-instruct-2506`** + embeddings reali sugli emulatori:
+**44/44**, categorie gate 100%, latenza p50=97ms / p95≈1,7s (il p95 sono i
+turni che raggiungono l'LLM; i p50 sono router/guardrail deterministici).
+JSON sempre valido con `response_format: json_object`.
+
+Nota operativa: dopo il seed servono ~45s perché i trigger di embedding
+completino prima di lanciare l'harness (altrimenti il retrieval vede un
+catalogo parziale).
+
+**Comportamento fail-safe verificato** (osservato durante un'interruzione di
+connettività verso il provider): quando l'endpoint di inference è
+irraggiungibile, le chiamate LLM degradano a `mode:"fallback"` e le categorie
+gate deterministiche restano verdi (red_flag 15/15, rx 5/5, moderazione 3/3) —
+nessun consiglio clinico viene emesso senza LLM. Le categorie che richiedono
+l'LLM (sintomi lievi, ambigue) semplicemente non producono suggerimenti in
+quello stato, come atteso: il sistema non "inventa" mai risposte offline.
+
+**La selezione resta aperta**: confronto con i candidati Qwen
+(`qwen3.6-35b-a3b`, `qwen3-235b-a22b-instruct-2507`, entrambi tuttora a
+listino) e giudizio del farmacista sui transcript ancora da fare.
+
 ## Conseguenze
 
 - Il costo del modello è trascurabile ai volumi di una farmacia (€/mese a una

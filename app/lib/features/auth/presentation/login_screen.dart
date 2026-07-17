@@ -4,10 +4,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../l10n/app_localizations.dart';
 import '../application/auth_providers.dart';
+import 'google_sign_in_button.dart';
+
+const _log = AppLogger('auth.login');
 
 /// Email/password sign-in (§1.3). On success it honors the `from` query param
 /// so the user returns to the page that triggered the login (session-expiry
@@ -34,10 +38,12 @@ class LoginScreen extends HookConsumerWidget {
         await ref
             .read(authRepositoryProvider)
             .signIn(email: email.text, password: password.text);
+        _log.info('login success -> ${from ?? '/profile'}');
         if (context.mounted) context.go(from ?? '/profile');
       } on FirebaseAuthException catch (e) {
         error.value = _messageFor(e.code, l10n);
-      } catch (_) {
+      } catch (e) {
+        _log.error('login unexpected error', error: e);
         error.value = l10n.authErrorGeneric;
       } finally {
         if (context.mounted) isLoading.value = false;
@@ -84,6 +90,10 @@ class LoginScreen extends HookConsumerWidget {
                     label: l10n.signIn,
                     isLoading: isLoading.value,
                     onPressed: submit,
+                  ),
+                  GoogleSignInButton(
+                    from: from,
+                    onError: (m) => error.value = m,
                   ),
                   const SizedBox(height: 12),
                   AppButton(

@@ -52,6 +52,12 @@ class AdminDashboardScreen extends ConsumerWidget {
             onTap: () => context.push('/admin/assistant'),
           ),
           _AdminCard(
+            icon: Icons.event_available_outlined,
+            title: l10n.adminManageAppointments,
+            subtitle: l10n.adminAppointmentsTitle,
+            onTap: () => context.push('/admin/appointments'),
+          ),
+          _AdminCard(
             icon: Icons.receipt_long_outlined,
             title: l10n.adminManageOrders,
             subtitle: l10n.comingSoonPhase3,

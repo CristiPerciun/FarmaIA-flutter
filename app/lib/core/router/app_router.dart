@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/account/presentation/consents_screen.dart';
 import '../../features/account/presentation/profile_screen.dart';
+import '../../features/admin/presentation/admin_appointments_screen.dart';
 import '../../features/admin/presentation/admin_assistant_guardrails_screen.dart';
 import '../../features/admin/presentation/admin_assistant_screen.dart';
 import '../../features/admin/presentation/admin_assistant_session_screen.dart';
@@ -24,9 +25,18 @@ import '../../features/checkout/presentation/payment_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/orders/presentation/order_detail_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
+import '../../features/services/presentation/appointments_screen.dart';
+import '../../features/services/presentation/booking_screen.dart';
+import '../../features/services/presentation/cup_info_screen.dart';
+import '../../features/services/presentation/locations_screen.dart';
+import '../../features/services/presentation/service_detail_screen.dart';
+import '../../features/services/presentation/services_screen.dart';
 import '../../features/style_guide/presentation/style_guide_screen.dart';
 import '../../l10n/app_localizations.dart';
+import '../utils/app_logger.dart';
 import 'transitions.dart';
+
+const _log = AppLogger('router');
 
 /// Route prefixes that require a signed-in user (§9.2). `/admin` additionally
 /// requires a staff role, checked in the redirect below.
@@ -62,18 +72,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Guard protected routes: send to login, preserving where we came from.
       if (!loggedIn && needsAuth) {
         final from = Uri.encodeComponent(state.uri.toString());
+        _log.info('guard: not signed in -> /login', {'from': location});
         return '/login?from=$from';
       }
 
       // Signed-in users shouldn't sit on the login/registration pages.
-      if (loggedIn && isAuthRoute) return '/profile';
+      if (loggedIn && isAuthRoute) {
+        _log.info('guard: signed in on auth route -> /profile');
+        return '/profile';
+      }
 
       // Admin area is staff-only. While the profile is still loading, stay put
       // to avoid kicking a legitimate staff user out on a cold start.
       if (needsStaff) {
         final profile = ref.read(appUserProvider);
         final isStaff = profile.valueOrNull?.isStaff ?? false;
-        if (!isStaff && !profile.isLoading) return '/';
+        if (!isStaff && !profile.isLoading) {
+          _log.info('guard: not staff -> /', {
+            'role': profile.valueOrNull?.role.name,
+            'loading': profile.isLoading,
+          });
+          return '/';
+        }
+        if (isStaff) {
+          _log.info('guard: staff ok', {'location': location});
+        }
       }
 
       return null;
@@ -106,6 +129,44 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/assistant',
         name: 'assistant',
         builder: (context, state) => const AssistantScreen(),
+      ),
+      // --- Servizi & prenotazioni (Fase 5). "Servizi" is a Home hero card,
+      // not a nav tab (§16.7); all destinations live as routes.
+      GoRoute(
+        path: '/services',
+        name: 'services',
+        builder: (context, state) => const ServicesScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: 'serviceDetail',
+            builder: (context, state) =>
+                ServiceDetailScreen(serviceId: state.pathParameters['id']!),
+            routes: [
+              GoRoute(
+                path: 'book',
+                name: 'serviceBook',
+                builder: (context, state) =>
+                    BookingScreen(serviceId: state.pathParameters['id']!),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/locations',
+        name: 'locations',
+        builder: (context, state) => const LocationsScreen(),
+      ),
+      GoRoute(
+        path: '/appointments',
+        name: 'appointments',
+        builder: (context, state) => const AppointmentsScreen(),
+      ),
+      GoRoute(
+        path: '/cup-info',
+        name: 'cupInfo',
+        builder: (context, state) => const CupInfoScreen(),
       ),
       GoRoute(
         path: '/cart',
@@ -188,6 +249,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'catalog',
             name: 'adminCatalog',
             builder: (context, state) => const AdminCatalogScreen(),
+          ),
+          GoRoute(
+            path: 'appointments',
+            name: 'adminAppointments',
+            builder: (context, state) => const AdminAppointmentsScreen(),
           ),
           GoRoute(
             path: 'products/new',

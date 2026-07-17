@@ -12,4 +12,10 @@ abstract final class PlatformSupport {
   /// The camera barcode scanner (`mobile_scanner`) ships only for mobile.
   /// On desktop/web the UI falls back to manual EAN entry (§2.5, §2.8).
   static bool get barcodeScanner => isMobile;
+
+  /// Federated (Google) sign-in via Firebase Auth's OAuth flow: `signInWithPopup`
+  /// on web and `signInWithProvider` on mobile. Not supported on desktop/Windows,
+  /// where the UI hides the Google button and keeps email/password (declared
+  /// fallback, §4.4/§1.5).
+  static bool get federatedSignIn => kIsWeb || isMobile;
 }

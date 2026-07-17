@@ -2,8 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/firebase/firebase_providers.dart';
+import '../../../core/utils/app_logger.dart';
 import '../data/auth_repository.dart';
 import '../domain/app_user.dart';
+
+const _log = AppLogger('auth.state');
 
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepository(
@@ -15,7 +18,13 @@ final authRepositoryProvider = Provider<AuthRepository>(
 /// Firebase auth state. Emits null when signed out or when the session expires
 /// (§9.2) — the router listens to this to guard protected routes.
 final authStateChangesProvider = StreamProvider<User?>(
-  (ref) => ref.watch(authRepositoryProvider).authStateChanges(),
+  (ref) => ref.watch(authRepositoryProvider).authStateChanges().map((user) {
+    _log.info(
+      user == null ? 'signed out' : 'signed in',
+      {'uid': user?.uid, 'anon': user?.isAnonymous},
+    );
+    return user;
+  }),
 );
 
 /// The signed-in Firebase user, or null. Synchronous read for guards.

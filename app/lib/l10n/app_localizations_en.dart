@@ -103,6 +103,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'An account with this email already exists.';
 
   @override
+  String get authErrorAccountExists =>
+      'An account already exists with this email using a different sign-in method. Please sign in with your email and password.';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get orSeparator => 'or';
+
+  @override
   String get profileTitle => 'Profile';
 
   @override
@@ -960,4 +970,259 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusArchived => 'Archived';
+
+  @override
+  String get navToServices => 'Services';
+
+  @override
+  String get homeServicesCardTitle => 'Services & bookings';
+
+  @override
+  String get homeServicesCardSubtitle =>
+      'Self-testing, telemedicine, CUP & reports';
+
+  @override
+  String get homeLocationsCardSubtitle =>
+      'Hours, map and contacts for our pharmacies';
+
+  @override
+  String get servicesTitle => 'Services & bookings';
+
+  @override
+  String get servicesLoadError => 'Could not load services. Try again.';
+
+  @override
+  String get servicesEmpty => 'No services available right now.';
+
+  @override
+  String get serviceAllCategories => 'All';
+
+  @override
+  String get servicePriceFree => 'Free';
+
+  @override
+  String get servicePrepTitle => 'Preparation';
+
+  @override
+  String serviceDurationLabel(int min) {
+    return '$min min';
+  }
+
+  @override
+  String get serviceRequiresFasting => 'Requires fasting';
+
+  @override
+  String get serviceAvailableAtTitle => 'Available at';
+
+  @override
+  String get serviceCategoryAutoanalisi => 'Self-testing';
+
+  @override
+  String get serviceCategoryTelemedicina => 'Telemedicine';
+
+  @override
+  String get serviceCategoryConsulenza => 'Consultations';
+
+  @override
+  String get serviceCategoryTampone => 'Swab tests';
+
+  @override
+  String get serviceCategoryCup => 'CUP & reports';
+
+  @override
+  String get serviceCategoryAltro => 'Other services';
+
+  @override
+  String get serviceBookingFreeAccess => 'Walk-in';
+
+  @override
+  String get serviceBookingAppointment => 'By appointment';
+
+  @override
+  String get serviceBookingExternalLink => 'External service';
+
+  @override
+  String get serviceBookAppointment => 'Request appointment';
+
+  @override
+  String get serviceFreeAccessInfo => 'Walk-in: no booking needed.';
+
+  @override
+  String get serviceOpenExternal => 'Open service';
+
+  @override
+  String get serviceNotFound => 'Service not found.';
+
+  @override
+  String get locationsTitle => 'Our pharmacies';
+
+  @override
+  String get locationsLoadError => 'Could not load pharmacies. Try again.';
+
+  @override
+  String get locationsEmpty => 'No pharmacies available.';
+
+  @override
+  String get locationSelectorTitle => 'Your pharmacy';
+
+  @override
+  String get locationChange => 'Change';
+
+  @override
+  String get locationCall => 'Call';
+
+  @override
+  String get locationWhatsApp => 'WhatsApp';
+
+  @override
+  String get locationOpenMap => 'Map';
+
+  @override
+  String get locationEmail => 'Email';
+
+  @override
+  String get locationCupPoint => 'CUP point';
+
+  @override
+  String get locationHoursTitle => 'Opening hours';
+
+  @override
+  String get locationHoursClosed => 'Closed';
+
+  @override
+  String get locationNoHours => 'Hours not available';
+
+  @override
+  String get locationChooseTitle => 'Choose a pharmacy';
+
+  @override
+  String get launchFailed => 'Could not open the link.';
+
+  @override
+  String get bookingTitle => 'Appointment request';
+
+  @override
+  String get bookingSignInRequired => 'Sign in to request an appointment.';
+
+  @override
+  String get bookingChooseLocation => 'Pharmacy';
+
+  @override
+  String get bookingChooseDate => 'Date';
+
+  @override
+  String get bookingChooseTime => 'Time';
+
+  @override
+  String get bookingPickDate => 'Pick a date';
+
+  @override
+  String get bookingPickTime => 'Pick a time';
+
+  @override
+  String get bookingContactPhone => 'Contact phone';
+
+  @override
+  String get bookingNotes => 'Notes (optional)';
+
+  @override
+  String get bookingSubmit => 'Send request';
+
+  @override
+  String get bookingSubmitted => 'Request sent: we\'ll contact you to confirm.';
+
+  @override
+  String get bookingIncomplete => 'Select a pharmacy, date and time.';
+
+  @override
+  String get bookingError => 'Could not send. Try again.';
+
+  @override
+  String get bookingDisclaimer =>
+      'This booking is a slot request handled by the pharmacy staff, who will confirm your appointment.';
+
+  @override
+  String get appointmentsTitle => 'My appointments';
+
+  @override
+  String get appointmentsSignIn => 'Sign in to see your appointments.';
+
+  @override
+  String get appointmentsEmpty => 'You have no appointments yet.';
+
+  @override
+  String get apptStatusRequested => 'Requested';
+
+  @override
+  String get apptStatusConfirmed => 'Confirmed';
+
+  @override
+  String get apptStatusCompleted => 'Completed';
+
+  @override
+  String get apptStatusCancelled => 'Cancelled';
+
+  @override
+  String get apptStatusNoShow => 'No-show';
+
+  @override
+  String get adminManageAppointments => 'Manage bookings';
+
+  @override
+  String get adminAppointmentsTitle => 'Bookings';
+
+  @override
+  String get adminAppointmentsEmpty => 'No bookings for this site.';
+
+  @override
+  String get adminApptConfirm => 'Confirm';
+
+  @override
+  String get adminApptCancel => 'Cancel';
+
+  @override
+  String get adminApptComplete => 'Complete';
+
+  @override
+  String get adminApptNoShow => 'No-show';
+
+  @override
+  String get adminApptUpdated => 'Status updated.';
+
+  @override
+  String adminApptContactLabel(String phone) {
+    return 'Contact: $phone';
+  }
+
+  @override
+  String get cupInfoTitle => 'CUP bookings & reports';
+
+  @override
+  String get cupInfoIntro =>
+      'We point you to the regional health services. SSN bookings happen on the state portals with SPID login, not inside the app.';
+
+  @override
+  String get cupOpenCupWeb => 'Open CUPWeb';
+
+  @override
+  String get cupOpenErSalute => 'Open ER Salute';
+
+  @override
+  String get cupOpenFse => 'Health record (FSE)';
+
+  @override
+  String get cupPrepareDocsTitle => 'Prepare your documents';
+
+  @override
+  String get cupPrepareDocsBody =>
+      'Prescription/NRE, health card and any exemption code.';
+
+  @override
+  String get cupPointsTitle => 'Where to book (FarmaCUP)';
+
+  @override
+  String get cupPointYes => 'CUP point available';
+
+  @override
+  String get cupPointNo => 'No CUP point at this site';
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Baganza Farmacie — emblema monocromatico (§16.2: "versioni mono e su fondo
+  scuro"). Stessa geometria di emblem.svg ma a tinta unita `currentColor`:
+  impostare `color` sul contenitore (es. bianco su fondo scuro, oro su bianco).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" fill="none" color="#C9A227">
+  <g id="ring">
+    <circle cx="512" cy="512" r="440" stroke="currentColor" stroke-width="30"/>
+  </g>
+  <g id="wings" fill="currentColor">
+    <g id="wing-left-mono">
+      <path d="
+        M 502 330
+        C 450 240, 350 160, 148 142
+        C 190 185, 228 212, 266 230
+        C 224 232, 184 226, 148 214
+        C 196 262, 250 290, 302 300
+        C 272 312, 240 316, 210 314
+        C 266 352, 332 366, 392 356
+        C 380 374, 362 388, 344 398
+        C 404 410, 460 396, 502 368
+        Z"/>
+    </g>
+    <use href="#wing-left-mono" transform="translate(1024 0) scale(-1 1)"/>
+  </g>
+  <g id="staff" fill="currentColor">
+    <circle cx="512" cy="150" r="36"/>
+    <rect x="494" y="192" width="36" height="14" rx="6"/>
+    <rect x="499" y="200" width="26" height="640" rx="13"/>
+  </g>
+  <g id="snakes" stroke="currentColor" stroke-width="24" stroke-linecap="round">
+    <path d="
+      M 512 800
+      C 420 762, 420 706, 512 668
+      C 604 630, 604 574, 512 540
+      C 420 506, 420 452, 512 420
+      C 585 394, 596 352, 548 322"/>
+    <path d="
+      M 512 772
+      C 604 738, 604 682, 512 646
+      C 420 610, 420 556, 512 524
+      C 604 492, 604 438, 512 408
+      C 442 384, 432 348, 478 320"/>
+    <ellipse cx="550" cy="306" rx="20" ry="13" fill="currentColor" stroke="none" transform="rotate(-26 550 306)"/>
+    <ellipse cx="474" cy="304" rx="20" ry="13" fill="currentColor" stroke="none" transform="rotate(26 474 304)"/>
+  </g>
+  <g id="mask" fill="currentColor">
+    <circle cx="512" cy="852" r="38"/>
+    <path d="
+      M 476 868
+      C 478 918, 502 942, 512 950
+      C 522 942, 546 918, 548 868
+      C 536 884, 488 884, 476 868 Z"/>
+  </g>
+  <g id="letter-s">
+    <text x="512" y="700" text-anchor="middle"
+          font-family="Georgia, 'Times New Roman', serif" font-weight="bold"
+          font-size="430" fill="currentColor">S</text>
+  </g>
+</svg>

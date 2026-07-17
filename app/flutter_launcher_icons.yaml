@@ -1,0 +1,28 @@
+# Step 6.1 (§16.2) — app icon per tutte le piattaforme, dal master generato da
+# tool/branding/generate_icons.py (emblema semplificato, senza wordmark).
+# Rigenerare con: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/branding/icon_master.png"
+
+  android: true
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/branding/icon_adaptive_fg.png"
+
+  ios: true
+  remove_alpha_ios: true
+  background_color_ios: "#FFFFFF"
+
+  # Le icone web (192/512 + maskable + favicon) le genera direttamente lo
+  # script Python con la safe-zone maskable corretta: qui restano spente per
+  # non sovrascriverle.
+  web:
+    generate: false
+
+  windows:
+    generate: true
+    image_path: "assets/branding/icon_master.png"
+    icon_size: 256
+
+  macos:
+    generate: true
+    image_path: "assets/branding/icon_master.png"

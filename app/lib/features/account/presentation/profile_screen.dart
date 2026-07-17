@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/adaptive_scaffold.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/application/auth_providers.dart';
@@ -19,7 +20,12 @@ class ProfileScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(currentUserProvider);
 
-    return Scaffold(
+    // Profile is one of the five primary tabs (§7.3): it must live inside the
+    // AdaptiveScaffold shell so the bottom bar (compact) / rail (expanded) stays
+    // visible — otherwise navigating here strands the user with no way back.
+    return AdaptiveScaffold(
+      currentTab: AppTab.profile,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(title: Text(l10n.profileTitle)),
       body: user == null ? _GuestView(l10n: l10n) : _AccountView(l10n: l10n),
     );
@@ -83,7 +89,9 @@ class _AccountView extends ConsumerWidget {
     final viewMode = ref.watch(viewModeProvider);
 
     return ListView(
-      padding: const EdgeInsets.all(24),
+      // Extra bottom padding clears the glass bottom bar (shell extends the
+      // body behind it on compact).
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 96),
       children: [
         ListTile(
           contentPadding: EdgeInsets.zero,
@@ -144,6 +152,13 @@ class _AccountView extends ConsumerWidget {
           title: Text(l10n.ordersTitle),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push('/orders'),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.event_note_outlined),
+          title: Text(l10n.appointmentsTitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/appointments'),
         ),
         const Divider(height: 32),
         AppButton(

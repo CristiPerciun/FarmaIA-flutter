@@ -30,46 +30,46 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDemoKeyReplaceViaFlutterfireConfigure',
-    appId: '1:000000000000:web:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'dbfarmacia',
+    apiKey: 'AIzaSyBiW7U40QsMTHudbNEIvK6Zt97_aEQnF1E',
+    appId: '1:180695762418:web:019982fc4129250b44576b',
+    messagingSenderId: '180695762418',
+    projectId: 'dbfarmacia-e6536',
     authDomain: 'dbfarmacia.firebaseapp.com',
-    storageBucket: 'dbfarmacia.appspot.com',
+    storageBucket: 'dbfarmacia-e6536.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDemoKeyReplaceViaFlutterfireConfigure',
-    appId: '1:000000000000:android:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'dbfarmacia',
-    storageBucket: 'dbfarmacia.appspot.com',
+    apiKey: 'AIzaSyBiW7U40QsMTHudbNEIvK6Zt97_aEQnF1E',
+    appId: '1:180695762418:web:019982fc4129250b44576b',
+    messagingSenderId: '180695762418',
+    projectId: 'dbfarmacia-e6536',
+    storageBucket: 'dbfarmacia-e6536.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDemoKeyReplaceViaFlutterfireConfigure',
-    appId: '1:000000000000:ios:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'dbfarmacia',
+    apiKey: 'AIzaSyBiW7U40QsMTHudbNEIvK6Zt97_aEQnF1E',
+    appId: '1:180695762418:web:019982fc4129250b44576b',
+    messagingSenderId: '180695762418',
+    projectId: 'dbfarmacia-e6536',
     storageBucket: 'dbfarmacia.appspot.com',
-    iosBundleId: 'com.farmaciabaganza.baganzaApp',
+    iosBundleId: 'dbfarmacia-e6536.firebasestorage.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDemoKeyReplaceViaFlutterfireConfigure',
-    appId: '1:000000000000:ios:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'dbfarmacia',
+    apiKey: 'AIzaSyBiW7U40QsMTHudbNEIvK6Zt97_aEQnF1E',
+    appId: '1:180695762418:web:019982fc4129250b44576b',
+    messagingSenderId: '180695762418',
+    projectId: 'dbfarmacia-e6536',
     storageBucket: 'dbfarmacia.appspot.com',
-    iosBundleId: 'com.farmaciabaganza.baganzaApp',
+    iosBundleId: 'dbfarmacia-e6536.firebasestorage.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDemoKeyReplaceViaFlutterfireConfigure',
-    appId: '1:000000000000:web:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'dbfarmacia',
+    apiKey: 'AIzaSyBiW7U40QsMTHudbNEIvK6Zt97_aEQnF1E',
+    appId: '1:180695762418:web:019982fc4129250b44576b',
+    messagingSenderId: '180695762418',
+    projectId: 'dbfarmacia-e6536',
     authDomain: 'dbfarmacia.firebaseapp.com',
-    storageBucket: 'dbfarmacia.appspot.com',
+    storageBucket: 'dbfarmacia-e6536.firebasestorage.app',
   );
 }

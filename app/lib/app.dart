@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/config/app_env.dart';
@@ -7,6 +8,7 @@ import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/offline_banner.dart';
+import 'core/widgets/splash_reveal.dart';
 import 'features/compliance/presentation/cookie_banner.dart';
 import 'l10n/app_localizations.dart';
 
@@ -53,6 +55,11 @@ class BaganzaApp extends ConsumerWidget {
               child: const CookieBanner(),
             ),
           ),
+          // Reveal animato di avvio (step 6.3, §16.3): copre tutto al primo
+          // frame, gira una sola volta (≤1,8 s, mai in loop) e sfuma sulla
+          // Home. `onReady` rimuove lo splash nativo (stesso bianco+emblema),
+          // quindi niente doppio splash.
+          const SplashReveal(onReady: FlutterNativeSplash.remove),
         ],
       ),
     );
