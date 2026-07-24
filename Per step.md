@@ -39,31 +39,68 @@
 
 ---
 
+## 📊 Stato attuale del progetto — analisi al 24/07/2026
+
+> Aggiornamento dopo **analisi approfondita del codice** (mappatura completa di `app/lib` + `firebase/`) e dopo il **primo deploy/prova su cloud reale** (`dbfarmacia-e6536`). Sostituisce le stime "a spanne": è lo stato verificato.
+
+### ✅ Implementato e verificato (codice)
+- **Fasi 0–6 + 4B implementate.** `flutter analyze` pulito, **75 test app verdi**, **14 test security-rules verdi**, functions `lint`+`build` ok; la CI compila **web + Android** (Windows ancora fuori dalla CI, v. 2.8).
+- **App adattiva completa** sulle 5 tab (Home · Negozio · Chat AI · Carrello · Profilo) con shell unica (bottom-bar ↔ rail): catalogo/ricerca fuzzy/scanner/offline, carrello/checkout/ordini, **pannello admin completo** (dashboard, gestione catalogo, form prodotto con pipeline AI, supervisione assistente + dettaglio sessione + editor guardrail, coda appuntamenti), servizi/multi-sede/prenotazioni/CUP, branding + splash animato.
+- **Backend**: 14 Cloud Functions (auth/ordini/vision/testi/assistente/embedding/manutenzione), rules **deny-by-default** su tutte le collezioni, indici compositi + **indice vettoriale 1024-dim**, harness eval con golden set (44 casi).
+
+### 🟡 In mock/sandbox (per scelta di progetto, non incompletezza)
+- **Pagamenti (3.3)**: provider sandbox, nessun gateway reale (ADR 0003).
+- **Vision (4.2)** e **Testi LLM admin (4.3)**: mock deterministico senza `PHOTOROOM_API_KEY`/`OPENAI_API_KEY` (ADR 0004).
+- **Assistente cliente (4B)**: pipeline reale; **modello reale già provato** (Scaleway/Mistral, golden set **44/44** — addendum ADR 0005), ma **feature flag `assistantChatEnabled` OFF** fino al gate 4B.8.
+
+### ☁️ Deploy su cloud reale (`dbfarmacia-e6536`) — PARZIALE
+- ✅ **Auth** (email/password + anonimo), **Firestore** e **Hosting** attivi; struttura collezioni creata; **2 account promossi ad admin** (doc `users.role` **+** custom claim, via `scripts/bootstrap_prod.mjs`); `firebase_options.dart` rigenerato con credenziali reali.
+- ⚠️ **Cloud Functions NON ancora deployate** (richiedono piano **Blaze** — v. ATTIVITA-UMANE A4). **Conseguenza diretta**: tutti i flussi che passano da callable/trigger **non funzionano ancora in prod** — `createOrder`, pagamento, **pipeline AI admin** (`generateProductTexts`/`processProductImage`), **assistente** (`assistantChat`), `syncRoleClaim`, embedding. Il flusso "**foto → IA → contenuti → prodotto**" richiede quindi il **deploy delle funzioni (Blaze)** prima di poter essere provato end-to-end sul cloud.
+
+### 🖥️ Verifica multi-superficie reale (aggiorna lo step 2.8)
+- **Web / Chrome (prod)**: risolto un blocco al login dovuto ad **App Check** (reCAPTCHA v3 con site key vuota → `network-request-failed`) → su web l'attivazione App Check viene **saltata quando manca `RECAPTCHA_SITE_KEY`** (`core/firebase/firebase_init.dart`).
+- **Windows desktop**: l'app si avvia e autentica, ma la **lettura Firestore via Firebase C++ SDK fallisce** (errore di canale "non-platform thread") → il doc `users/{uid}` non viene letto → **ruolo/badge non rilevati su Windows**. È una **limitazione del plugin di piattaforma**, non della configurazione. Superfici pienamente supportate ad oggi: **web e mobile**.
+- Aggiunta **osservabilità PII-safe** (`core/utils/app_logger.dart`) su auth/router/init + script diagnostici cloud (`scripts/inspect_prod.mjs` read-only, `scripts/bootstrap_prod.mjs`).
+
+### 🚦 I 3 gate critici restano APERTI
+1. **SEO 2.7** — storefront SSR (ADR 0001) non ancora costruito.
+2. **Red-team clinico + legale 4B.8** — richiede modello reale + verbale farmacista + parere legale (flag chat resta OFF).
+3. **Lancio 8.6** — autorizzazione ministeriale + logo prima della vendita di medicinali.
+
+### 🔎 Punti tecnici da tenere d'occhio
+- **Blaze + deploy funzioni**: prerequisito per provare AI/ordini/assistente sul cloud reale.
+- **Dimensione embedding**: indice vettoriale a **1024** (coerente col modello reale `qwen3-embedding` troncato); il mock keyless è a 256-dim ma il retrieval usa il fallback in-memory, quindi **nessun conflitto in prod** — allineare solo se si abilitasse la Vector Search con embedding mock.
+- **Ruolo su Windows**: finché resta la limitazione C++ SDK, la verifica admin va fatta su web/mobile.
+
+---
+
 ## FASE 0 — Fondamenta & Setup
 
-### Step 0.1 — Repository e ambiente ⭐ · S
+> **Fase 0 completata.** Repo `app/` + `firebase/` con Git/branching, linter+format, README per entrambi (0.1); progetto Firebase dev (emulatori) + prod `dbfarmacia-e6536`, servizi abilitati (0.2); scaffolding feature-first con Riverpod+Hooks+go_router e init Firebase in `main.dart` (0.3); design system §7.2 (0.4); i18n IT/EN con selettore (0.5); CI su push/PR (analyze+test+build web/Android) e flavor dev/prod via `--dart-define=ENV` (0.6). *Restano: **Secret Manager** reale (al deploy Blaze) e il **target Windows in CI** — v. 2.8.*
+
+### Step 0.1 — Repository e ambiente ⭐ · S ✅
 - **Obiettivo:** due repo pronti e versionati.
 - **Attività:**
-  - [ ] Crea `app/` (Flutter) e `firebase/` (Firebase) con Git e strategia di branching.
-  - [ ] Configura Flutter SDK, linter/analyzer, formattazione.
-  - [ ] README con istruzioni di avvio per entrambi i progetti.
+  - [x] Crea `app/` (Flutter) e `firebase/` (Firebase) con Git e strategia di branching.
+  - [x] Configura Flutter SDK, linter/analyzer, formattazione.
+  - [x] README con istruzioni di avvio per entrambi i progetti.
 - **✓ Fatto quando:** entrambi i repo compilano "a vuoto" e il linter passa. · **Rif.** §4
 
-### Step 0.2 — Progetto Firebase ⭐ · M
+### Step 0.2 — Progetto Firebase ⭐ · M ✅
 - **Obiettivo:** backend cloud attivo.
 - **Attività:**
-  - [ ] Crea il progetto Firebase (ambienti **dev** e **prod**).
-  - [ ] Abilita **Auth, Firestore, Storage, Cloud Functions, Hosting, App Check**.
-  - [ ] Configura gli **emulatori** Firebase per lo sviluppo locale.
-  - [ ] Predisponi **Secret Manager** per le future chiavi (LLM/Photoroom/pagamenti).
+  - [x] Crea il progetto Firebase (ambienti **dev** e **prod** → `dbfarmacia-e6536`).
+  - [x] Abilita **Auth, Firestore, Storage, Cloud Functions, Hosting, App Check** (Auth email/password + anonimo attivi in prod; Cloud Functions **da deployare** al piano Blaze).
+  - [x] Configura gli **emulatori** Firebase per lo sviluppo locale (`firebase.json`: auth 9099, firestore 8080, storage 9199, functions 5001, hosting 5000, UI 4000).
+  - [~] Predisponi **Secret Manager** per le future chiavi (LLM/Photoroom/pagamenti) — *documentato in `firebase/README.md`; le chiavi oggi sono in `.env` per lo sviluppo, il travaso su Secret Manager si fa al deploy prod.*
 - **✓ Fatto quando:** l'app locale si collega agli emulatori e a Firebase dev. · **Rif.** §3.1, §4.2 · **Dipende da:** 0.1
 
-### Step 0.3 — Scaffolding Flutter (Feature-First) ⭐ · M
+### Step 0.3 — Scaffolding Flutter (Feature-First) ⭐ · M ✅
 - **Obiettivo:** struttura del frontend pronta.
 - **Attività:**
-  - [ ] Crea `core/` e `features/` come da §4.1.
-  - [ ] Integra **Riverpod + Hooks** e **go_router** (routing basato su path).
-  - [ ] Inizializza Firebase + **App Check** in `main.dart`.
+  - [x] Crea `core/` e `features/` come da §4.1.
+  - [x] Integra **Riverpod + Hooks** e **go_router** (routing basato su path).
+  - [x] Inizializza Firebase + **App Check** in `main.dart` (App Check attivo dove supportato — web/Android/iOS/macOS; assente su Windows).
 - **✓ Fatto quando:** navigazione tra 2 schermate placeholder con go_router e provider attivi. · **Rif.** §3, §4.1
 
 ### Step 0.4 — Design System & linguaggio visivo ⭐ · M→L ✅
@@ -78,19 +115,19 @@
 - **✓ Fatto quando:** la "style page" mostra componenti, **gradiente ambientale, una `GlassSurface` e una `TiltCard` funzionanti**, e i contrasti passano (anche con `prefers-reduced-motion` attivo). · **Rif.** §7.2, §16.2
   - **Fatto:** token ambientali in `core/theme/app_colors.dart` (`ambientAzure`/`ambientAzureHero`); `BaganzaEffects` `ThemeExtension` (`core/theme/baganza_effects.dart`) registrata nel tema; widget `AmbientBackground`, `GlassSurface` (blur + `solidFallback`), `TiltCard` (hover-tilt/press-scale, rispetta `disableAnimations`); breakpoint token (`core/theme/breakpoints.dart`); token condivisi con lo storefront in `core/theme/tokens.json`. La style page mostra swatch azzurro, `GlassSurface` e `TiltCard` dal vivo.
 
-### Step 0.5 — i18n IT/EN ⭐ · S
+### Step 0.5 — i18n IT/EN ⭐ · S ✅
 - **Obiettivo:** infrastruttura bilingue.
 - **Attività:**
-  - [ ] Configura `flutter_localizations` + `intl`, file ARB `app_it.arb`/`app_en.arb`.
-  - [ ] Selettore lingua (auto da device + override in `users.locale`).
+  - [x] Configura `flutter_localizations` + `intl`, file ARB `app_it.arb`/`app_en.arb` (generazione `app_localizations*.dart`).
+  - [x] Selettore lingua (`core/providers/locale_provider.dart`: auto da device + override).
 - **✓ Fatto quando:** una schermata cambia lingua IT↔EN senza stringhe hardcoded. · **Rif.** §8
 
-### Step 0.6 — CI/CD e flavor ⭐ · S
+### Step 0.6 — CI/CD e flavor ⭐ · S 🟡 (CI attiva; manca il target Windows → v. 2.8)
 - **Obiettivo:** build automatiche e ambienti separati.
 - **Attività:**
-  - [ ] Pipeline CI (analyze + test + build **web/Android/Windows** — il target Windows è una superficie di prodotto, §4.4).
-  - [ ] **Flavor/ambienti** dev/prod lato app e Functions.
-- **✓ Fatto quando:** una PR fa girare lint+test e produce le build dei tre target. · **Rif.** §4, §4.4
+  - [~] Pipeline CI (`.github/workflows/ci.yml` su push/PR: format + analyze + test + **build web + Android**; job separato functions lint+build). **Manca il target Windows** (superficie di prodotto §4.4) — v. 2.8.
+  - [x] **Flavor/ambienti** dev/prod lato app (`--dart-define=ENV=dev|prod` → `core/config/app_env.dart`) e Functions (`.env` + `.env.example`).
+- **✓ Fatto quando:** una PR fa girare lint+test e produce le build dei tre target. **Oggi produce web+Android; Windows resta da aggiungere.** · **Rif.** §4, §4.4
 
 ---
 
@@ -121,6 +158,7 @@
   - [x] **Route guard** (cliente non accede alle rotte admin) e **switch** Cliente/Admin nel Profilo (`app_router.dart` redirect + `viewModeProvider`).
   - [x] Gestione sessione scaduta (redirect a `/login?from=…` mantenendo il contesto).
 - **✓ Fatto quando:** un cliente e un admin vedono interfacce diverse; le rotte admin sono protette. · **Rif.** §2.2, §7.4, §9.2 · **Dipende da:** 1.2
+  - **Verificato su cloud reale (24/07/2026):** registrazione/login **email-password** funzionanti in prod su **web** dopo il fix App Check (§8.4); il ruolo `admin` (badge + switch Cliente/Admin + `/admin`) si legge correttamente su **web** con i 2 account promossi via `scripts/bootstrap_prod.mjs` (doc `users.role` **+** custom claim). **Su Windows** il ruolo non compare per la limitazione Firestore C++ SDK (v. 2.8). Osservabilità auth/router in `core/utils/app_logger.dart` (log PII-safe con email mascherata).
 
 ### Step 1.4 — Impianto Compliance & Privacy ⭐ · L ✅
 - **Obiettivo:** scheletro legale pronto (dettagli normativi in Parte 2).
@@ -214,11 +252,11 @@
 ### Step 2.8 — Portale web desktop & app Windows (verifica multi-superficie) ⭐ · S
 - **Obiettivo:** la stessa base di codice regge le quattro superfici del §4.4 — web app mobile, portale web desktop, app Windows (l'iOS/Android nativo segue con gli store, Fase 8).
 - **Attività:**
-  - [ ] Passata di verifica dei flussi Fase 2 su **web desktop ≥1280 px** (shell a rail, griglie, dettaglio) e su **Windows** (`flutter run -d windows`).
+  - [~] Passata di verifica dei flussi su **web desktop ≥1280 px** (shell a rail, griglie, dettaglio — OK) e su **Windows** (`flutter run -d windows` — **eseguito**, v. finding sotto).
   - [x] **Guardie di piattaforma** consolidate in `core/utils`: scanner barcode solo mobile (fallback: campo EAN manuale su desktop/Windows), gestione hover/focus da tastiera sulle card e sui filtri.
-  - [ ] **Build Windows in CI** accanto a web/Android: una rottura del target desktop è una rottura di build.
+  - [ ] **Build Windows in CI** accanto a web/Android: una rottura del target desktop è una rottura di build. *(Ancora fuori dalla CI — v. 0.6.)*
 - **✓ Fatto quando:** catalogo, ricerca e dettaglio funzionano su web mobile, web desktop e Windows senza layout rotti; la CI compila i tre target. · **Rif.** §4.4 · **Dipende da:** 2.2, 2.3
-  - **Parziale:** guardie di piattaforma in `core/utils/platform_support.dart` (scanner→fallback EAN); shell adattiva rail/bottom-bar e hover-tilt/focus sulle card già presenti da 2.2. `flutter build web` verde. **Restano:** run di verifica su Windows e target Windows in CI.
+  - **Parziale + finding reale (24/07/2026):** guardie di piattaforma in `core/utils/platform_support.dart` (scanner→fallback EAN); shell adattiva rail/bottom-bar e hover-tilt/focus dalle card presenti da 2.2. `flutter build web` verde; **web desktop verificato** (login/ruolo OK dopo il fix App Check). **Windows: l'app compila e gira**, ma è emersa una **limitazione del Firebase C++ SDK** — le **letture Firestore falliscono** (errore di canale "non-platform thread"), quindi il doc `users/{uid}` non si carica e **ruolo/badge non compaiono su Windows**. Layout e navigazione OK; la limitazione è del plugin, non del codice app. **Restano:** target Windows in CI e (se Windows deve restare superficie di primo livello) un workaround/upgrade del plugin Firestore desktop, oppure dichiarare Windows superficie "best-effort" (§4.4 fallback).
 
 > **Fase 2 — step 2.1–2.7 completati** (linguaggio visivo §7.2 incluso in 0.4). Verifiche: `flutter analyze` pulito, **44 test** app verdi (+17 da Fase 1), `flutter build web` ok. *(Restano: 2.7 gate SEO = storefront SSR reale — track separato nell'ADR; 2.8 = run Windows + CI multi-target.)*
 
@@ -326,10 +364,10 @@
 - **Obiettivo:** modello open-source scelto su prove, non su brochure.
 - **Attività:**
   - [x] **Golden set** — base tecnica di ~45 conversazioni IT/EN (`firebase/functions/test-assets/golden_set.json`: sintomi lievi, red-flag, Rx, ambiguità, injection, moderazione). **⚠ Aperto:** estensione a 50–100 casi **scritti/validati col farmacista**.
-  - [ ] Test comparativo dei candidati (§12.2) su provider **EU** — **⚠ Aperto** (serve una chiave provider); l'harness è pronto: `npm run eval:assistant` misura pass-rate per categoria e latenza p50/p95; per confrontare un candidato basta configurarlo in `functions/.env` e rieseguire.
+  - [~] Test comparativo dei candidati (§12.2) su provider **EU** — **prima run col modello reale FATTA**: account **Scaleway** attivo, `mistral-small-3.2-24b-instruct-2506` → golden set **44/44, gate 100%** (addendum ADR 0005, 06/07/2026). **⚠ Resta il confronto** con i candidati Qwen (`qwen3-235b-a22b-instruct-2507`, ecc.): cambiare `LLM_MODEL` in `functions/.env` e rieseguire `npm run eval:assistant`, poi registrare l'esito e portare l'ADR 0005 ad "Accettata".
   - [x] Proxy Cloud Function **OpenAI-compatibile** (`functions/src/ai/llm_client.ts`): `LLM_BASE_URL`+`LLM_MODEL`+`LLM_API_KEY` da config/Secret Manager → modello **swappabile**; mock deterministico senza chiave. *(Streaming SSE rimandato con motivazione: la risposta è JSON strutturato con `productRef` verificati — v. ADR 0005.)*
   - [x] Decisione registrata: **ADR 0005** (stato Proposta — architettura decisa; l'esito della selezione empirica va registrato lì per passare ad "Accettata").
-- **✓ Fatto quando:** un modello è scelto sul golden set e risponde via proxy dagli emulatori. **Stato: proxy+harness fatti; selezione del modello aperta.** · **Rif.** §12.2, §11.5 · **Dipende da:** 0.2
+- **✓ Fatto quando:** un modello è scelto sul golden set e risponde via proxy dagli emulatori. **Stato: proxy+harness fatti; prima run reale (Mistral) 44/44; resta il confronto Qwen + validazione golden set col farmacista prima di chiudere.** · **Rif.** §12.2, §11.5 · **Dipende da:** 0.2
 
 ### Step 4B.2 — Embeddings & indice vettoriale ⭐ · M ✅
 - **Attività:**
@@ -488,6 +526,7 @@
 
 ### Step 8.4 — Hardening sicurezza ⭐ · M
 - [ ] **App Check** in enforcement; verifica **nessuna chiave nel client**; revisione rules. · **Rif.** §11, §5.5
+  - **Stato:** App Check **non ancora in enforcement** (coerente col resto del backend e con la superficie Windows che non ha provider App Check — §4.4). Attivazione **condizionale su web**: si salta quando manca `RECAPTCHA_SITE_KEY` (evita `network-request-failed` al login — v. finding 24/07); per abilitarlo si passa una site key reale via `--dart-define=RECAPTCHA_SITE_KEY=…`. Da riesaminare al gate 4B.8 (App Check sulla callable `assistantChat`) e prima del lancio (8.6). Chiavi provider mai nel client (sono lato Functions/Secret Manager).
 
 ### Step 8.5 — Deploy & PWA ⭐ · M
 - [ ] Hosting **Firebase/Vercel** (SSR per le pagine pubbliche, secondo l'ADR di 2.7); `manifest.json` (icone, `theme_color`), service worker `offline-first`; build store Android/iOS.

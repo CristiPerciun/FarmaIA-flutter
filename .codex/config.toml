@@ -1,0 +1,5 @@
+[mcp_servers.penpot]
+command = 'C:\Program Files\nodejs\node.exe'
+args = ['C:\Users\c.perciun\Documents\Custom_WorkSpace\FarmaIA-flutter\.codex\start-penpot-mcp.cjs']
+startup_timeout_sec = 120
+tool_timeout_sec = 120

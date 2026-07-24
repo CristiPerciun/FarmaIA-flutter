@@ -1,0 +1,1277 @@
+<style>
+  /* ============================================================
+     BAGANZA FARMACIE — Proposta d'identità visiva
+     Direzione: "Eredità d'apoteca + calma clinica"
+     Verde = unico colore interattivo · Oro = solo dettaglio/filo
+     ============================================================ */
+
+  :root {
+    /* Type */
+    --serif: "Palatino Linotype", "Book Antiqua", "Iowan Old Style", Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Consolas", monospace;
+
+    /* Neutrals — azure-cool, biased toward the ambient sky */
+    --paper: #EAF4FD;
+    --paper-2: #F2F9FE;
+    --surface: #FFFFFF;
+    --surface-2: #E9F1F6;
+    --ink: #123720;      /* headings — deep forest green */
+    --ink-2: #374A41;    /* body */
+    --ink-3: #5E7681;    /* muted / captions — cool grey-blue */
+    --border: #D6E6EE;
+    --border-2: #BFD6E2;
+
+    /* Glass — frosted surfaces floating over the azure ground */
+    --glass: color-mix(in srgb, #FFFFFF 70%, transparent);
+    --glass-strong: color-mix(in srgb, #FFFFFF 84%, transparent);
+    --glass-brd: rgba(120,160,195,.34);
+    --glass-nav: color-mix(in srgb, #FFFFFF 56%, transparent);
+    --glass-ring: rgba(255,255,255,.72);
+
+    /* Brand */
+    --green: #1E7A3C;        /* primary action — the only interactive color */
+    --green-deep: #14532D;
+    --green-hover: #196A34;
+    --green-text: #14532D;   /* green used as TEXT — dark, legible on azure & white */
+    --green-tint: #E3F1E8;
+    --gold: #C9A227;         /* decorative filo only */
+    --gold-soft: #E6C76A;
+    --gold-deep: #8A6D1B;
+    --crimson: #9E1B32;      /* prestige accent, sparingly */
+
+    /* Ambient azure ramp — the sky that fades all the way to white */
+    --azure-1: #ADD9EE;
+    --azure-2: #C6E6F6;
+    --azure-3: #E6F4FC;
+    --azure-4: #FFFFFF;
+    --azure: #E6F4FC;
+    --azure-hero: #C6E6F6;
+
+    /* Semantic (distinct from accent) */
+    --ok: #1E7A3C;
+    --warn: #B07A0E;
+    --danger: #C62828;
+    --info: #2E6FB0;
+
+    /* Depth (mirrors BaganzaEffects.cardShadow) */
+    --shadow-card: 0 2px 8px rgba(0,0,0,.05), 0 12px 24px rgba(30,122,60,.10);
+    --shadow-soft: 0 1px 3px rgba(0,0,0,.05), 0 6px 16px rgba(30,122,60,.07);
+    --shadow-pop: 0 8px 20px rgba(0,0,0,.10), 0 24px 48px rgba(20,83,45,.16);
+
+    --r-card: 18px;
+    --r-lg: 22px;
+    --r-sm: 12px;
+    --maxw: 1180px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #102E44;
+      --paper-2: #16374F;
+      --surface: #1C4059;
+      --surface-2: #234E68;
+      --ink: #EAF4FB;
+      --ink-2: #BDD3E0;
+      --ink-3: #8BA7B7;
+      --border: #2C5877;
+      --border-2: #37688A;
+      --glass: color-mix(in srgb, #1E4864 62%, transparent);
+      --glass-strong: color-mix(in srgb, #1E4864 80%, transparent);
+      --glass-brd: color-mix(in srgb, #BFE0F7 22%, transparent);
+      --glass-nav: color-mix(in srgb, #16374F 55%, transparent);
+      --glass-ring: rgba(120,170,205,.35);
+      --green: #4FB87E;
+      --green-deep: #2E8B57;
+      --green-hover: #64C892;
+      --green-text: #5CC48C;
+      --green-tint: color-mix(in srgb, #4FB87E 22%, transparent);
+      --gold: #E6C76A;
+      --gold-soft: #C9A227;
+      --gold-deep: #C9A94A;
+      --crimson: #E1788B;
+      --azure-1: #0E2A40;
+      --azure-2: #143953;
+      --azure-3: #1B4767;
+      --azure-4: #23577A;
+      --azure: #1B4767;
+      --azure-hero: #143953;
+      --ok: #4FB87E;
+      --warn: #E0B44A;
+      --danger: #F0736F;
+      --info: #6FA8DC;
+      --shadow-card: 0 2px 10px rgba(0,0,0,.45), 0 14px 30px rgba(0,0,0,.35);
+      --shadow-soft: 0 2px 10px rgba(0,0,0,.4);
+      --shadow-pop: 0 12px 30px rgba(0,0,0,.55), 0 28px 60px rgba(0,0,0,.5);
+    }
+  }
+  /* Viewer toggle wins in both directions */
+  :root[data-theme="light"] {
+    --paper:#EAF4FD;--paper-2:#F2F9FE;--surface:#FFFFFF;--surface-2:#E9F1F6;
+    --ink:#123720;--ink-2:#374A41;--ink-3:#5E7681;--border:#D6E6EE;--border-2:#BFD6E2;
+    --glass:color-mix(in srgb,#FFFFFF 70%,transparent);--glass-strong:color-mix(in srgb,#FFFFFF 84%,transparent);
+    --glass-brd:rgba(120,160,195,.34);--glass-nav:color-mix(in srgb,#FFFFFF 56%,transparent);--glass-ring:rgba(255,255,255,.72);
+    --green:#1E7A3C;--green-deep:#14532D;--green-hover:#196A34;--green-text:#14532D;--green-tint:#E3F1E8;
+    --gold:#C9A227;--gold-soft:#E6C76A;--gold-deep:#8A6D1B;--crimson:#9E1B32;
+    --azure-1:#ADD9EE;--azure-2:#C6E6F6;--azure-3:#E6F4FC;--azure-4:#FFFFFF;
+    --azure:#E6F4FC;--azure-hero:#C6E6F6;--ok:#1E7A3C;--warn:#B07A0E;--danger:#C62828;--info:#2E6FB0;
+    --shadow-card:0 2px 8px rgba(0,0,0,.05),0 12px 24px rgba(30,122,60,.10);
+    --shadow-soft:0 1px 3px rgba(0,0,0,.05),0 6px 16px rgba(30,122,60,.07);
+    --shadow-pop:0 8px 20px rgba(0,0,0,.10),0 24px 48px rgba(20,83,45,.16);
+  }
+  :root[data-theme="dark"] {
+    --paper:#102E44;--paper-2:#16374F;--surface:#1C4059;--surface-2:#234E68;
+    --ink:#EAF4FB;--ink-2:#BDD3E0;--ink-3:#8BA7B7;--border:#2C5877;--border-2:#37688A;
+    --glass:color-mix(in srgb,#1E4864 62%,transparent);--glass-strong:color-mix(in srgb,#1E4864 80%,transparent);
+    --glass-brd:color-mix(in srgb,#BFE0F7 22%,transparent);--glass-nav:color-mix(in srgb,#16374F 55%,transparent);--glass-ring:rgba(120,170,205,.35);
+    --green:#4FB87E;--green-deep:#2E8B57;--green-hover:#64C892;--green-text:#5CC48C;--green-tint:color-mix(in srgb,#4FB87E 22%,transparent);
+    --gold:#E6C76A;--gold-soft:#C9A227;--gold-deep:#C9A94A;--crimson:#E1788B;
+    --azure-1:#0E2A40;--azure-2:#143953;--azure-3:#1B4767;--azure-4:#23577A;
+    --azure:#1B4767;--azure-hero:#143953;--ok:#4FB87E;--warn:#E0B44A;--danger:#F0736F;--info:#6FA8DC;
+    --shadow-card:0 2px 10px rgba(0,0,0,.45),0 14px 30px rgba(0,0,0,.35);
+    --shadow-soft:0 2px 10px rgba(0,0,0,.4);
+    --shadow-pop:0 12px 30px rgba(0,0,0,.55),0 28px 60px rgba(0,0,0,.5);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--sans);
+    background: linear-gradient(180deg, var(--azure-1) 0%, var(--azure-2) 30%, var(--azure-3) 60%, var(--azure-4) 92%);
+    background-attachment: fixed;
+    color: var(--ink-2);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  h1,h2,h3,h4 { color: var(--ink); line-height: 1.12; text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  a { color: var(--green-text); text-decoration: none; }
+  ::selection { background: var(--green-tint); color: var(--green-text); }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .stack { display: flex; flex-direction: column; }
+  .row { display: flex; align-items: center; }
+  .eyebrow {
+    font: 600 12px/1.4 var(--sans);
+    letter-spacing: .16em; text-transform: uppercase; color: var(--gold-deep);
+    display: inline-flex; align-items: center; gap: 9px;
+  }
+  .eyebrow::before { content:""; width: 22px; height: 1.5px; background: var(--gold); display:inline-block; }
+  .lead { font-size: 1.12rem; color: var(--ink-2); max-width: 60ch; }
+  .muted { color: var(--ink-3); }
+
+  /* icons via sprite */
+  .ic { width: 20px; height: 20px; display: inline-block; vertical-align: middle; flex: none; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(18px) saturate(1.6); -webkit-backdrop-filter: blur(18px) saturate(1.6);
+    background: color-mix(in srgb, var(--azure-3) 68%, transparent);
+    border-bottom: 1px solid var(--glass-brd);
+  }
+  .topbar .wrap { display: flex; align-items: center; gap: 18px; height: 62px; }
+  .topbar nav { margin-left: auto; display: flex; gap: 6px; }
+  .topbar nav a {
+    color: var(--ink-2); font-size: .9rem; font-weight: 500; padding: 8px 12px; border-radius: 10px;
+  }
+  .topbar nav a:hover { background: var(--surface-2); color: var(--ink); }
+  .tbrand { display: flex; align-items: center; gap: 11px; font-weight: 600; color: var(--ink); }
+  .theme-btn {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    border: 1px solid var(--border-2); background: var(--surface); color: var(--ink-2);
+    border-radius: 999px; padding: 7px 14px; font: inherit; font-size: .82rem; font-weight: 500;
+  }
+  .theme-btn:hover { border-color: var(--green-text); color: var(--green-text); }
+
+  /* ---------- Brand mark ---------- */
+  .mark {
+    width: 44px; height: 44px; border-radius: 13px; flex: none;
+    background: linear-gradient(150deg, var(--green) 0%, var(--green-deep) 100%);
+    display: grid; place-items: center; position: relative;
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--gold) 55%, transparent), var(--shadow-soft);
+  }
+  .mark .ic { color: #fff; width: 24px; height: 24px; }
+  .mark.lg { width: 72px; height: 72px; border-radius: 20px; }
+  .mark.lg .ic { width: 40px; height: 40px; }
+  .wordmark { display: flex; flex-direction: column; line-height: 1; }
+  .wordmark b { font-family: var(--serif); font-weight: 600; font-size: 1.35rem; color: var(--ink); letter-spacing: .01em; }
+  .wordmark span { font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold-deep); margin-top: 4px; }
+  .wordmark.lg b { font-size: 2.1rem; }
+  .wordmark.lg span { font-size: .74rem; }
+
+  /* ---------- Cover ---------- */
+  .cover { position: relative; overflow: hidden; padding: 80px 0 68px; }
+  .cover::before {
+    content:""; position: absolute; inset: 0; z-index: -2;
+    background:
+      radial-gradient(80% 70% at 82% -8%, color-mix(in srgb, var(--green) 13%, transparent) 0%, transparent 58%),
+      radial-gradient(120% 90% at 12% -5%, var(--azure-1) 0%, transparent 55%);
+  }
+  .cover::after {
+    content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+    opacity:.6;
+  }
+  .cover .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .cover h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2.4rem, 5.2vw, 4rem); letter-spacing: -0.01em; margin: 20px 0 0; }
+  .cover h1 em { font-style: italic; color: var(--green-text); }
+  .cover .tagline { font-family: var(--serif); font-style: italic; font-size: 1.4rem; color: var(--green-text); margin-top: 14px; }
+  .cover .lead { margin-top: 18px; }
+  .cover-meta { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 30px; }
+  .cover-meta div { display: flex; flex-direction: column; }
+  .cover-meta dt { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+  .cover-meta dd { margin: 3px 0 0; font-weight: 600; color: var(--ink); font-size: .95rem; }
+
+  /* floating phone in cover */
+  .cover-visual { position: relative; display: grid; place-items: center; min-height: 380px; }
+  .cover-visual .device { transform: rotate(-3deg); }
+  .cover-glow { position: absolute; width: 340px; height: 340px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--green) 26%, transparent), transparent 70%);
+    filter: blur(30px); z-index: -1; }
+
+  /* ---------- Sections ---------- */
+  section { padding: 66px 0; }
+  .sec-head { max-width: 62ch; margin-bottom: 40px; }
+  .sec-head h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.8rem, 3.4vw, 2.6rem); margin-top: 12px; }
+  .sec-head p { margin-top: 14px; }
+  .alt { background: color-mix(in srgb, var(--surface) 32%, transparent); border-top: 1px solid var(--glass-brd); border-bottom: 1px solid var(--glass-brd); }
+
+  /* ---------- Palette ---------- */
+  .pal-group { margin-bottom: 30px; }
+  .pal-group h4 { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px; font-family: var(--sans); font-weight: 700; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .swatch { border-radius: 14px; border: 1px solid var(--border); background: var(--surface); overflow: hidden; box-shadow: var(--shadow-soft); }
+  .swatch .chip { height: 74px; position: relative; }
+  .swatch .meta { padding: 10px 12px 12px; }
+  .swatch .meta b { color: var(--ink); font-size: .86rem; display: block; }
+  .swatch .meta code { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); }
+  .swatch .meta small { display:block; color: var(--ink-3); font-size: .72rem; margin-top: 3px; }
+  .swatch .ring { position:absolute; inset:0; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+
+  /* ---------- Type specimen ---------- */
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .type-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); padding: 26px; box-shadow: var(--shadow-soft); }
+  .type-card .tag { font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-deep); }
+  .type-card .name { font-size: .9rem; color: var(--ink-3); margin-top: 4px; }
+  .specimen-serif { font-family: var(--serif); font-size: 3.1rem; color: var(--ink); line-height: 1; margin: 18px 0 10px; }
+  .specimen-serif em { font-style: italic; color: var(--green-text); }
+  .specimen-sans { font-family: var(--sans); font-size: 2.2rem; font-weight: 600; color: var(--ink); margin: 18px 0 10px; }
+  .specimen-mono { font-family: var(--mono); font-size: 1.7rem; color: var(--green-text); margin: 18px 0 10px; font-variant-numeric: tabular-nums; }
+  .scale-row { display:flex; align-items:baseline; gap: 14px; border-top: 1px dashed var(--border); padding: 9px 0; }
+  .scale-row span:first-child { color: var(--ink); }
+  .scale-row .sz { margin-left:auto; font-family: var(--mono); font-size: .72rem; color: var(--ink-3); }
+
+  /* ---------- Token cards ---------- */
+  .token-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 16px; }
+  .token { background: var(--surface); border:1px solid var(--border); border-radius: var(--r-card); padding: 20px; box-shadow: var(--shadow-soft); }
+  .token h4 { font-size: .92rem; }
+  .token p { font-size: .82rem; color: var(--ink-3); margin-top: 6px; }
+  .token .demo { margin-top: 16px; height: 68px; border-radius: 12px; display:grid; place-items:center; }
+  .demo-shadow { background: var(--surface); box-shadow: var(--shadow-card); border:1px solid var(--border); }
+  .demo-radius { background: var(--green-tint); border: 1.5px solid var(--green); border-radius: var(--r-lg); }
+  .demo-glass { position: relative; overflow: hidden; background:
+      linear-gradient(135deg, var(--azure-hero), var(--green-tint)); }
+  .demo-glass .g {
+    width: 78%; height: 60%; border-radius: 14px;
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, #fff 45%, transparent);
+    box-shadow: var(--shadow-soft);
+  }
+  .demo-motion .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--green); animation: bob 2.4s var(--eb, ease-in-out) infinite; }
+  @keyframes bob { 0%,100%{ transform: translateY(-9px);} 50%{ transform: translateY(9px);} }
+  .demo-ambient { background: linear-gradient(180deg, var(--azure-hero), var(--surface)); border:1px solid var(--border); }
+  .token .val { font-family: var(--mono); font-size: .72rem; color: var(--green-text); margin-top:10px; display:block; }
+
+  /* ---------- Components showcase ---------- */
+  .comp-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 18px; }
+  .comp { background: var(--surface); border:1px solid var(--border); border-radius: var(--r-card); padding: 22px; box-shadow: var(--shadow-soft); }
+  .comp > h4 { font-size: .82rem; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-3); margin-bottom: 16px; }
+  .comp .set { display:flex; flex-wrap: wrap; gap: 10px; align-items:center; }
+
+  /* buttons */
+  .btn { font: 600 .9rem/1 var(--sans); border-radius: 12px; padding: 13px 20px; border: 1.5px solid transparent;
+    display:inline-flex; align-items:center; gap: 9px; cursor: pointer; }
+  .btn .ic { width: 18px; height: 18px; }
+  .btn-primary { background: var(--green); color: #fff; box-shadow: 0 6px 14px rgba(30,122,60,.22); }
+  .btn-primary:hover { background: var(--green-hover); }
+  .btn-outline { background: transparent; color: var(--green-text); border-color: var(--green-text); }
+  .btn-outline:hover { background: var(--green-tint); }
+  .btn-ghost { background: transparent; color: var(--green-text); }
+  .btn-ghost:hover { background: var(--green-tint); }
+  .btn-sm { padding: 9px 14px; font-size: .82rem; border-radius: 10px; }
+
+  /* chips */
+  .chip-ui { font: 500 .82rem/1 var(--sans); padding: 9px 14px; border-radius: 999px; border:1px solid var(--border-2);
+    background: var(--surface); color: var(--ink-2); cursor: pointer; display:inline-flex; align-items:center; gap:7px; }
+  .chip-ui.on { background: var(--green); color:#fff; border-color: var(--green-text); }
+  .chip-ui:hover:not(.on) { border-color: var(--green-text); color: var(--green-text); }
+
+  /* input */
+  .field { display:flex; align-items:center; gap: 10px; background: var(--surface-2); border:1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; color: var(--ink-3); }
+  .field.focus { border-color: var(--green-text); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 18%, transparent); background: var(--surface); }
+  .field input { border:0; background: transparent; font: inherit; color: var(--ink); width: 100%; outline: none; }
+  .field .ic { color: var(--ink-3); }
+
+  /* badges & status */
+  .badge { font: 700 .66rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border-radius: 7px; display:inline-flex; align-items:center; gap:5px; }
+  .badge-ai { background: linear-gradient(120deg, var(--green), var(--green-deep)); color:#fff; }
+  .badge-ai .ic { width: 13px; height: 13px; color: var(--gold-soft); }
+  .badge-rx { background: var(--surface-2); color: var(--crimson); border:1px solid color-mix(in srgb,var(--crimson) 30%, transparent); }
+  .badge-ce { background: var(--surface-2); color: var(--info); border:1px solid color-mix(in srgb,var(--info) 30%, transparent); }
+  .badge-red { background: color-mix(in srgb,var(--crimson) 14%, var(--surface)); color: var(--crimson); border:1px solid color-mix(in srgb,var(--crimson) 34%, transparent); }
+  .pill-status { font: 600 .72rem/1 var(--sans); padding: 6px 11px; border-radius: 999px; display:inline-flex; align-items:center; gap:6px; }
+  .pill-status::before { content:""; width:7px; height:7px; border-radius:50%; background: currentColor; }
+  .st-ok { color: var(--ok); background: color-mix(in srgb,var(--ok) 13%, var(--surface)); }
+  .st-warn { color: var(--warn); background: color-mix(in srgb,var(--warn) 15%, var(--surface)); }
+  .st-info { color: var(--info); background: color-mix(in srgb,var(--info) 13%, var(--surface)); }
+  .st-danger { color: var(--danger); background: color-mix(in srgb,var(--danger) 13%, var(--surface)); }
+
+  /* price */
+  .price { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--green-text); font-weight: 600; }
+  .price .was { color: var(--ink-3); text-decoration: line-through; font-weight: 400; font-size: .82em; margin-left: 8px; }
+
+  /* seal / ministerial placeholder */
+  .seal { display:flex; align-items:center; gap: 12px; border:1px dashed var(--gold); border-radius: 12px; padding: 12px 14px; background: color-mix(in srgb, var(--gold) 6%, var(--surface)); }
+  .seal .sq { width: 40px; height: 40px; border-radius: 8px; border: 1.5px solid var(--gold); display:grid; place-items:center; color: var(--gold-deep); flex:none; }
+  .seal small { color: var(--ink-3); font-size: .72rem; }
+  .seal b { color: var(--ink); font-size: .82rem; display:block; }
+
+  /* cross ornament */
+  .ornament { display:flex; align-items:center; justify-content:center; gap: 14px; color: var(--gold); margin: 8px 0; }
+  .ornament::before, .ornament::after { content:""; height:1px; width: 70px; background: linear-gradient(90deg, transparent, var(--gold)); }
+  .ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
+
+  /* ============================================================
+     DEVICE / APP SCREENS
+     ============================================================ */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: 30px 26px; align-items: start; }
+  .frame { display:flex; flex-direction: column; gap: 14px; }
+  .frame .cap { padding: 0 4px; }
+  .frame .cap .k { font-size: .7rem; letter-spacing:.14em; text-transform:uppercase; color: var(--gold-deep); font-weight:700; }
+  .frame .cap h4 { font-size: 1.02rem; margin-top: 5px; font-family: var(--serif); font-weight: 600; }
+  .frame .cap p { font-size: .82rem; color: var(--ink-3); margin-top: 5px; }
+
+  .device {
+    width: 100%; max-width: 300px; margin: 0 auto; border-radius: 34px; padding: 9px;
+    background: linear-gradient(160deg, #EAF2F9, #C2D5E4);
+    box-shadow: var(--shadow-pop), inset 0 1px 0 rgba(255,255,255,.7);
+    border: 1px solid var(--glass-ring);
+    position: relative;
+  }
+  @media (prefers-color-scheme: dark) { .device { background: linear-gradient(160deg, #38536E, #1B2E42); border-color: rgba(120,170,205,.3); } }
+  :root[data-theme="dark"] .device { background: linear-gradient(160deg, #38536E, #1B2E42); border-color: rgba(120,170,205,.3); }
+  :root[data-theme="light"] .device { background: linear-gradient(160deg, #EAF2F9, #C2D5E4); border-color: var(--glass-ring); }
+  .screen {
+    border-radius: 27px; overflow: hidden;
+    background: linear-gradient(180deg, var(--azure-1) 0%, var(--azure-3) 36%, var(--azure-4) 80%);
+    min-height: 600px; display: flex; flex-direction: column; position: relative;
+    font-size: 13px; color: var(--ink-2);
+  }
+  /* atmospheric ambient wash inside app — the azure sky fading to white */
+  .screen.hero-wash { background: linear-gradient(180deg, var(--azure-1) 0%, var(--azure-2) 32%, var(--azure-4) 92%); }
+  .screen.wash { background: linear-gradient(180deg, var(--azure-2) 0%, var(--azure-4) 52%); }
+  .screen:has(.bnav) .body { padding-bottom: 104px; }
+
+  .notch { position:absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 92px; height: 22px; background:#0c120e; border-radius: 0 0 14px 14px; z-index: 6; }
+  :root[data-theme="light"] .notch { background:#10160f; }
+
+  .statusbar { display:flex; justify-content:space-between; align-items:center; padding: 11px 18px 3px; font-size: 11px; font-weight: 600; color: var(--ink); }
+  .statusbar .r { display:flex; gap: 5px; align-items:center; }
+  .statusbar .r .ic { width: 14px; height: 14px; color: var(--ink); }
+
+  .appbar { display:flex; align-items:center; gap: 10px; padding: 6px 16px 10px; }
+  .appbar .title { font-weight: 600; color: var(--ink); font-size: 15px; }
+  .appbar .title.serif { font-family: var(--serif); font-size: 17px; }
+  .appbar .sp { margin-left:auto; }
+  .appbar .ib { width: 32px; height: 32px; border-radius: 9px; display:grid; place-items:center; color: var(--ink-2); }
+  .appbar .ib:hover { background: var(--surface-2); }
+  .appbar .ib .ic { width: 19px; height:19px; }
+  .appbar .lang { font-size:11px; font-weight:700; color: var(--green-text); border:1px solid var(--border-2); border-radius:8px; padding:5px 8px; display:flex; gap:5px; align-items:center; }
+
+  .body { padding: 4px 16px 14px; display:flex; flex-direction: column; gap: 13px; flex: 1; }
+  .body.scroll-hint { -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent); mask-image: linear-gradient(180deg, #000 86%, transparent); }
+
+  /* generic app card */
+  .card { background: var(--glass-strong); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border:1px solid var(--glass-brd); border-radius: var(--r-card); box-shadow: var(--shadow-soft); }
+  .card.pad { padding: 14px; }
+
+  /* app buttons scaled */
+  .a-btn { font: 600 13px/1 var(--sans); border-radius: 12px; padding: 13px; text-align:center; display:flex; align-items:center; justify-content:center; gap:8px; border:1.5px solid transparent; }
+  .a-btn .ic { width:17px; height:17px; }
+  .a-primary { background: var(--green); color:#fff; box-shadow: 0 5px 12px rgba(30,122,60,.22); }
+  .a-outline { background: transparent; color: var(--green-text); border-color: var(--green-text); }
+  .a-block { width: 100%; }
+
+  /* logo frame on home */
+  .logoframe { height: 116px; border-radius: 16px; border: 2px solid var(--gold); background: var(--surface);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 6px; }
+  .logoframe .mark { width: 46px; height: 46px; }
+  .logoframe b { font-family: var(--serif); font-weight:600; color: var(--ink); font-size: 16px; }
+  .logoframe span { font-size: 9px; letter-spacing:.26em; text-transform:uppercase; color: var(--gold-deep); }
+
+  .welcome { text-align:center; }
+  .welcome h3 { font-family: var(--serif); font-weight:600; font-size: 21px; }
+  .welcome p { font-size: 13px; color: var(--ink-3); margin-top: 5px; }
+
+  /* assistant search bar (home) */
+  .a-search { display:flex; align-items:center; gap:10px; background: var(--surface); border:1px solid var(--border);
+    border-radius: 14px; padding: 13px 14px; box-shadow: var(--shadow-soft); color: var(--ink-3); font-size: 12.5px; }
+  .a-search .badge-ai { margin-left:auto; }
+  .a-search .ic { color: var(--green-text); }
+
+  /* hero service card */
+  .hero-card { border-radius: 18px; padding: 16px; color:#fff; position:relative; overflow:hidden;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
+    box-shadow: var(--shadow-card); }
+  .hero-card::after { content:""; position:absolute; right:-30px; top:-30px; width:120px; height:120px; border-radius:50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--gold) 40%, transparent), transparent 70%); }
+  .hero-card .k { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color: var(--gold-soft); font-weight:700; }
+  .hero-card h4 { color:#fff; font-family: var(--serif); font-size: 17px; margin-top:6px; }
+  .hero-card p { color: rgba(255,255,255,.82); font-size: 12px; margin-top:5px; max-width: 90%; }
+  .hero-card .go { margin-top:12px; display:inline-flex; align-items:center; gap:7px; font-weight:600; font-size:12.5px;
+    background: rgba(255,255,255,.16); padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.28); }
+
+  /* list rows */
+  .lrow { display:flex; align-items:center; gap: 12px; padding: 13px 14px; }
+  .lrow + .lrow { border-top: 1px solid var(--border); }
+  .lrow .ico { width: 38px; height: 38px; border-radius: 11px; background: var(--green-tint); color: var(--green-text); display:grid; place-items:center; flex:none; }
+  .lrow .ico .ic { width:19px; height:19px; }
+  .lrow .tx { flex:1; min-width:0; }
+  .lrow .tx b { color: var(--ink); font-size: 13.5px; font-weight:600; display:block; }
+  .lrow .tx small { color: var(--ink-3); font-size: 11.5px; }
+  .lrow .end { color: var(--ink-3); }
+  .lrow .end .ic { width:17px; height:17px; }
+
+  /* product grid */
+  .pgrid { display:grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+  .pcard { background: var(--surface); border:1px solid var(--border); border-radius: 15px; overflow:hidden; box-shadow: var(--shadow-soft); display:flex; flex-direction:column; }
+  .thumb { aspect-ratio: 1/.82; display:grid; place-items:center; position:relative;
+    background: linear-gradient(150deg, var(--azure), var(--green-tint)); color: color-mix(in srgb, var(--green) 55%, var(--ink-3)); }
+  .thumb .ic { width: 34px; height: 34px; opacity:.7; }
+  .thumb .flag { position:absolute; top:8px; left:8px; }
+  .pcard .pb { padding: 9px 10px 11px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .pcard .pb .nm { color: var(--ink); font-size: 12px; font-weight:600; line-height:1.25; }
+  .pcard .pb .ty { font-size: 10px; color: var(--ink-3); text-transform:uppercase; letter-spacing:.06em; }
+  .pcard .pb .pr { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  .pcard .pb .pr .price { font-size: 13px; }
+  .addbtn { width: 30px; height: 30px; border-radius: 9px; background: var(--green); color:#fff; display:grid; place-items:center; flex:none; }
+  .addbtn .ic { width:17px; height:17px; }
+
+  /* category chips row */
+  .chips-row { display:flex; gap: 8px; overflow:hidden; }
+  .c-chip { font: 500 11.5px/1 var(--sans); padding: 8px 12px; border-radius:999px; border:1px solid var(--border-2); color: var(--ink-2); white-space:nowrap; background: var(--surface); }
+  .c-chip.on { background: var(--green); color:#fff; border-color: var(--green-text); }
+
+  /* chat */
+  .chat { display:flex; flex-direction:column; gap: 11px; padding: 6px 14px 12px; flex:1; }
+  .bubble { max-width: 82%; padding: 11px 13px; border-radius: 15px; font-size: 12.5px; line-height:1.4; }
+  .bubble.ai { background: var(--surface); border:1px solid var(--border); color: var(--ink-2); border-bottom-left-radius: 5px; align-self:flex-start; box-shadow: var(--shadow-soft); }
+  .bubble.me { background: var(--green); color:#fff; border-bottom-right-radius: 5px; align-self:flex-end; }
+  .qchips { display:flex; flex-wrap:wrap; gap: 7px; }
+  .sugg { border:1px solid var(--border); border-radius: 13px; padding: 9px; display:flex; gap: 10px; align-items:center; background: var(--surface); margin-top: 8px; box-shadow: var(--shadow-soft); }
+  .sugg .thumb { width: 42px; height: 42px; aspect-ratio:auto; border-radius: 9px; flex:none; }
+  .sugg .thumb .ic { width:20px;height:20px;}
+  .sugg .sg { flex:1; min-width:0; }
+  .sugg .sg b { color: var(--ink); font-size: 12px; display:block; }
+  .disclaimer { display:flex; gap: 8px; align-items:flex-start; font-size: 10.5px; color: var(--ink-3); padding: 9px 12px; background: var(--surface-2); border-radius: 10px; border:1px solid var(--border); }
+  .disclaimer .ic { width: 15px; height:15px; color: var(--crimson); flex:none; margin-top:1px; }
+  .chat-input { display:flex; align-items:center; gap:9px; padding: 10px 14px; border-top:1px solid var(--border); background: var(--surface); }
+  .chat-input .box { flex:1; background: var(--surface-2); border:1px solid var(--border); border-radius: 999px; padding: 9px 13px; color: var(--ink-3); font-size:12px; }
+  .chat-input .send { width: 36px; height:36px; border-radius:50%; background: var(--green); color:#fff; display:grid; place-items:center; flex:none; }
+  .chat-input .send .ic { width:17px; height:17px; }
+
+  /* order summary */
+  .summary { padding: 13px 14px; display:flex; flex-direction:column; gap:9px; }
+  .summary .sr { display:flex; justify-content:space-between; font-size: 12.5px; }
+  .summary .sr .price { font-size:12.5px; }
+  .summary .tot { border-top:1px dashed var(--border); padding-top:10px; margin-top:2px; font-weight:700; }
+  .summary .tot b { color: var(--ink); font-size:14px; }
+  .summary .tot .price { font-size: 15px; }
+  .free-hint { font-size:11px; color: var(--green-text); background: var(--green-tint); border-radius:9px; padding:8px 10px; display:flex; gap:7px; align-items:center; }
+
+  /* stepper (order status) */
+  .stepper { display:flex; align-items:flex-start; padding: 6px 4px; }
+  .stepper .stp { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; }
+  .stepper .stp .d { width: 18px; height:18px; border-radius:50%; background: var(--surface-2); border:2px solid var(--border-2); display:grid; place-items:center; z-index:2; }
+  .stepper .stp .d .ic { width:10px; height:10px; color:#fff; }
+  .stepper .stp.done .d { background: var(--green); border-color: var(--green-text); }
+  .stepper .stp.now .d { background: var(--green); border-color: var(--green-text); box-shadow: 0 0 0 4px var(--green-tint); }
+  .stepper .stp small { font-size: 9.5px; color: var(--ink-3); text-align:center; line-height:1.1; }
+  .stepper .stp.done small, .stepper .stp.now small { color: var(--green-text); font-weight:600; }
+  .stepper .stp::before { content:""; position:absolute; top:8px; left:-50%; width:100%; height:2px; background: var(--border-2); z-index:1; }
+  .stepper .stp:first-child::before { display:none; }
+  .stepper .stp.done::before, .stepper .stp.now::before { background: var(--green); }
+
+  /* qty stepper */
+  .qty { display:flex; align-items:center; gap:0; border:1px solid var(--border-2); border-radius:9px; overflow:hidden; }
+  .qty button, .qty .b { width:28px; height:28px; display:grid; place-items:center; background: var(--surface-2); color: var(--green-text); border:0; }
+  .qty .n { width: 30px; text-align:center; font-family: var(--mono); font-weight:600; color: var(--ink); font-size: 12px; }
+  .qty .ic { width:14px; height:14px; }
+
+  /* toggles */
+  .toggle-row { display:flex; align-items:flex-start; gap:12px; padding: 12px 0; }
+  .toggle-row + .toggle-row { border-top:1px solid var(--border); }
+  .toggle-row .tt { flex:1; }
+  .toggle-row .tt b { color: var(--ink); font-size:12.5px; display:block; }
+  .toggle-row .tt small { color: var(--ink-3); font-size:11px; }
+  .sw { width: 40px; height: 23px; border-radius: 999px; background: var(--border-2); position:relative; flex:none; margin-top:2px; }
+  .sw::after { content:""; position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:.2s; }
+  .sw.on { background: var(--green); }
+  .sw.on::after { left: 19px; }
+
+  /* bottom nav — floating glassmorphism bar with a raised AI centerpiece */
+  .bnav {
+    position: absolute; left: 10px; right: 10px; bottom: 14px; z-index: 6;
+    display: flex; align-items: center; justify-content: space-between; gap: 0;
+    padding: 7px 8px; border-radius: 24px;
+    background: var(--glass-nav);
+    backdrop-filter: blur(24px) saturate(1.9); -webkit-backdrop-filter: blur(24px) saturate(1.9);
+    border: 1px solid var(--glass-brd);
+    box-shadow: 0 14px 34px rgba(20,70,110,.24), 0 2px 8px rgba(20,70,110,.12), inset 0 1px 0 var(--glass-ring);
+  }
+  .bnav .n { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: var(--ink-3); font-size: 8.5px; font-weight: 600; letter-spacing: .01em; }
+  .bnav .n .ni { width: 40px; height: 28px; border-radius: 12px; display: grid; place-items: center; transition: background .2s ease, transform .2s ease; }
+  .bnav .n .ni .ic { width: 23px; height: 23px; }
+  .bnav .n.on { color: var(--green-text); }
+  .bnav .n.on .ni { background: color-mix(in srgb, var(--green) 16%, transparent); }
+  .bnav .center { flex: 0 0 auto; }
+  .bnav .fab {
+    width: 54px; height: 54px; margin-top: -30px; border-radius: 50%;
+    background: linear-gradient(140deg, var(--green-hover), var(--green-deep));
+    display: grid; place-items: center; color: #fff;
+    border: 3px solid var(--glass-ring);
+    box-shadow: 0 12px 24px rgba(30,122,60,.5), 0 2px 6px rgba(30,122,60,.4), inset 0 0 0 1.5px color-mix(in srgb, var(--gold-soft) 55%, transparent);
+  }
+  .bnav .fab .ic { width: 26px; height: 26px; color: #fff; }
+  .bnav .fab .ic use { color: #fff; }
+
+  /* assistant floating pill */
+  .apill { position:absolute; left:14px; right:14px; bottom: 66px; z-index:5;
+    background: color-mix(in srgb, var(--surface) 74%, transparent); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border:1px solid color-mix(in srgb,#fff 45%, transparent); border-radius: 16px; padding: 11px 13px; display:flex; align-items:center; gap:11px;
+    box-shadow: var(--shadow-card); }
+  .apill .av { width: 34px; height:34px; border-radius:50%; background: linear-gradient(135deg,var(--green),var(--green-deep)); display:grid; place-items:center; color: var(--gold-soft); flex:none; }
+  .apill .av .ic { width:18px; height:18px; }
+  .apill p { font-size: 11px; color: var(--ink-2); line-height:1.3; }
+  .apill p b { color: var(--ink); }
+
+  /* section label inside app */
+  .field-label { font-size: 11px; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-3); font-weight:700; }
+
+  /* admin tiles */
+  .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .atile { background: var(--surface); border:1px solid var(--border); border-radius:14px; padding:13px; box-shadow: var(--shadow-soft); display:flex; flex-direction:column; gap:8px; }
+  .atile .ico { width:34px; height:34px; border-radius:10px; background: var(--green-tint); color:var(--green-deep); display:grid; place-items:center; }
+  .atile .ico .ic { width:18px; height:18px; }
+  .atile b { color:var(--ink); font-size:12px; line-height:1.2; }
+  .atile.feature { grid-column: span 2; background: linear-gradient(135deg,var(--green),var(--green-deep)); color:#fff; }
+  .atile.feature .ico { background: rgba(255,255,255,.16); color: var(--gold-soft); }
+  .atile.feature b { color:#fff; }
+  .atile.feature small { color: rgba(255,255,255,.8); font-size:10.5px; }
+
+  .superv { display:flex; gap:10px; align-items:center; padding:10px 0; }
+  .superv + .superv { border-top:1px solid var(--border); }
+  .superv .tx { flex:1; }
+  .superv .tx b { color:var(--ink); font-size:12px; display:block; }
+  .superv .tx small { color: var(--ink-3); font-size:10.5px; }
+
+  /* payment method rows */
+  .pay { display:flex; align-items:center; gap:11px; padding:12px 13px; border:1px solid var(--border); border-radius:12px; background:var(--surface); }
+  .pay.sel { border-color: var(--green-text); box-shadow: 0 0 0 2px color-mix(in srgb,var(--green) 20%, transparent); }
+  .pay .ico { width:34px; height:24px; border-radius:5px; background: var(--surface-2); border:1px solid var(--border); display:grid; place-items:center; color: var(--ink-2); flex:none; }
+  .pay .ico .ic { width:16px; height:16px; }
+  .pay b { color:var(--ink); font-size:12.5px; flex:1; }
+  .pay .rdo { width:18px; height:18px; border-radius:50%; border:2px solid var(--border-2); flex:none; }
+  .pay.sel .rdo { border-color: var(--green-text); background: radial-gradient(circle, var(--green) 40%, transparent 46%); }
+
+  .notice { font-size:10.5px; color: var(--ink-3); background: var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:9px 11px; display:flex; gap:8px; }
+  .notice .ic { width:14px; height:14px; color: var(--info); flex:none; margin-top:1px; }
+
+  /* location card details */
+  .loc-actions { display:flex; gap:8px; }
+  .loc-actions .la { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:9px 4px; border:1px solid var(--border); border-radius:11px; color: var(--green-text); font-size:10px; font-weight:600; background: var(--surface); }
+  .loc-actions .la .ic { width:17px; height:17px; }
+  .hours { display:flex; justify-content:space-between; font-size:11.5px; padding:4px 0; }
+  .hours span:first-child { color: var(--ink-2); }
+  .hours span:last-child { color: var(--ink-3); font-family: var(--mono); }
+
+  /* ---------- Closing / footer ---------- */
+  .feature-list { display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 18px; }
+  .fl { background: var(--surface); border:1px solid var(--border); border-radius: var(--r-card); padding: 22px; box-shadow: var(--shadow-soft); }
+  .fl .ic { color: var(--green-text); width: 24px; height:24px; }
+  .fl h4 { margin-top: 14px; font-size: 1rem; }
+  .fl p { margin-top: 8px; font-size: .88rem; color: var(--ink-3); }
+
+  .map-note { background: var(--surface); border:1px solid var(--border); border-radius: var(--r-card); padding: 22px 24px; box-shadow: var(--shadow-soft); }
+  .map-note ol { margin: 0; padding-left: 20px; }
+  .map-note li { margin: 9px 0; font-size: .92rem; }
+  .map-note code { font-family: var(--mono); font-size: .82rem; background: var(--surface-2); padding: 2px 6px; border-radius: 6px; color: var(--green-text); }
+
+  footer { background: var(--green-deep); color: color-mix(in srgb,#fff 82%, var(--green-deep)); padding: 46px 0; }
+  footer .wrap { display:flex; flex-wrap:wrap; gap: 24px; align-items:center; }
+  footer .wordmark b { color:#fff; }
+  footer .wordmark span { color: var(--gold-soft); }
+  footer p { font-size: .84rem; max-width: 52ch; }
+  footer .mark { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--gold) 65%, transparent); }
+
+  /* Frosted-glass treatment shared across surfaces (coherent glassmorphism) */
+  .swatch, .type-card, .token, .comp, .fl, .map-note,
+  .pcard, .a-search, .demo-shadow, .pay, .atile, .sugg {
+    background: var(--glass-strong);
+    backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-color: var(--glass-brd);
+  }
+
+  /* reveal */
+  .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; }
+    html { scroll-behavior: auto; }
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  @media (max-width: 900px) {
+    .cover .wrap { grid-template-columns: 1fr; }
+    .cover-visual { min-height: 0; order: -1; }
+    .type-grid { grid-template-columns: 1fr; }
+    .topbar nav { display: none; }
+  }
+</style>
+
+<!-- ===================== ICON SPRITE ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="base" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
+  </defs>
+  <symbol id="i-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.7 5.3L19 9l-5.3 1.7L12 16l-1.7-5.3L5 9l5.3-1.7z"/><circle cx="18.5" cy="17.5" r="1.6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.9 8.9 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.2 11.3a1.6 1.6 0 0 0 1.6 1.3h8.2a1.6 1.6 0 0 0 1.6-1.3L21.5 7H6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></symbol>
+  <symbol id="i-shop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M3.5 9 5 4h14l1.5 5"/><path d="M9 21v-6h6v6"/><path d="M9 9a3 3 0 0 1-6 0M15 9a3 3 0 0 1-6 0M21 9a3 3 0 0 1-6 0"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 3v3M16 3v3"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16.9v2.5a2 2 0 0 1-2.2 2 19.5 19.5 0 0 1-8.5-3 19 19 0 0 1-6-6 19.5 19.5 0 0 1-3-8.6A2 2 0 0 1 3.3 2h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L6.9 9.8a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.2l5.9-.9z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8v8M11 8v8M15 8v8"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h11v11H2zM13 9h4l4 3v5h-8z"/><circle cx="6.5" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.5" cy="10" r="1.6"/><path d="M21 16l-5-4.5L6 19.5"/></symbol>
+  <symbol id="i-pill" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M8.8 8.8l6.4 6.4"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 6a5 5 0 0 1 9.3 5c-2.3 4.5-9.3 9-9.3 9z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20z"/><path d="M12 9v5M12 17h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-euro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7a6.5 6.5 0 1 0 0 10M4 10.5h8M4 14h7"/></symbol>
+  <symbol id="i-heart-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9.3-9A5 5 0 0 1 12 6a5 5 0 0 1 9.3 5"/><path d="M21 12h-4l-2 3-3-6-2 3H6"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.3 6.3 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+  <!-- Expressive filled nav glyphs -->
+  <symbol id="i-nav-home" viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd"><path d="M12 3 21 10.6V20a1 1 0 0 1-1 1h-4.6v-4.4a2.4 2.4 0 0 0-4.8 0V21H4a1 1 0 0 1-1-1v-9.4z"/></symbol>
+  <symbol id="i-nav-shop" viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd"><path d="M4 4h16a1 1 0 0 1 1 1v3H3V5a1 1 0 0 1 1-1z"/><path d="M4 9.5h16V20a1 1 0 0 1-1 1h-4.6v-4a2.4 2.4 0 0 0-4.8 0v4H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-nav-cart" viewBox="0 0 24 24"><path fill="currentColor" d="M7.6 9h11.9a1 1 0 0 1 .98 1.2l-1.05 5.3A1.5 1.5 0 0 1 18 16.7H9.2a1.5 1.5 0 0 1-1.47-1.18z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7.6 9 6.4 4.7a1.3 1.3 0 0 0-1.25-.95H2.7"/><circle fill="currentColor" cx="10" cy="20" r="1.5"/><circle fill="currentColor" cx="17.5" cy="20" r="1.5"/></symbol>
+  <symbol id="i-nav-user" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M4 20.6a8 8 0 0 1 16 0 1 1 0 0 1-1 1.1H5a1 1 0 0 1-1-1.1z"/></symbol>
+</svg>
+
+<!-- ===================== TOP BAR ===================== -->
+<header class="topbar">
+  <div class="wrap">
+    <span class="tbrand"><span class="mark" style="width:34px;height:34px;border-radius:10px"><svg class="ic"><use href="#i-cross"/></svg></span> Baganza · Design</span>
+    <nav>
+      <a href="#direzione">Direzione</a>
+      <a href="#identita">Identità</a>
+      <a href="#componenti">Componenti</a>
+      <a href="#schermate">Schermate</a>
+      <a href="#prossimo">Prossimi passi</a>
+    </nav>
+    <button class="theme-btn" id="themeToggle" type="button" aria-label="Cambia tema">
+      <svg class="ic" style="width:16px;height:16px"><use href="#i-sun" id="themeIcon"/></svg><span id="themeLabel">Tema</span>
+    </button>
+  </div>
+</header>
+
+<!-- ===================== COVER ===================== -->
+<section class="cover">
+  <div class="wrap">
+    <div class="stack">
+      <span class="eyebrow">Proposta d'identità visiva · 2026</span>
+      <h1>Un'identità per <em>Baganza&nbsp;Farmacie</em></h1>
+      <p class="tagline">Non solo farmaci — Parma.</p>
+      <p class="lead">Una direzione grafica che unisce l'<strong>eredità dell'apoteca</strong> — il verde della croce, l'oro come dettaglio di pregio — alla <strong>calma clinica</strong> di superfici pulite e luce d'ambiente. Un solo colore interattivo, tipografia con voce e funzione distinte, e lo stesso linguaggio su acquisto, servizi, assistente AI e area farmacia.</p>
+      <dl class="cover-meta">
+        <div><dt>Cliente</dt><dd>Baganza Farmacie</dd></div>
+        <div><dt>Ambito</dt><dd>App completa (iOS · Android · Web)</dd></div>
+        <div><dt>Base</dt><dd>Flutter · Material 3</dd></div>
+        <div><dt>Lingue</dt><dd>Italiano · English</dd></div>
+      </dl>
+    </div>
+    <div class="cover-visual">
+      <span class="cover-glow"></span>
+      <!-- Cover phone: Home -->
+      <div class="device">
+        <div class="notch"></div>
+        <div class="screen hero-wash">
+          <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+          <div class="appbar">
+            <span class="title serif">Home</span>
+            <span class="sp"></span>
+            <span class="ib"><svg class="ic"><use href="#i-user"/></svg></span>
+            <span class="lang"><svg class="ic" style="width:13px;height:13px"><use href="#i-globe"/></svg>IT</span>
+          </div>
+          <div class="body">
+            <div class="logoframe">
+              <span class="mark"><svg class="ic"><use href="#i-cross"/></svg></span>
+              <b>Baganza</b><span>Farmacie · Parma</span>
+            </div>
+            <div class="welcome">
+              <h3>Benvenuto in Baganza</h3>
+              <p>Non solo farmaci — Parma</p>
+            </div>
+            <div class="a-search"><svg class="ic"><use href="#i-search"/></svg><span>Cerca un prodotto o chiedi un consiglio…</span><span class="badge badge-ai"><svg class="ic"><use href="#i-spark"/></svg>AI</span></div>
+            <div class="hero-card">
+              <span class="k">Servizi e prenotazioni</span>
+              <h4>La farmacia, oltre il banco</h4>
+              <p>Autoanalisi, telemedicina, CUP e referti</p>
+              <span class="go">Scopri <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></span>
+            </div>
+            <div class="a-btn a-primary a-block"><svg class="ic"><use href="#i-shop"/></svg>Vai al negozio</div>
+          </div>
+          <div class="bnav">
+            <span class="n on"><span class="ni"><svg class="ic"><use href="#i-nav-home"/></svg></span>Home</span>
+            <span class="n"><span class="ni"><svg class="ic"><use href="#i-nav-shop"/></svg></span>Negozio</span>
+            <span class="n center"><span class="fab" role="img" aria-label="Assistente AI"><svg class="ic"><use href="#i-spark"/></svg></span></span>
+            <span class="n"><span class="ni"><svg class="ic"><use href="#i-nav-cart"/></svg></span>Carrello</span>
+            <span class="n"><span class="ni"><svg class="ic"><use href="#i-nav-user"/></svg></span>Profilo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DIREZIONE ===================== -->
+<section id="direzione">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">La direzione</span>
+      <h2>Eredità d'apoteca, calma clinica</h2>
+      <p class="lead">Baganza è una farmacia di territorio: fiducia, competenza e un'idea di servizio che va oltre la vendita. La grafica lo racconta con quattro scelte precise.</p>
+    </div>
+    <div class="feature-list">
+      <div class="fl reveal"><svg class="ic"><use href="#i-cross"/></svg><h4>Il verde come unica azione</h4><p>Un solo colore interattivo: tutto ciò che è verde si può toccare. Bottoni, link e selezioni parlano la stessa lingua, e l'interfaccia resta leggibile senza sforzo.</p></div>
+      <div class="fl reveal"><svg class="ic" style="color:var(--gold-deep)"><use href="#i-star"/></svg><h4>L'oro come filo di pregio</h4><p>Mai riempimenti né testo: l'oro vive in filetti sottili, cornici e sigilli. Un dettaglio di lusso discreto che eleva senza gridare.</p></div>
+      <div class="fl reveal"><svg class="ic" style="color:var(--info)"><use href="#i-layers"/></svg><h4>Luce d'ambiente</h4><p>Una velatura azzurro-ghiaccio che sfuma nel bianco: pura atmosfera clinica. Non è mai testo né superficie premibile — dà solo profondità e respiro.</p></div>
+      <div class="fl reveal"><svg class="ic"><use href="#i-heart-pulse"/></svg><h4>Voce e funzione</h4><p>Un serif elegante per la voce del brand — benvenuti, titoli, momenti di cura — e un sans nitido per la funzione: liste, moduli, prezzi. Due registri, una sola personalità.</p></div>
+    </div>
+    <div class="ornament"><svg class="ic" style="width:16px;height:16px"><use href="#i-cross"/></svg></div>
+  </div>
+</section>
+
+<!-- ===================== IDENTITÀ ===================== -->
+<section id="identita" class="alt">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Identità · Colore</span>
+      <h2>La tavolozza</h2>
+      <p>Costruita sul verde farmacia esistente, con neutri leggermente virati al verde — mai grigi "di default" — e i colori semantici tenuti distinti dall'accento.</p>
+    </div>
+
+    <div class="pal-group reveal">
+      <h4>Brand</h4>
+      <div class="swatches">
+        <div class="swatch"><div class="chip" style="background:#1E7A3C"><span class="ring"></span></div><div class="meta"><b>Verde primario</b><code>#1E7A3C</code><small>Unica azione interattiva</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#14532D"><span class="ring"></span></div><div class="meta"><b>Verde profondo</b><code>#14532D</code><small>Titoli, testo forte</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#C9A227"><span class="ring"></span></div><div class="meta"><b>Oro</b><code>#C9A227</code><small>Solo filo / dettaglio</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#E6C76A"><span class="ring"></span></div><div class="meta"><b>Oro chiaro</b><code>#E6C76A</code><small>Ornamenti, sigilli</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#9E1B32"><span class="ring"></span></div><div class="meta"><b>Cremisi</b><code>#9E1B32</code><small>Pregio, con parsimonia</small></div></div>
+      </div>
+    </div>
+
+    <div class="pal-group reveal">
+      <h4>Ambiente &amp; neutri</h4>
+      <div class="swatches">
+        <div class="swatch"><div class="chip" style="background:#EAF4FE"><span class="ring"></span></div><div class="meta"><b>Azzurro ambient</b><code>#EAF4FE</code><small>Atmosfera, mai testo</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#DDEEFC"><span class="ring"></span></div><div class="meta"><b>Azzurro hero</b><code>#DDEEFC</code><small>Sfondo Home</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#FBFDFB"><span class="ring"></span></div><div class="meta"><b>Carta</b><code>#FBFDFB</code><small>Fondo pagina</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#F1F6F1"><span class="ring"></span></div><div class="meta"><b>Superficie 2</b><code>#F1F6F1</code><small>Riempimenti, campi</small></div></div>
+        <div class="swatch"><div class="chip" style="background:#E2EAE4"><span class="ring"></span></div><div class="meta"><b>Bordo</b><code>#E2EAE4</code><small>Filetti verde-grigio</small></div></div>
+      </div>
+    </div>
+
+    <div class="pal-group reveal">
+      <h4>Semantici</h4>
+      <div class="swatches">
+        <div class="swatch"><div class="chip" style="background:#1E7A3C"><span class="ring"></span></div><div class="meta"><b>Successo</b><code>#1E7A3C</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#B07A0E"><span class="ring"></span></div><div class="meta"><b>Attenzione</b><code>#B07A0E</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#C62828"><span class="ring"></span></div><div class="meta"><b>Errore / urgenza</b><code>#C62828</code></div></div>
+        <div class="swatch"><div class="chip" style="background:#2E6FB0"><span class="ring"></span></div><div class="meta"><b>Informazione</b><code>#2E6FB0</code></div></div>
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div class="sec-head reveal" style="margin-top:56px">
+      <span class="eyebrow">Identità · Tipografia</span>
+      <h2>Due registri, una voce</h2>
+    </div>
+    <div class="type-grid">
+      <div class="type-card reveal">
+        <span class="tag">Voce · Display</span>
+        <div class="name">Serif umanista (es. Spectral / Frank Ruhl in produzione)</div>
+        <div class="specimen-serif">Non solo <em>farmaci</em></div>
+        <div class="scale-row"><span style="font-family:var(--serif);font-size:1.7rem">Benvenuto in Baganza</span><span class="sz">Display / 28–56</span></div>
+        <div class="scale-row"><span style="font-family:var(--serif);font-size:1.25rem">Titoli di sezione &amp; empty state</span><span class="sz">Heading / 20–34</span></div>
+        <p class="muted" style="font-size:.82rem;margin-top:12px">Usato per benvenuti, titoli, momenti di cura. Autorevole, caldo, "da farmacia storica".</p>
+      </div>
+      <div class="type-card reveal">
+        <span class="tag">Funzione · UI</span>
+        <div class="name">Sans di sistema (leggibilità &amp; accessibilità)</div>
+        <div class="specimen-sans">Aggiungi al carrello</div>
+        <div class="scale-row"><span style="font-size:1.05rem;font-weight:600">Etichette, liste, moduli, bottoni</span><span class="sz">Body / 14–17</span></div>
+        <div class="scale-row"><span style="font-size:.86rem">Testo secondario e note legali</span><span class="sz">Small / 12–13</span></div>
+        <div class="specimen-mono">€ 12,90 · BF-2026-0428</div>
+        <p class="muted" style="font-size:.82rem;margin-top:6px">Monospazio con cifre tabellari per prezzi, quantità, codici EAN e numeri d'ordine.</p>
+      </div>
+    </div>
+
+    <!-- Tokens -->
+    <div class="sec-head reveal" style="margin-top:56px">
+      <span class="eyebrow">Identità · Token del linguaggio (§7.2)</span>
+      <h2>Profondità e movimento</h2>
+      <p>Gli stessi valori dell'app: le feature li leggono dal tema, non li scrivono a mano.</p>
+    </div>
+    <div class="token-grid">
+      <div class="token reveal"><h4>Ombra carta</h4><p>Doppio strato: ambiente + direzionale con velo verde.</p><div class="demo demo-shadow"><span style="font-size:.8rem;color:var(--ink-3)">Card</span></div><span class="val">0 12px 24px rgba(30,122,60,.10)</span></div>
+      <div class="token reveal"><h4>Raggi</h4><p>Angoli morbidi coerenti su card e superfici.</p><div class="demo demo-radius"></div><span class="val">card 18 · lg 22 · sm 12</span></div>
+      <div class="token reveal"><h4>Vetro (glass)</h4><p>Superficie smerigliata sopra la velatura ambient.</p><div class="demo demo-glass"><span class="g"></span></div><span class="val">blur σ 22 · fill .72 · r 22</span></div>
+      <div class="token reveal"><h4>Movimento</h4><p>Micro 180ms · standard 280ms · pagina 450ms.</p><div class="demo demo-motion"><span class="dot"></span></div><span class="val">curva "arrive" easeOutBack</span></div>
+      <div class="token reveal"><h4>Ambient wash</h4><p>Azzurro-ghiaccio → bianco. Solo atmosfera.</p><div class="demo demo-ambient"></div><span class="val">stops 0.0 → 0.62</span></div>
+      <div class="token reveal"><h4>Tema scuro</h4><p>Verde-notte con verde ravvivato per il contrasto.</p><div class="demo" style="background:linear-gradient(135deg,#0C1710,#132619);border:1px solid #24402C"><span style="color:#52B87C;font-weight:600">Aa</span></div><span class="val">parità AA · non un'inversione</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMPONENTI ===================== -->
+<section id="componenti">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Sistema · Componenti</span>
+      <h2>I mattoni dell'interfaccia</h2>
+      <p>Un kit condiviso: cambiando questi, cambia tutta l'app. Ogni componente rispetta la regola "verde = azione, oro = dettaglio".</p>
+    </div>
+    <div class="comp-grid">
+      <div class="comp reveal"><h4>Bottoni</h4>
+        <div class="set">
+          <button class="btn btn-primary"><svg class="ic"><use href="#i-cart"/></svg>Aggiungi</button>
+          <button class="btn btn-outline">Filtri</button>
+          <button class="btn btn-ghost">Annulla</button>
+        </div>
+        <div class="set" style="margin-top:10px"><button class="btn btn-primary btn-sm">Vai al checkout</button><button class="btn btn-outline btn-sm">Style guide</button></div>
+      </div>
+      <div class="comp reveal"><h4>Chip &amp; categorie</h4>
+        <div class="set">
+          <span class="chip-ui on">Tutti</span><span class="chip-ui">Medicinali</span><span class="chip-ui">In offerta</span><span class="chip-ui">Integratori</span>
+        </div>
+        <div class="set" style="margin-top:10px"><span class="chip-ui"><svg class="ic" style="width:14px;height:14px"><use href="#i-chat"/></svg>Mal di testa</span><span class="chip-ui">Raffreddore</span></div>
+      </div>
+      <div class="comp reveal"><h4>Campi</h4>
+        <div class="stack" style="gap:10px">
+          <div class="field focus"><svg class="ic"><use href="#i-search"/></svg><input value="Tachipirina" aria-label="Ricerca"></div>
+          <div class="field"><svg class="ic"><use href="#i-user"/></svg><span>Nome e cognome</span></div>
+        </div>
+      </div>
+      <div class="comp reveal"><h4>Badge &amp; stati</h4>
+        <div class="set">
+          <span class="badge badge-ai"><svg class="ic"><use href="#i-spark"/></svg>AI</span>
+          <span class="badge badge-rx">Ricetta</span>
+          <span class="badge badge-ce">CE</span>
+          <span class="badge badge-red"><svg class="ic" style="width:12px;height:12px"><use href="#i-alert"/></svg>Red-flag</span>
+        </div>
+        <div class="set" style="margin-top:12px">
+          <span class="pill-status st-ok">Consegnato</span>
+          <span class="pill-status st-info">Spedito</span>
+          <span class="pill-status st-warn">In attesa</span>
+          <span class="pill-status st-danger">Annullato</span>
+        </div>
+      </div>
+      <div class="comp reveal"><h4>Prezzo</h4>
+        <div class="set" style="gap:20px">
+          <span class="price" style="font-size:1.5rem">€ 7,90 <span class="was">€ 9,50</span></span>
+        </div>
+        <p class="muted" style="font-size:.8rem;margin-top:10px">Monospazio tabellare; il listino barrato resta secondario.</p>
+      </div>
+      <div class="comp reveal"><h4>Sigillo &amp; conformità</h4>
+        <div class="seal">
+          <span class="sq"><svg class="ic"><use href="#i-shield"/></svg></span>
+          <div><b>Logo ministeriale (segnaposto)</b><small>Vendita online di medicinali · autorizzazione Ministero della Salute</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCHERMATE ===================== -->
+<section id="schermate" class="alt">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">L'app · Schermate</span>
+      <h2>Il sistema, applicato</h2>
+      <p class="lead">Le aree principali dell'app con lo stesso linguaggio. Contenuti e testi reali (IT), tema chiaro qui — ogni schermata funziona identica in scuro e in inglese.</p>
+    </div>
+
+    <div class="gallery">
+
+      <!-- HOME -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen hero-wash">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="title serif">Home</span><span class="sp"></span><span class="ib"><svg class="ic"><use href="#i-user"/></svg></span><span class="lang"><svg class="ic" style="width:13px;height:13px"><use href="#i-globe"/></svg>IT</span></div>
+            <div class="body">
+              <div class="logoframe"><span class="mark"><svg class="ic"><use href="#i-cross"/></svg></span><b>Baganza</b><span>Farmacie · Parma</span></div>
+              <div class="welcome"><h3>Benvenuto in Baganza</h3><p>Non solo farmaci — Parma</p></div>
+              <div class="a-search"><svg class="ic"><use href="#i-search"/></svg><span>Cerca o chiedi un consiglio…</span><span class="badge badge-ai"><svg class="ic"><use href="#i-spark"/></svg>AI</span></div>
+              <div class="hero-card"><span class="k">Servizi e prenotazioni</span><h4>Oltre il banco</h4><p>Autoanalisi, telemedicina, CUP</p><span class="go">Scopri <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></span></div>
+              <div class="card lrow" style="padding:12px"><span class="ico"><svg class="ic"><use href="#i-pin"/></svg></span><span class="tx"><b>Le nostre sedi</b><small>Orari, mappa e contatti</small></span><span class="end"><svg class="ic"><use href="#i-chevron"/></svg></span></div>
+            </div>
+            <div class="bnav"><span class="n on"><span class="ni"><svg class="ic"><use href="#i-nav-home"/></svg></span>Home</span><span class="n"><span class="ni"><svg class="ic"><use href="#i-nav-shop"/></svg></span>Negozio</span><span class="n center"><span class="fab" role="img" aria-label="Assistente AI"><svg class="ic"><use href="#i-spark"/></svg></span></span><span class="n"><span class="ni"><svg class="ic"><use href="#i-nav-cart"/></svg></span>Carrello</span><span class="n"><span class="ni"><svg class="ic"><use href="#i-nav-user"/></svg></span>Profilo</span></div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Ingresso</span><h4>Home</h4><p>Logo, benvenuto, ricerca-assistente e l'hero "Servizi". La velatura hero più satura accoglie.</p></div>
+      </div>
+
+      <!-- NEGOZIO -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen wash">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title">Negozio</span><span class="sp"></span><span class="ib"><svg class="ic"><use href="#i-scan"/></svg></span></div>
+            <div class="body scroll-hint">
+              <div class="field" style="background:var(--surface)"><svg class="ic"><use href="#i-search"/></svg><span>Cerca prodotti, principi attivi…</span></div>
+              <div class="chips-row"><span class="c-chip on">Tutti</span><span class="c-chip">Medicinali</span><span class="c-chip">Integratori</span><span class="c-chip">Cosmetici</span></div>
+              <div class="row" style="justify-content:space-between"><small class="muted" style="font-size:11px">128 prodotti</small><span class="chip-ui" style="padding:6px 11px"><svg class="ic" style="width:13px;height:13px"><use href="#i-filter"/></svg>Filtri</span></div>
+              <div class="pgrid">
+                <div class="pcard"><div class="thumb"><span class="badge badge-red flag" style="font-size:.55rem;padding:3px 6px">-17%</span><svg class="ic"><use href="#i-pill"/></svg></div><div class="pb"><span class="ty">OTC</span><span class="nm">Tachipirina 1000mg</span><div class="pr"><span class="price">€ 7,90 <span class="was">9,50</span></span><span class="addbtn"><svg class="ic"><use href="#i-plus"/></svg></span></div></div></div>
+                <div class="pcard"><div class="thumb"><svg class="ic"><use href="#i-box"/></svg></div><div class="pb"><span class="ty">Integratore</span><span class="nm">Vitamina D 1000 UI</span><div class="pr"><span class="price">€ 12,50</span><span class="addbtn"><svg class="ic"><use href="#i-plus"/></svg></span></div></div></div>
+                <div class="pcard"><div class="thumb"><span class="badge badge-ce flag" style="font-size:.55rem;padding:3px 6px">CE</span><svg class="ic"><use href="#i-heart-pulse"/></svg></div><div class="pb"><span class="ty">Dispositivo</span><span class="nm">Termometro digitale</span><div class="pr"><span class="price">€ 9,90</span><span class="addbtn"><svg class="ic"><use href="#i-plus"/></svg></span></div></div></div>
+                <div class="pcard"><div class="thumb"><svg class="ic"><use href="#i-image"/></svg></div><div class="pb"><span class="ty">Cosmetico</span><span class="nm">Crema viso SPF30</span><div class="pr"><span class="price">€ 18,90</span><span class="addbtn"><svg class="ic"><use href="#i-plus"/></svg></span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Acquisto</span><h4>Negozio</h4><p>Griglia prodotti con tile-immagine morbide, badge di tipo/CE/offerta e "Aggiungi" sempre a portata di pollice.</p></div>
+      </div>
+
+      <!-- PRODOTTO -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title">Dettaglio</span><span class="sp"></span><span class="ib"><svg class="ic"><use href="#i-heart"/></svg></span></div>
+            <div class="body scroll-hint" style="gap:12px">
+              <div class="thumb" style="border-radius:16px;aspect-ratio:1/.72;background:linear-gradient(150deg,var(--azure-hero),var(--green-tint))"><svg class="ic" style="width:46px;height:46px"><use href="#i-pill"/></svg></div>
+              <div><span class="badge badge-rx" style="margin-bottom:8px">Medicinale OTC</span><h3 style="font-size:17px;color:var(--ink);font-weight:700">Tachipirina 1000mg — 20 cpr</h3></div>
+              <div class="row" style="justify-content:space-between"><span class="price" style="font-size:1.5rem">€ 7,90 <span class="was">9,50</span></span></div>
+              <div class="a-btn a-primary a-block"><svg class="ic"><use href="#i-cart"/></svg>Aggiungi al carrello</div>
+              <div class="card pad"><span class="field-label">Principio attivo</span><p style="margin-top:5px;color:var(--ink-2);font-size:12.5px">Paracetamolo 1000 mg</p></div>
+              <div class="card pad"><span class="field-label">Posologia</span><p style="margin-top:5px;color:var(--ink-2);font-size:12.5px">1 compressa fino a 3 volte al giorno, non oltre 3g/die.</p></div>
+              <div class="lrow card" style="padding:12px"><span class="ico"><svg class="ic"><use href="#i-shield"/></svg></span><span class="tx"><b>Reso e recesso</b><small>Diritto di recesso entro 14 giorni (art. 54-bis).</small></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Acquisto</span><h4>Scheda prodotto</h4><p>Tipo medicinale ben visibile, sezioni informative in card, e il patto di fiducia (reso/recesso) sempre presente.</p></div>
+      </div>
+
+      <!-- ASSISTENTE AI -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen wash">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title serif">Assistente</span><span class="badge badge-ai" style="margin-left:8px"><svg class="ic"><use href="#i-spark"/></svg>AI</span><span class="sp"></span><span class="ib"><svg class="ic"><use href="#i-plus"/></svg></span></div>
+            <div class="chat">
+              <div class="bubble ai">Ciao! Dimmi cosa ti serve o descrivi un piccolo disturbo: ti propongo prodotti dal nostro catalogo.</div>
+              <div class="qchips"><span class="chip-ui" style="font-size:11px;padding:7px 11px">Mal di testa</span><span class="chip-ui" style="font-size:11px;padding:7px 11px">Raffreddore</span><span class="chip-ui" style="font-size:11px;padding:7px 11px">Consiglio pelle</span></div>
+              <div class="bubble me">Ho mal di testa da stamattina</div>
+              <div class="bubble ai">Per un mal di testa occasionale può aiutare un analgesico da banco. Trovato nel catalogo:
+                <div class="sugg"><span class="thumb"><svg class="ic"><use href="#i-pill"/></svg></span><span class="sg"><b>Tachipirina 1000mg</b><span class="price" style="font-size:11px">€ 7,90</span></span><span class="addbtn" style="width:26px;height:26px"><svg class="ic" style="width:15px;height:15px"><use href="#i-plus"/></svg></span></div>
+              </div>
+              <div class="disclaimer"><svg class="ic"><use href="#i-alert"/></svg><span>Non sono un medico né un farmacista. Per casi seri rivolgiti al 112 o al tuo medico.</span></div>
+            </div>
+            <div class="chat-input"><span class="box">Scrivi un messaggio…</span><span class="send"><svg class="ic"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Il cuore dell'app</span><h4>Assistente AI</h4><p>Chat con badge AI, suggerimenti-prodotto in linea, chip rapidi e il disclaimer sempre visibile. Il farmacista è a un tocco di distanza.</p></div>
+      </div>
+
+      <!-- CARRELLO -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title">Carrello</span></div>
+            <div class="body">
+              <div class="card">
+                <div class="lrow"><span class="ico"><svg class="ic"><use href="#i-pill"/></svg></span><span class="tx"><b>Tachipirina 1000mg</b><small class="price" style="font-size:11px">€ 7,90</small></span><span class="qty"><span class="b"><svg class="ic"><use href="#i-minus"/></svg></span><span class="n">2</span><span class="b"><svg class="ic"><use href="#i-plus"/></svg></span></span></div>
+                <div class="lrow"><span class="ico"><svg class="ic"><use href="#i-box"/></svg></span><span class="tx"><b>Vitamina D 1000 UI</b><small class="price" style="font-size:11px">€ 12,50</small></span><span class="qty"><span class="b"><svg class="ic"><use href="#i-minus"/></svg></span><span class="n">1</span><span class="b"><svg class="ic"><use href="#i-plus"/></svg></span></span></div>
+              </div>
+              <div class="free-hint"><svg class="ic" style="width:15px;height:15px"><use href="#i-truck"/></svg>Aggiungi € 4,60 per la spedizione gratuita.</div>
+              <div class="card summary">
+                <div class="sr"><span>Subtotale</span><span class="price">€ 28,30</span></div>
+                <div class="sr"><span>Spedizione</span><span class="price" style="color:var(--green-text)">Gratuita</span></div>
+                <div class="sr"><span class="muted">di cui IVA 10%</span><span class="price muted">€ 2,57</span></div>
+                <div class="sr tot"><b>Totale</b><span class="price">€ 28,30</span></div>
+              </div>
+              <div class="a-btn a-primary a-block"><svg class="ic"><use href="#i-lock"/></svg>Vai al checkout</div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Acquisto</span><h4>Carrello</h4><p>Stepper quantità compatti, incentivo alla spedizione gratuita e riepilogo con IVA inclusa in chiaro.</p></div>
+      </div>
+
+      <!-- PAGAMENTO -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title">Pagamento</span></div>
+            <div class="body">
+              <span class="field-label">Metodo di pagamento</span>
+              <div class="pay sel"><span class="ico"><svg class="ic"><use href="#i-card"/></svg></span><b>Carta</b><span class="rdo"></span></div>
+              <div class="pay"><span class="ico"><svg class="ic"><use href="#i-euro"/></svg></span><b>PayPal</b><span class="rdo"></span></div>
+              <div class="pay"><span class="ico"><svg class="ic"><use href="#i-euro"/></svg></span><b>Satispay</b><span class="rdo"></span></div>
+              <div class="pay"><span class="ico"><svg class="ic"><use href="#i-calendar"/></svg></span><b>Paga a rate</b><span class="rdo"></span></div>
+              <div class="notice"><svg class="ic"><use href="#i-info"/></svg><span>Ambiente sandbox: nessun addebito reale.</span></div>
+              <div class="a-btn a-primary a-block" style="margin-top:2px"><svg class="ic"><use href="#i-lock"/></svg>Paga € 28,30</div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Acquisto</span><h4>Pagamento</h4><p>Metodi come righe selezionabili (verde = scelto), nota sandbox e CTA che ripete l'importo.</p></div>
+      </div>
+
+      <!-- SERVIZI -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen wash">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title serif">Servizi</span></div>
+            <div class="body scroll-hint">
+              <div class="chips-row"><span class="c-chip on">Tutti</span><span class="c-chip">Autoanalisi</span><span class="c-chip">Telemedicina</span><span class="c-chip">CUP</span></div>
+              <div class="card lrow" style="padding:13px"><span class="ico"><svg class="ic"><use href="#i-heart-pulse"/></svg></span><span class="tx"><b>Autoanalisi glicemia</b><small>15 min · Su appuntamento</small></span><span class="price" style="font-size:12px">€ 12</span></div>
+              <div class="card lrow" style="padding:13px"><span class="ico"><svg class="ic"><use href="#i-globe"/></svg></span><span class="tx"><b>Telemedicina cardiologica</b><small>Su appuntamento</small></span><span class="end"><svg class="ic"><use href="#i-chevron"/></svg></span></div>
+              <div class="card lrow" style="padding:13px"><span class="ico"><svg class="ic"><use href="#i-user"/></svg></span><span class="tx"><b>Consulenza nutrizionale</b><small>30 min · Su appuntamento</small></span><span class="price" style="font-size:12px;color:var(--green-text)">Gratuito</span></div>
+              <div class="hero-card" style="background:linear-gradient(135deg,var(--info),#1f4f80)"><span class="k" style="color:#cfe3f7">CUP e referti</span><h4>Prenotazioni SSN</h4><p>Ti guidiamo verso CUPWeb, ER Salute e FSE.</p><span class="go">Come funziona <svg class="ic" style="width:14px;height:14px"><use href="#i-arrow"/></svg></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Servizi &amp; sedi</span><h4>Servizi e prenotazioni</h4><p>Categorie filtrabili, durata e modalità in chiaro, "Gratuito" evidenziato e il ponte verso i servizi regionali.</p></div>
+      </div>
+
+      <!-- SEDE -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title">Le nostre sedi</span></div>
+            <div class="body">
+              <div class="thumb" style="border-radius:14px;aspect-ratio:1/.5;background:linear-gradient(135deg,var(--green-tint),var(--azure))"><svg class="ic" style="width:34px;height:34px"><use href="#i-map"/></svg></div>
+              <div class="card pad">
+                <div class="row" style="justify-content:space-between"><b style="color:var(--ink);font-size:14px">Baganza — Centro</b><span class="pill-status st-ok" style="font-size:10px">Aperto</span></div>
+                <p class="muted" style="font-size:11.5px;margin-top:3px">Via Emilia 24, Parma</p>
+                <div style="margin-top:10px"><span class="badge badge-ce" style="border-color:color-mix(in srgb,var(--gold) 40%,transparent);color:var(--gold-deep)"><svg class="ic" style="width:12px;height:12px"><use href="#i-check"/></svg>Punto CUP attivo</span></div>
+                <div class="loc-actions" style="margin-top:12px"><span class="la"><svg class="ic"><use href="#i-phone"/></svg>Chiama</span><span class="la"><svg class="ic"><use href="#i-chat"/></svg>WhatsApp</span><span class="la"><svg class="ic"><use href="#i-pin"/></svg>Mappa</span></div>
+              </div>
+              <div class="card pad"><span class="field-label">Orari</span>
+                <div class="hours"><span>Lun–Ven</span><span>08:30 – 19:30</span></div>
+                <div class="hours"><span>Sabato</span><span>08:30 – 13:00</span></div>
+                <div class="hours"><span>Domenica</span><span>Chiuso</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Servizi &amp; sedi</span><h4>Sede</h4><p>Mappa, stato apertura, punto CUP e azioni dirette (chiama, WhatsApp, mappa) come colonne uguali.</p></div>
+      </div>
+
+      <!-- ORDINE -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="ib"><svg class="ic"><use href="#i-chevron"/></svg></span><span class="title">Ordine</span></div>
+            <div class="body">
+              <div class="card pad">
+                <div class="row" style="justify-content:space-between"><b class="price" style="color:var(--ink);font-size:13px">BF-2026-0428</b><span class="pill-status st-info">Spedito</span></div>
+                <div class="stepper" style="margin-top:16px">
+                  <div class="stp done"><span class="d"><svg class="ic"><use href="#i-check"/></svg></span><small>Creato</small></div>
+                  <div class="stp done"><span class="d"><svg class="ic"><use href="#i-check"/></svg></span><small>Confermato</small></div>
+                  <div class="stp done"><span class="d"><svg class="ic"><use href="#i-check"/></svg></span><small>Preparaz.</small></div>
+                  <div class="stp now"><span class="d"></span><small>Spedito</small></div>
+                  <div class="stp"><span class="d"></span><small>Consegn.</small></div>
+                </div>
+              </div>
+              <div class="card lrow" style="padding:12px"><span class="ico"><svg class="ic"><use href="#i-truck"/></svg></span><span class="tx"><b>Tracking</b><small class="price" style="font-size:11px">BRT · 0568 4419 220</small></span><span class="end"><svg class="ic"><use href="#i-chevron"/></svg></span></div>
+              <div class="card pad"><span class="field-label">Articoli · 3</span>
+                <div class="hours"><span>Tachipirina 1000mg ×2</span><span class="price" style="font-size:11px">€ 15,80</span></div>
+                <div class="hours"><span>Vitamina D 1000 UI</span><span class="price" style="font-size:11px">€ 12,50</span></div>
+                <div class="hours" style="border-top:1px dashed var(--border);margin-top:4px;padding-top:8px"><span style="color:var(--ink);font-weight:700">Totale</span><span class="price" style="font-size:13px">€ 41,20</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Account</span><h4>Dettaglio ordine</h4><p>Uno stato che è davvero una sequenza → stepper reale. Tracking in monospazio e riepilogo articoli.</p></div>
+      </div>
+
+      <!-- PROFILO / CONSENSI -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="title serif">Profilo</span><span class="sp"></span><span class="ib"><svg class="ic"><use href="#i-globe"/></svg></span></div>
+            <div class="body scroll-hint">
+              <div class="card lrow" style="padding:14px"><span class="ico" style="background:linear-gradient(135deg,var(--green),var(--green-deep));color:#fff"><svg class="ic"><use href="#i-user"/></svg></span><span class="tx"><b>Giulia Bianchi</b><small>giulia.b@email.it · Cliente</small></span></div>
+              <div class="card lrow" style="padding:13px"><span class="ico"><svg class="ic"><use href="#i-box"/></svg></span><span class="tx"><b>I miei ordini</b></span><span class="end"><svg class="ic"><use href="#i-chevron"/></svg></span></div>
+              <div class="card pad"><span class="field-label">Consensi e privacy</span>
+                <div class="toggle-row"><div class="tt"><b>Comunicazioni marketing</b><small>Offerte e novità via email.</small></div><span class="sw"></span></div>
+                <div class="toggle-row"><div class="tt"><b>Dati dei medicinali</b><small>Necessario per ordinare SOP/OTC.</small></div><span class="sw on"></span></div>
+                <div class="toggle-row"><div class="tt"><b>Assistente AI</b><small>Trattamento sintomi (art. 9 GDPR).</small></div><span class="sw on"></span></div>
+              </div>
+              <div class="a-btn a-outline a-block">Esci</div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Account</span><h4>Profilo &amp; consensi</h4><p>Interruttori chiari per ogni consenso GDPR, revocabili in ogni momento. Conformità come parte del design, non appendice.</p></div>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="frame reveal">
+        <div class="device"><div class="notch"></div>
+          <div class="screen wash">
+            <div class="statusbar"><span>9:41</span><span class="r"><svg class="ic"><use href="#i-heart-pulse"/></svg><span>100%</span></span></div>
+            <div class="appbar"><span class="title serif">Amministrazione</span></div>
+            <div class="body scroll-hint">
+              <p class="muted" style="font-size:12px">Benvenuto, Dott. Rossi</p>
+              <div class="admin-grid">
+                <div class="atile feature"><span class="ico"><svg class="ic"><use href="#i-spark"/></svg></span><b>Aggiungi prodotto</b><small>Testi e foto generati con AI, da revisionare.</small></div>
+                <div class="atile"><span class="ico"><svg class="ic"><use href="#i-shop"/></svg></span><b>Catalogo</b></div>
+                <div class="atile"><span class="ico"><svg class="ic"><use href="#i-box"/></svg></span><b>Ordini</b></div>
+                <div class="atile"><span class="ico"><svg class="ic"><use href="#i-calendar"/></svg></span><b>Prenotazioni</b></div>
+                <div class="atile"><span class="ico"><svg class="ic"><use href="#i-chat"/></svg></span><b>Assistente AI</b></div>
+              </div>
+              <div class="card pad">
+                <div class="row" style="justify-content:space-between"><span class="field-label">Supervisione assistente</span><span class="badge badge-red" style="font-size:.55rem"><svg class="ic" style="width:11px;height:11px"><use href="#i-alert"/></svg>2</span></div>
+                <div class="superv"><span class="tx"><b>Sessione · 8 turni</b><small>Utente · red-flag rilevata</small></span><span class="badge badge-red" style="font-size:.55rem">Red-flag</span></div>
+                <div class="superv"><span class="tx"><b>Sessione · 3 turni</b><small>Escalation da gestire</small></span><span class="pill-status st-warn" style="font-size:10px">Escalation</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span class="k">Staff</span><h4>Area farmacia</h4><p>Stessa lingua visiva, tono operativo: l'azione primaria (prodotto AI) come tile in evidenza, e la supervisione con stati red-flag/escalation leggibili a colpo d'occhio.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROSSIMI PASSI ===================== -->
+<section id="prossimo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Dal mockup al codice</span>
+      <h2>Come diventa app vera</h2>
+      <p class="lead">Questo mockup è HTML/CSS a scopo di approvazione. Una volta scelta la direzione, si traduce nei token Flutter già presenti nel progetto — un punto solo da cui cambia tutta l'app.</p>
+    </div>
+    <div class="map-note reveal">
+      <ol>
+        <li>Palette e neutri → <code>core/theme/app_colors.dart</code></li>
+        <li>Gradienti, vetro, ombre, motion → <code>core/theme/baganza_effects.dart</code> (+ mirror <code>tokens.json</code>)</li>
+        <li>Tipografia, bottoni, input, card → <code>core/theme/app_theme.dart</code></li>
+        <li>Componenti condivisi → <code>core/widgets/</code> (glass, tilt-card, ambient, app-card, app-button)</li>
+        <li>Le ~30 schermate ereditano il nuovo look senza toccarle una per una; rifiniture mirate dove serve.</li>
+      </ol>
+    </div>
+    <div class="feature-list" style="margin-top:22px">
+      <div class="fl reveal"><svg class="ic"><use href="#i-globe"/></svg><h4>Bilingue nativo</h4><p>Ogni schermata è pensata per IT ed EN: spaziature e troncamenti reggono le stringhe più lunghe.</p></div>
+      <div class="fl reveal"><svg class="ic"><use href="#i-shield"/></svg><h4>Accessibile</h4><p>Contrasto AA in chiaro e scuro, tocco ≥ 48px, focus visibile, motion ridotto rispettato.</p></div>
+      <div class="fl reveal"><svg class="ic"><use href="#i-check"/></svg><h4>Conforme</h4><p>Logo ministeriale, cookie e diritto di recesso hanno un posto nel sistema, non aggiunti dopo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <span class="mark lg"><svg class="ic"><use href="#i-cross"/></svg></span>
+    <div class="wordmark lg"><b>Baganza</b><span>Farmacie · Parma</span></div>
+    <p style="margin-left:auto">Proposta d'identità visiva — mockup per approvazione. Nessun logo o marchio di terzi è riprodotto; il logo ministeriale è un segnaposto.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('js');
+
+    // Theme toggle — cooperates with the viewer's data-theme mechanism
+    var btn = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
+    var label = document.getElementById('themeLabel');
+    function prefersDark() { return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+    function currentIsDark() {
+      var t = root.getAttribute('data-theme');
+      if (t === 'dark') return true;
+      if (t === 'light') return false;
+      return prefersDark();
+    }
+    function paint() {
+      var dark = currentIsDark();
+      if (icon) icon.setAttribute('href', dark ? '#i-sun' : '#i-moon');
+      if (label) label.textContent = dark ? 'Chiaro' : 'Scuro';
+    }
+    if (btn) {
+      btn.addEventListener('click', function () {
+        root.setAttribute('data-theme', currentIsDark() ? 'light' : 'dark');
+        paint();
+      });
+    }
+    paint();
+
+    // Scroll reveal
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var els = document.querySelectorAll('.reveal');
+    if (reduce || !('IntersectionObserver' in window)) {
+      els.forEach(function (e) { e.classList.add('in'); });
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+      els.forEach(function (e) { io.observe(e); });
+    }
+  })();
+</script>
